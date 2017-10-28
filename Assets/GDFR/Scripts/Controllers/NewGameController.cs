@@ -1,10 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class NewGameController : MonoBehaviour {
 
     Animator anim = null;
+
+    public GameObject MenuAudioController;
+
+    public void Awake()
+    {
+        if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
+        {
+            Instantiate(MenuAudioController);
+        }
+    }
 
     public void Start()
     {
@@ -29,6 +38,7 @@ public class NewGameController : MonoBehaviour {
     public void startGame()
     {
         Debug.Log("startGame button");
+        Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("MainGame");
     }
 }

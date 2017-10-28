@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 public class GameContoller : RxFx_FSM {
 	
@@ -32,7 +35,7 @@ public class GameContoller : RxFx_FSM {
 
 	void Awake()
 	{
-		new FSM_Event("StartEvent",State_LoadData);
+        new FSM_Event("StartEvent",State_LoadData);
         new FSM_Event("SettingUpRules", State_SettingUpRules);
         new FSM_Event("GameReset",State_GameReset);
 		new FSM_Event("DrawPhase1",State_DrawPhase1);	
@@ -53,12 +56,19 @@ public class GameContoller : RxFx_FSM {
         callEvent("StartEvent");
 	}
 
+    void Start()
+    {
+        //The main menu's track's probability is 0 at the beginning to keep it from being selected; since at this point, another track has been selected we can renable it's probability
+	    AudioController.Instance._GetAudioItem("Game Music").subItems[0].Probability = 100;
+    }
+
     public void NewGame()
     {
         // Clear all FSM
         this.StopAllCoroutines();
         RxFx_FSM.GlobalEventList.Clear();
 
+        Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("NewGame");
     }
 
@@ -68,20 +78,21 @@ public class GameContoller : RxFx_FSM {
         this.StopAllCoroutines();
         RxFx_FSM.GlobalEventList.Clear();
 
+        Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("MainMenu");
     }
 
     public void MuteSound()
     {
-        if (this.lastVolume == 0)
+        if (Math.Abs(lastVolume) < 0.005f)
         {
-            this.lastVolume = AudioController.GetGlobalVolume();
+            lastVolume = AudioController.GetGlobalVolume();
             AudioController.SetGlobalVolume(0);
         }
         else
         {
-            AudioController.SetGlobalVolume(this.lastVolume);
-            this.lastVolume = 0;
+            AudioController.SetGlobalVolume(lastVolume);
+            lastVolume = 0;
         }
     }
 
@@ -806,7 +817,7 @@ public class GameContoller : RxFx_FSM {
 		return currentBestCard;
 	}
 
-	public static int GetPlayValue(GDFR_Card_Script pCard,GDFR_Deck_Script toDeck)
+	public static int GetPlayValue(GDFR_Card_Script pCard, GDFR_Deck_Script toDeck)
 	{
 		GDFR_Card_Script[] tCards = toDeck.GetCardList() as GDFR_Card_Script[];
 		int discardValue = 0;

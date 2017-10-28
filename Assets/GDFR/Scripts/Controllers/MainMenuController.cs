@@ -1,8 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
-public class MainMenuController : MonoBehaviour {
+public class MainMenuController : MonoBehaviour
+{
+    public GameObject MenuAudioController;
+
+    public void Awake()
+    {
+        if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
+        {
+            Instantiate(MenuAudioController);
+        }
+    }
 
 	public void NewGame()
 	{
