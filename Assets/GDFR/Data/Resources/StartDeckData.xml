@@ -1,0 +1,250 @@
+<Deck>
+<!-- Cards 1 - 5 -->	
+<!-- {Our, Oop, Ock, Elly, Ew} -->	
+	<card>
+		<GoblinSpriteName>01_GOBLIN_Gobble_T_Goop</GoblinSpriteName>
+		<FairySpriteName>01_FAIRY_PB_and_Jelly</FairySpriteName>	
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Oop</GoblinRhyme>
+		<FairyRhyme>Elly</FairyRhyme>
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+		<GoblinText>Gobble T Goop</GoblinText>
+		<FairyText>PB and Jelly</FairyText>
+	</card>	
+	<card>
+		<GoblinSpriteName>02_GOBLIN_Vermin_Vermicelli</GoblinSpriteName>
+		<FairySpriteName>02_FAIRY_Dewdrop_Shower</FairySpriteName>	
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Elly</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+		<GoblinText>Vermin Vermicelli</GoblinText>
+		<FairyText>Dewdrop Shower</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>03_GOBLIN_Nervous_Nelly</GoblinSpriteName>
+		<FairySpriteName>03_FAIRY_Vanilla_Scoop</FairySpriteName>	
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Elly</GoblinRhyme>
+		<FairyRhyme>Oop</FairyRhyme>		
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+		<GoblinText>Nervous Nelly</GoblinText>
+		<FairyText>Vanilla Scoop</FairyText>		
+	</card>	
+	<card>
+		<GoblinSpriteName>04_GOBLIN_Chicken_Pock</GoblinSpriteName>
+		<FairySpriteName>04_FAIRY_Willow_Sue</FairySpriteName>	
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Ock</GoblinRhyme>
+		<FairyRhyme>Ew</FairyRhyme>	
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+		<GoblinText>Chicken Pock</GoblinText>
+		<FairyText>Willow Sue</FairyText>		
+	</card>	
+	<card>
+		<GoblinSpriteName>05_GOBLIN_Full_Moon_Moo</GoblinSpriteName>
+		<FairySpriteName>05_FAIRY_Pixie_Power</FairySpriteName>	
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Ew</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Full Moon Moo</GoblinText>
+		<FairyText>Pixie Power</FairyText>			
+	</card>	
+<!-- Cards 6 - 10 -->	
+<!-- {Our, Oop, Ock, Elly, Ew} -->		
+	<card>
+		<GoblinSpriteName>06_GOBLIN_Earwax_Stew</GoblinSpriteName>
+		<FairySpriteName>06_FAIRY_Kokopelli</FairySpriteName>	
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Ew</GoblinRhyme>
+		<FairyRhyme>Elly</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>true</FairyStarBorder>	
+		<GoblinText>Earwax Stew</GoblinText>
+		<FairyText>Kokopelli</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>07_GOBLIN_Old_Man_Sock</GoblinSpriteName>
+		<FairySpriteName>07_FAIRY_Sweet_and_Sour</FairySpriteName>		
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Ock</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Old Man Sock</GoblinText>
+		<FairyText>Sweet and Sour</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>08_GOBLIN_Big_Big_Belly</GoblinSpriteName>
+		<FairySpriteName>08_FAIRY_Penny_Clue</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Elly</GoblinRhyme>
+		<FairyRhyme>Ew</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Big Big Belly</GoblinText>
+		<FairyText>Penny Clue</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>09_GOBLIN_Nappy_Hour</GoblinSpriteName>
+		<FairySpriteName>09_FAIRY_Lemon_Loop</FairySpriteName>		
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Oop</FairyRhyme>		
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+		<GoblinText>Nappy Hour</GoblinText>
+		<FairyText>Lemon Loop</FairyText>			
+	</card>	
+	<!-- Cards 10 - 15 -->
+	<!-- {Our, Oop, Ock, Elly, Ew} -->	
+	<card>
+		<GoblinSpriteName>10_GOBLIN_Cuckoo_Clock</GoblinSpriteName>
+		<FairySpriteName>10_FAIRY_Lucky_OKelly</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Ock</GoblinRhyme>
+		<FairyRhyme>Elly</FairyRhyme>		
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Cuckoo Clock</GoblinText>
+		<FairyText>Lucky OKelly</FairyText>		
+	</card>	
+	<card>
+		<GoblinSpriteName>11_GOBLIN_He_So_Smelly</GoblinSpriteName>
+		<FairySpriteName>11_FAIRY_Candy_Rock</FairySpriteName>		
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Elly</GoblinRhyme>
+		<FairyRhyme>Ock</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>true</FairyStarBorder>	
+		<GoblinText>He So Smelly</GoblinText>
+		<FairyText>Candy Rock</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>12_GOBLIN_Dastardly_Droop</GoblinSpriteName>
+		<FairySpriteName>12_FAIRY_Goldie_Lock</FairySpriteName>		
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Oop</GoblinRhyme>
+		<FairyRhyme>Ock</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Dastardly Droop</GoblinText>
+		<FairyText>Goldie Lock</FairyText>		
+	</card>	
+	<card>
+		<GoblinSpriteName>13_GOBLIN_Cobweb_Shock</GoblinSpriteName>
+		<FairySpriteName>13_FAIRY_Hula_Hoop</FairySpriteName>		
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Ock</GoblinRhyme>
+		<FairyRhyme>Oop</FairyRhyme>		
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Cobweb Shock</GoblinText>
+		<FairyText>Hula Hoop</FairyText>		
+	</card>		
+	<card>
+		<GoblinSpriteName>14_GOBLIN_Goblin_Soup</GoblinSpriteName>
+		<FairySpriteName>14_FAIRY_Morning_Dew</FairySpriteName>		
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Oop</GoblinRhyme>
+		<FairyRhyme>Ew</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>true</FairyStarBorder>	
+		<GoblinText>Goblin Soup</GoblinText>
+		<FairyText>Morning Dew</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>15_GOBLIN_Spidery_Glue</GoblinSpriteName>
+		<FairySpriteName>15_FAIRY_Rainbow_Swoop</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Ew</GoblinRhyme>
+		<FairyRhyme>Oop</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>true</FairyStarBorder>	
+		<GoblinText>Spidery Glue</GoblinText>
+		<FairyText>Rainbow Swoop</FairyText>			
+	</card>	
+	<!-- Cards 16 - 20 -->
+	<!-- {Our, Oop, Ock, Elly, Ew} -->	
+	<card>
+		<GoblinSpriteName>16_GOBLIN_Cringe_and_Cower</GoblinSpriteName>
+		<FairySpriteName>16_FAIRY_Hickory_Dock</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Ock</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Cringe and Cower</GoblinText>
+		<FairyText>Hickory Dock</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>17_GOBLIN_Needs_a_Shower</GoblinSpriteName>
+		<FairySpriteName>17_FAIRY_Snowflake_Shelly</FairySpriteName>	
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Elly</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Needs a Shower</GoblinText>
+		<FairyText>Snowflake Shelly</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>18_GOBLIN_OP_You</GoblinSpriteName>
+		<FairySpriteName>18_FAIRY_Poppy_Smock</FairySpriteName>		
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Ew</GoblinRhyme>
+		<FairyRhyme>Ock</FairyRhyme>		
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+		<GoblinText>OP You</GoblinText>
+		<FairyText>Poppy Smock</FairyText>			
+	</card>	
+	<card>
+		<GoblinSpriteName>19_GOBLIN_Salamander_Snoop</GoblinSpriteName>
+		<FairySpriteName>19_FAIRY_Petal_Flower</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Oop</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>		
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Salamander Snoop</GoblinText>
+		<FairyText>Petal Flower</FairyText>		
+	</card>	
+	<card>
+		<GoblinSpriteName>20_GOBLIN_Dusty_Dour</GoblinSpriteName>
+		<FairySpriteName>20_FAIRY_Baby_Blue</FairySpriteName>		
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Ew</FairyRhyme>		
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+		<GoblinText>Dusty Dour</GoblinText>
+		<FairyText>Baby Blue</FairyText>		
+	</card>	
+</Deck>

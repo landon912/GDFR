@@ -1,0 +1,17 @@
+Game States
+
+Setup
+	PlayerDraw 1: Star Card Draw to each player, discard leftover
+	PlayerDraw 2: Draw 3 goblin cards to each player
+	FairyRingDraw: 4 cards fairy side up, discard remaining
+	Initiative: Random player starts.
+player
+	SelectCard: select card to add to fairy ring
+	Non-Star play
+		flipRhyme: Flip the card in the fairy ring that Rhyme with the players card.
+	Star play
+		StartPlay:  all cards in fair ring flip
+	Collect: collect other cards that match played card's symbol
+	VictoryCheck: player has only fairies (any number) face up in hand / At least 6 fairies
+
+

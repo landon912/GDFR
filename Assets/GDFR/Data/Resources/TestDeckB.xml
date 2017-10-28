@@ -1,0 +1,54 @@
+<Deck>
+	<!-- Cards 16 - 20 -->
+	<!-- {Our, Oop, Ock, Elly, Ew} -->	
+	<card>
+		<GoblinSpriteName>16_GOBLIN_Cringe_and_Cower</GoblinSpriteName>
+		<FairySpriteName>16_FAIRY_Hickory_Dock</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Ock</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>		
+	</card>	
+	<card>
+		<GoblinSpriteName>17_GOBLIN_Needs_a_Shower</GoblinSpriteName>
+		<FairySpriteName>17_FAIRY_Snowflake_Shelly</FairySpriteName>	
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Elly</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>		
+	</card>	
+	<card>
+		<GoblinSpriteName>18_GOBLIN_OP_You</GoblinSpriteName>
+		<FairySpriteName>18_FAIRY_Poppy_Smock</FairySpriteName>		
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Ew</GoblinRhyme>
+		<FairyRhyme>Ock</FairyRhyme>		
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+	</card>	
+	<card>
+		<GoblinSpriteName>19_GOBLIN_Salamander_Snoop</GoblinSpriteName>
+		<FairySpriteName>19_FAIRY_Petal_Flower</FairySpriteName>		
+		<GoblinSymbol>Frog</GoblinSymbol>
+		<FairySymbol>Mushroom</FairySymbol>
+		<GoblinRhyme>Oop</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>		
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+	</card>	
+	<card>
+		<GoblinSpriteName>20_GOBLIN_Dusty_Dour</GoblinSpriteName>
+		<FairySpriteName>20_FAIRY_Baby_Blue</FairySpriteName>		
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Our</GoblinRhyme>
+		<FairyRhyme>Ew</FairyRhyme>		
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+	</card>	
+</Deck>

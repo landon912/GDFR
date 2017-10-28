@@ -1,0 +1,55 @@
+<Deck>
+<!-- Cards 1 - 5 -->	
+<!-- {Our, Oop, Ock, Elly, Ew} -->	
+	<card>
+		<GoblinSpriteName>01_GOBLIN_Gobble_T_Goop</GoblinSpriteName>
+		<FairySpriteName>01_FAIRY_PB_and_Jelly</FairySpriteName>	
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Oop</GoblinRhyme>
+		<FairyRhyme>Elly</FairyRhyme>
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+	</card>	
+	<card>
+		<GoblinSpriteName>02_GOBLIN_Vermin_Vermicelli</GoblinSpriteName>
+		<!-- leave this as "20_FAIRY_Vermin_Vermicelli" for now, this was the filename error, I'll fix later -->
+		<FairySpriteName>02_FAIRY_Dewdrop_Shower</FairySpriteName>	
+		<GoblinSymbol>Mushroom</GoblinSymbol>
+		<FairySymbol>Frog</FairySymbol>
+		<GoblinRhyme>Elly</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>	
+	</card>	
+	<card>
+		<GoblinSpriteName>03_GOBLIN_Nervous_Nelly</GoblinSpriteName>
+		<FairySpriteName>03_FAIRY_Vanilla_Scoop</FairySpriteName>	
+		<GoblinSymbol>Sun</GoblinSymbol>
+		<FairySymbol>Moon</FairySymbol>
+		<GoblinRhyme>Elly</GoblinRhyme>
+		<FairyRhyme>Oop</FairyRhyme>		
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+	</card>	
+	<card>
+		<GoblinSpriteName>04_GOBLIN_Chicken_Pock</GoblinSpriteName>
+		<FairySpriteName>04_FAIRY_Willow_Sue</FairySpriteName>	
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Ock</GoblinRhyme>
+		<FairyRhyme>Ew</FairyRhyme>	
+		<GoblinStarBorder>true</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>
+	</card>	
+	<card>
+		<GoblinSpriteName>05_GOBLIN_Full_Moon_Moo</GoblinSpriteName>
+		<FairySpriteName>05_FAIRY_Pixie_Power</FairySpriteName>	
+		<GoblinSymbol>Moon</GoblinSymbol>
+		<FairySymbol>Sun</FairySymbol>
+		<GoblinRhyme>Ew</GoblinRhyme>
+		<FairyRhyme>Our</FairyRhyme>	
+		<GoblinStarBorder>false</GoblinStarBorder>
+		<FairyStarBorder>false</FairyStarBorder>		
+	</card>	
+</Deck>

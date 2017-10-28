@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Avatars>
+  <Avatar>
+    <id>0</id>
+    <names>
+      <name>Sugar Plum</name>
+      <name>Sugar Plum 2</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>1</id>
+    <names>
+      <name>Jareth</name>
+      <name>Rodrigo</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>2</id>
+    <names>
+      <name>Tinker Bell</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>3</id>
+    <names>
+      <name>Contributor 1</name>
+    </names>
+  </Avatar>
+</Avatars>

@@ -1,0 +1,30 @@
+<MovePanel>
+	<MoveRow>
+		<MoveButton>
+			<MoveColor>White</MoveColor>
+			<MoveType>HardLeft</MoveType>
+		</MoveButton>
+		<MoveButton></MoveButton>
+		<MoveButton></MoveButton>
+		<MoveButton></MoveButton>
+		<MoveButton>
+			<MoveColor>White</MoveColor>
+			<MoveType>HardRight</MoveType>
+		</MoveButton>
+		<MoveButton></MoveButton>
+	</MoveRow>	
+	<MoveRow>
+		<MoveButton>
+			<MoveColor>White</MoveColor>
+			<MoveType>HardLeft</MoveType>
+		</MoveButton>
+		<MoveButton></MoveButton>
+		<MoveButton></MoveButton>
+		<MoveButton></MoveButton>
+		<MoveButton>
+			<MoveColor>White</MoveColor>
+			<MoveType>HardRight</MoveType>
+		</MoveButton>
+		<MoveButton></MoveButton>
+	</MoveRow>	
+</MovePanel>
