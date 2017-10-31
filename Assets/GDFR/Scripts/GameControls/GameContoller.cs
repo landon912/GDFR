@@ -179,7 +179,7 @@ public class GameContoller : RxFx_FSM {
             {
                 if (playerProfile.type == PlayersProfile.Type.Human)
                 {
-                    name = "Player " + (playerIdx + 1).ToString();
+                    name = "Player " + (playerIdx + 1);
                 }
                 else
                 {
@@ -188,6 +188,7 @@ public class GameContoller : RxFx_FSM {
             }
             avatars[position].Name = name;
             avatars[position].spriteName = "Avatar_" + playerProfile.avatar.ToString().PadLeft(2, '0');
+            avatars[position].avatarGlowSprite.gameObject.SetActive(false);
         }
 
         callEvent("GameReset");
@@ -684,24 +685,50 @@ public class GameContoller : RxFx_FSM {
 
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
-            default:
+            
             case GameSettings.RulesVariant.Classic:
                 switch (Toolbox.Instance.gameSettings.numberOfPlayers)
                 {
-                    default:
-                        if (fairyCount >= 6 || goblinCount == 0)
+                    case 2:
+                        if (fairyCount >= 8 || goblinCount == 0)
                         {
                             callEvent("DeclareWinner");
                             yield break;
                         }
                         break;
-                    case 2:
                     case 3:
+                    case 4:
                         if (fairyCount >= 7 || goblinCount == 0)
                         {
                             callEvent("DeclareWinner");
                             yield break;
                         }
+                        break;
+                    default:
+                        Debug.LogError("You Should Not Be Here - There is a RuleVariant and Player Number Mismatch or Player Count is out of range");
+                        break;
+                }
+                break;
+            case GameSettings.RulesVariant.Goblins_Rule:
+                switch (Toolbox.Instance.gameSettings.numberOfPlayers)
+                {
+                    case 2:
+                        if (goblinCount >= 8 || fairyCount == 0)
+                        {
+                            callEvent("DeclareWinner");
+                            yield break;
+                        }
+                        break;
+                    case 3:
+                    case 4:
+                        if (goblinCount >= 7 || fairyCount == 0)
+                        {
+                            callEvent("DeclareWinner");
+                            yield break;
+                        }
+                        break;
+                    default:
+                        Debug.LogError("You Should Not Be Here - There is a RuleVariant and Player Number Mismatch or Player Count is out of range");
                         break;
                 }
                 break;
@@ -713,10 +740,12 @@ public class GameContoller : RxFx_FSM {
                     yield break;
                 }
                 break;
+            default:
+                Debug.LogError("You Should Not Be Here - Rules Variant is Unknown");
+                break;
         }
 
 		callEvent("ChangePlayer");
-		yield break;
 	}	
 
 	IEnumerator State_DeclareWinner (params object[] data)
