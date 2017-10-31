@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
 
 public class PlayerProfile_UI : MonoBehaviour {
 
@@ -7,6 +7,9 @@ public class PlayerProfile_UI : MonoBehaviour {
     public UnityEngine.UI.Toggle humanToggle = null;
     public UnityEngine.UI.Toggle aiToggle = null;
     public UnityEngine.UI.Dropdown avatarDropdown = null;
+
+    public bool HasDefaultName = false;
+    public string NameChangeStringToIgnore = String.Empty;
 
     int _profileIndex = 0;
     public int ProfileIndex
@@ -51,47 +54,50 @@ public class PlayerProfile_UI : MonoBehaviour {
     // De-registering events
     void OnDisable()
     {
-
         nameField.onEndEdit.RemoveAllListeners();
         humanToggle.onValueChanged.RemoveAllListeners();
         avatarDropdown.onValueChanged.RemoveAllListeners();
     }
 
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
     // Events
     void OnNameChanged(string value)
     {
-        Toolbox.Instance.playerProfiles[this.ProfileIndex].name = value;
-        Debug.Log("Player [ " + this.ProfileIndex + " ] NAME set to " + value);
+        Toolbox.Instance.playerProfiles[ProfileIndex].name = value;
+        Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + value);
+
+        //dont reset default name flag b/c we are assigning the default name
+        if (NameChangeStringToIgnore != value)
+        {
+            HasDefaultName = false;
+        }
     }
 
-    void OnHumanToggle(bool value)
+    public void OnHumanToggle(bool value)
     {
         if (value)
         {
-            Toolbox.Instance.playerProfiles[this.ProfileIndex].type = PlayersProfile.Type.Human;
+            Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.Human;
+            if (HasDefaultName)
+            {
+                nameField.text = "";
+            }
         }
         else
         {
-            Toolbox.Instance.playerProfiles[this.ProfileIndex].type = PlayersProfile.Type.AI;
+            Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.AI;
+            if (nameField.text == string.Empty)
+            {
+                FindObjectOfType<GameSettingUIEvents>().SelectDefaultName(this);
+            }
         }
 
-        Debug.Log("Player [ " + this.ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].type);
+        Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].type);
     }
 
     void OnAvatarChanged(int listValue)
     {
-        Toolbox.Instance.playerProfiles[this.ProfileIndex].avatar = listValue;
+        Toolbox.Instance.playerProfiles[ProfileIndex].avatar = listValue;
 
-        Debug.Log("Player [ " + this.ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].avatar);
+        Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].avatar);
     }
 }

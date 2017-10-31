@@ -20,7 +20,7 @@ public class Toolbox : Singleton<Toolbox>
     }
 
     // (optional) allow runtime registration of global objects
-    static public T RegisterComponent<T>() where T : Component
+    public static T RegisterComponent<T>() where T : Component
     {
         return Instance.GetOrAddComponent<T>();
     }
@@ -33,7 +33,7 @@ public class GameSettings
     public enum CardVariant { Rhymes = 0, Numbers = 1 }
     public enum RulesVariant { Classic = 0, Solitaire = 1, Ultimate_Solitaire = 2, Goblins_Rule = 4 }
 
-    public int numberOfPlayers = 1;
+    public int numberOfPlayers = 4;
     public Difficulty difficultyLevel = Difficulty.Easy;
     public CardVariant cardVariant = CardVariant.Rhymes;
     public RulesVariant rulesVariant = RulesVariant.Solitaire;

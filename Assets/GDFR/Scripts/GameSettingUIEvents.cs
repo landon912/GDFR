@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
 public class GameSettingUIEvents : MonoBehaviour {
@@ -10,8 +9,8 @@ public class GameSettingUIEvents : MonoBehaviour {
     public UnityEngine.UI.Dropdown difficultyDropDown = null;
 	public UnityEngine.UI.Dropdown cardVariantDropDown = null;
 	public UnityEngine.UI.Dropdown rulesVariantDropDown = null;
-    public UnityEngine.GameObject playerControl = null;
-    public UnityEngine.GameObject playerItemControl = null;
+    public GameObject playerControl = null;
+    public GameObject playerItemControl = null;
 
     void OnEnable()
 	{
@@ -43,9 +42,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         // Create all player profiles after the first
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
         {
-            bool canBeAI = true;
-            //if (idx == 0) canBeAI = false;
-            createNewPlayerProfile(idx, canBeAI);
+            createNewPlayerProfile(idx, true, idx != 0);
         }
 
         ValidateAddAndRemoveButtons();
@@ -98,43 +95,39 @@ public class GameSettingUIEvents : MonoBehaviour {
         }
     }
 
-    void createNewPlayerProfile(int idx)
-    {
-        this.createNewPlayerProfile(idx, true);
-    }
-
-    void createNewPlayerProfile(int idx, bool canBeAI)
+    void createNewPlayerProfile(int idx, bool canBeAI = true, bool isAI = false)
     {
         // add a new player panel
-        UnityEngine.GameObject newPlayerPanel = (GameObject)Instantiate(playerItemControl, new Vector3(0, -(32.8f + (68.6f * idx)), 0), Quaternion.identity);
+        GameObject newPlayerPanel = Instantiate(playerItemControl, new Vector3(0, -(32.8f + (68.6f * idx)), 0), Quaternion.identity);
 
         // set the player profile index on the UI component, so it can modify this player settings
-        newPlayerPanel.GetComponent<PlayerProfile_UI>().ProfileIndex = idx;
-        newPlayerPanel.GetComponent<PlayerProfile_UI>().aiToggle.gameObject.SetActive(canBeAI);
+        PlayerProfile_UI playerUI = newPlayerPanel.GetComponent<PlayerProfile_UI>();
+
+        playerUI.ProfileIndex = idx;
+        playerUI.aiToggle.gameObject.SetActive(canBeAI);
+        playerUI.aiToggle.isOn = isAI;
+        if (isAI)
+        {
+            SelectDefaultName(playerUI);
+        }
 
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
-        newPlayerPanel.name = "player" + (idx+1).ToString();
+        newPlayerPanel.name = "player" + (idx+1);
+    }
+
+    public void SelectDefaultName(PlayerProfile_UI playerUI)
+    {
+        //select AI name from list
+        playerUI.NameChangeStringToIgnore = "AI Name";
+        playerUI.nameField.text = "AI Name";
+        playerUI.HasDefaultName = true;
     }
 
     void ValidateAddAndRemoveButtons()
     {
-        if (Toolbox.Instance.gameSettings.numberOfPlayers == Toolbox.MAX_NUMBER_PLAYERS)
-        {
-            numberOfPlayersAdd.interactable = false;
-        }
-        else
-        {
-            numberOfPlayersAdd.interactable = true;
-        }
+        numberOfPlayersAdd.interactable = Toolbox.Instance.gameSettings.numberOfPlayers != Toolbox.MAX_NUMBER_PLAYERS;
 
-        if (Toolbox.Instance.gameSettings.numberOfPlayers == 1)
-        {
-            numberOfPlayersRemove.interactable = false;
-        }
-        else
-        {
-            numberOfPlayersRemove.interactable = true;
-        }
+        numberOfPlayersRemove.interactable = Toolbox.Instance.gameSettings.numberOfPlayers != 1;
     }
 
 	void OnPlayerCountChanged(int count)
@@ -144,11 +137,21 @@ public class GameSettingUIEvents : MonoBehaviour {
         // adding and < MAX
         if ((currentNumber < count) && (count <= Toolbox.MAX_NUMBER_PLAYERS))
         {
-            createNewPlayerProfile(count - 1);
+            int delta = Mathf.Abs(count - currentNumber);
+            for (int i = delta; i > 0; i--)
+            {
+                createNewPlayerProfile(count - delta, true, true);
+                delta--;
+            }
         }
         else if ((currentNumber > count) && (count > 0)) // removing and > 0
         {
-            Destroy(GameObject.Find("player" + (count+1).ToString()));
+            int delta = Mathf.Abs(count - currentNumber);
+            for(int i = delta; i > 0; i--)
+            {
+                Destroy(GameObject.Find("player" + (count + i)));
+                delta--;
+            }
         }
 
         ValidateAddAndRemoveButtons();
