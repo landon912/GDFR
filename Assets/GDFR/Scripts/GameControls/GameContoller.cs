@@ -228,12 +228,28 @@ public class GameContoller : RxFx_FSM {
                 switch(Toolbox.Instance.gameSettings.numberOfPlayers)
                 {
                     case 2:
+                        rulesMessage = "Be the first player to get rid of all your Goblins, or collect 8 Fairies!"; break;
                     case 3:
+                    case 4:
                         rulesMessage = "Be the first player to get rid of all your Goblins, or collect 7 Fairies!"; break;
                     default:
-                        rulesMessage = "Be the first player to get rid of all your Goblins, or collect 6 Fairies!"; break;
+                        Debug.LogError("You Should Not Be Here - Invalid Number of Players in this Rule Variant"); break;
                 }
                 break;
+            case GameSettings.RulesVariant.Goblins_Rule:
+                switch (Toolbox.Instance.gameSettings.numberOfPlayers)
+                {
+                    case 2:
+                        rulesMessage = "Be the first player to get rid of all your Fairies, or collect 8 Goblins!"; break;
+                    case 3:
+                    case 4:
+                        rulesMessage = "Be the first player to get rid of all your Fairies, or collect 7 Goblins!"; break;
+                    default:
+                        Debug.LogError("You Should Not Be Here - Invalid Number of Players in this Rule Variant"); break;
+                }
+                break;
+            default:
+                Debug.LogError("You Should Not Be Here - Invalid Rule Variant"); break;
         }
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(uiFunctionScript.SendGameMessage(rulesMessage, 4f));
@@ -244,7 +260,6 @@ public class GameContoller : RxFx_FSM {
 		//yield return new WaitForSeconds(2f);
 
 		callEvent("DrawPhase1");
-		yield break;
 	}
 
 	//Remove Star Boarder Cards Give 1 random one to each player
