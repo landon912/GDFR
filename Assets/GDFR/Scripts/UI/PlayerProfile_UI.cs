@@ -60,7 +60,7 @@ public class PlayerProfile_UI : MonoBehaviour {
     }
 
     // Events
-    void OnNameChanged(string value)
+    public void OnNameChanged(string value)
     {
         Toolbox.Instance.playerProfiles[ProfileIndex].name = value;
         Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + value);
