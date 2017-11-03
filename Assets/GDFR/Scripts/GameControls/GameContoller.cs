@@ -646,7 +646,8 @@ public class GameContoller : RxFx_FSM {
 		}
 		foreach(GDFR_Card_Script c in takenCards)
 		{
-			yield return StartCoroutine(c.AnimateDrawCard(playerDeck[playersPosition[currentPlayer]],0f));
+		    EventReceiver.TriggerCardTakenEvent(c);
+            yield return StartCoroutine(c.AnimateDrawCard(playerDeck[playersPosition[currentPlayer]],0f));
 		}
 		fairyRingDeck.Refresh();
 		fairyRingDeck.DeckUiEnabled(false);

@@ -105,7 +105,11 @@ public class GameSettingUIEvents : MonoBehaviour {
 
         playerUI.ProfileIndex = idx;
         playerUI.aiToggle.gameObject.SetActive(canBeAI);
+
+        playerUI.PlayToggleSound = false;
         playerUI.aiToggle.isOn = isAI;
+        playerUI.PlayToggleSound = true;
+
         if (isAI)
         {
             SelectDefaultName(playerUI);

@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class AudioEvents : MonoBehaviour {
 
-    new AudioSource audio;
+    public AudioSource audio;
     public AudioClip playedCardClip;
-	public AudioClip playedStarClip;
-	public AudioClip SymbolMatchClip;
 	public AudioClip goodPlayClip;
 	public AudioClip badPlayClip;
 
@@ -17,21 +15,25 @@ public class AudioEvents : MonoBehaviour {
 
 	void OnEnable()
 	{
-		EventReceiver.cardPlayedEvent+=OnCardPlayed;
-		EventReceiver.starPlayedEvent+=OnStarPlayed;
-		EventReceiver.symbolMatchEvent+=OnSymbolMatch;
-		EventReceiver.playResultEvent+=OnPlayResult;
+		EventReceiver.CardPlayedEvent += OnCardPlayed;
+		EventReceiver.StarPlayedEvent += OnStarPlayed;
+		EventReceiver.SymbolMatchEvent += OnSymbolMatch;
+	    EventReceiver.CardTakenEvent += OnCardTaken;
+        EventReceiver.PlayResultEvent += OnPlayResult;
+	    EventReceiver.ButtonPressedEvent += OnButtonPressed;
 	}
 
 	void OnDisable()
 	{
-		EventReceiver.cardPlayedEvent-=OnCardPlayed;
-		EventReceiver.starPlayedEvent-=OnStarPlayed;
-		EventReceiver.symbolMatchEvent-=OnSymbolMatch;
-		EventReceiver.playResultEvent-=OnPlayResult;
-	}
+		EventReceiver.CardPlayedEvent -= OnCardPlayed;
+		EventReceiver.StarPlayedEvent -= OnStarPlayed;
+		EventReceiver.SymbolMatchEvent -= OnSymbolMatch;
+	    EventReceiver.CardPlayedEvent -= OnCardTaken;
+		EventReceiver.PlayResultEvent -= OnPlayResult;
+	    EventReceiver.ButtonPressedEvent -= OnButtonPressed;
+    }
 
-	void OnCardPlayed(Card card)
+    void OnCardPlayed(Card card)
 	{
 		audio.clip = playedCardClip;
 		audio.Play();
@@ -39,29 +41,47 @@ public class AudioEvents : MonoBehaviour {
 
 	void OnStarPlayed(Card card)
 	{
-		audio.clip = playedStarClip;
-		audio.Play();
+	    AudioController.Play("Star Card");
 	}
 
 	void OnSymbolMatch(Card[] cards)
 	{
-		audio.clip = SymbolMatchClip;
-		audio.Play();
+	    AudioController.Play("Symbol Match");
 	}
 
-	void OnPlayResult(int Quality)
+    void OnCardTaken(Card card)
+    {
+        GDFR_Card_Script c = (GDFR_Card_Script) card;
+        switch (c.currentRace)
+        {
+            case Race.Fairy:
+                AudioController.Play("Fairy Laugh");
+                break;
+            case Race.Goblin:
+                //AudioController.Play("Goblin Laugh");
+                break;
+        }
+    }
+
+	void OnPlayResult(int quality)
 	{
 		Debug.Log("Result Hit");
-		if(Quality>2)
+		if(quality > 2)
 		{
 			audio.clip = goodPlayClip;
 			audio.Play();
 		}
-		if(Quality<0)
+		if(quality < 0)
 		{
 			audio.clip = badPlayClip;
 			audio.Play();
 		}
 	}
 
+    public void OnButtonPressed()
+    {
+        Debug.Log("Trying to play");
+        AudioController.Play(
+            SceneManager.GetActiveScene().name == "MainGame" ? "Button Pressed" : "Menu Button Pressed");
+    }
 }

@@ -31,17 +31,27 @@ public class PlayerProfile_UI : MonoBehaviour {
 
             if (Toolbox.Instance.playerProfiles[value].type == PlayersProfile.Type.Human)
             {
+                PlayToggleSound = false;
+
                 humanToggle.isOn = true;
                 aiToggle.isOn = false;
+
+                PlayToggleSound = true;
             }
             else
             {
+                PlayToggleSound = false;
+
                 humanToggle.isOn = false;
                 aiToggle.isOn = true;
+
+                PlayToggleSound = true;
             }
         }
         get { return _profileIndex; }
     }
+
+    public bool PlayToggleSound = true;
 
     // Registering Events
     void OnEnable()
@@ -89,6 +99,12 @@ public class PlayerProfile_UI : MonoBehaviour {
             {
                 FindObjectOfType<GameSettingUIEvents>().SelectDefaultName(this);
             }
+        }
+
+        //skip us manually changing the first profile to a player automatically
+        if (PlayToggleSound)
+        {
+            EventReceiver.TriggerButtonPressedEvent();
         }
 
         Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].type);

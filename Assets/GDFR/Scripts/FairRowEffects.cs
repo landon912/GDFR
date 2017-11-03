@@ -7,11 +7,11 @@ public class FairRowEffects : MonoBehaviour {
 
 	// Use this for initialization
 	void OnEnable () {
-		EventReceiver.starPlayedEvent+=OnStarPlayedEvent;
+		EventReceiver.StarPlayedEvent+=OnStarPlayedEvent;
 	}
 
 	void OnDisable () {
-		EventReceiver.starPlayedEvent-=OnStarPlayedEvent;
+		EventReceiver.StarPlayedEvent-=OnStarPlayedEvent;
 	}
 	
 	void OnStarPlayedEvent(Card card)
