@@ -2,32 +2,32 @@
 
 public class EventReceiver : MonoBehaviour {
 
-	public delegate void CardPlayedEventHandler(Card card);
+	public delegate void CardPlayedEventHandler(GDFR_Card_Script card);
 	public static event CardPlayedEventHandler CardPlayedEvent; 
-	public static void TriggerCardPlayedEvent(Card card)
+	public static void TriggerCardPlayedEvent(GDFR_Card_Script card)
 	{
 	    if (CardPlayedEvent != null) CardPlayedEvent(card);
 	}
 
-	public delegate void StarPlayedEventHandler(Card card);
+	public delegate void StarPlayedEventHandler(GDFR_Card_Script card);
 	public static event StarPlayedEventHandler StarPlayedEvent; 
-	public static void TriggerStarPlayedEvent(Card card)
+	public static void TriggerStarPlayedEvent(GDFR_Card_Script card)
 	{
 	    if (StarPlayedEvent != null) StarPlayedEvent(card);
 	}
 
-	public delegate void SymbolMatchEventHandler(Card[] cards);
+	public delegate void SymbolMatchEventHandler(GDFR_Card_Script[] cards);
 	public static event SymbolMatchEventHandler SymbolMatchEvent; 
-	public static void TriggerSymbolMatchEvent(Card[] cards)
+	public static void TriggerSymbolMatchEvent(GDFR_Card_Script[] cards)
 	{
 	    if (SymbolMatchEvent != null) SymbolMatchEvent(cards);
 	}
 
-    public delegate void CardTakenEventHandler(Card card);
-    public static event CardTakenEventHandler CardTakenEvent;
-    public static void TriggerCardTakenEvent(Card card)
+    public delegate void CardsTakenEventHandler(GDFR_Card_Script[] cards);
+    public static event CardsTakenEventHandler CardsTakenEvent;
+    public static void TriggerCardsTakenEvent(GDFR_Card_Script[] cards)
     {
-        if (CardTakenEvent != null) CardTakenEvent(card);
+        if (CardsTakenEvent != null) CardsTakenEvent(cards);
     }
 
     public delegate void PlayResultEventHandler(int resultValue);

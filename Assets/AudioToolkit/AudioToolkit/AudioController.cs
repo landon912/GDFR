@@ -854,7 +854,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>
     /// Uses the PlayScheduled function only available in Unity v4.1 or newer that allows to stitch two audios together at DSP level precision without a gap. 
     /// Can not be used to chain more then one audio.
     /// </remarks>
-    static public AudioObject PlayAfter( string audioID, AudioObject playingAudio, double deltaDspTime = 0, float volume = 1.0f, float startTime = 0 )
+    public static AudioObject PlayAfter( string audioID, AudioObject playingAudio, double deltaDspTime = 0, float volume = 1.0f, float startTime = 0 )
     {
 #if UNITY_AUDIO_FEATURES_4_1
         double dspTime;

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class AudioEvents : MonoBehaviour {
@@ -18,7 +20,7 @@ public class AudioEvents : MonoBehaviour {
 		EventReceiver.CardPlayedEvent += OnCardPlayed;
 		EventReceiver.StarPlayedEvent += OnStarPlayed;
 		EventReceiver.SymbolMatchEvent += OnSymbolMatch;
-	    EventReceiver.CardTakenEvent += OnCardTaken;
+	    EventReceiver.CardsTakenEvent += OnCardsTaken;
         EventReceiver.PlayResultEvent += OnPlayResult;
 	    EventReceiver.ButtonPressedEvent += OnButtonPressed;
 	}
@@ -28,7 +30,7 @@ public class AudioEvents : MonoBehaviour {
 		EventReceiver.CardPlayedEvent -= OnCardPlayed;
 		EventReceiver.StarPlayedEvent -= OnStarPlayed;
 		EventReceiver.SymbolMatchEvent -= OnSymbolMatch;
-	    EventReceiver.CardPlayedEvent -= OnCardTaken;
+	    EventReceiver.CardsTakenEvent -= OnCardsTaken;
 		EventReceiver.PlayResultEvent -= OnPlayResult;
 	    EventReceiver.ButtonPressedEvent -= OnButtonPressed;
     }
@@ -49,18 +51,45 @@ public class AudioEvents : MonoBehaviour {
 	    AudioController.Play("Symbol Match");
 	}
 
-    void OnCardTaken(Card card)
+    void OnCardsTaken(GDFR_Card_Script[] cards)
     {
-        GDFR_Card_Script c = (GDFR_Card_Script) card;
-        switch (c.currentRace)
+        bool hasFairy = false, hasGoblin = false;
+        const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
+
+        foreach (GDFR_Card_Script card in cards)
         {
-            case Race.Fairy:
-                AudioController.Play("Fairy Laugh");
-                break;
-            case Race.Goblin:
-                //AudioController.Play("Goblin Laugh");
-                break;
+            if (hasFairy && hasGoblin){ break; }
+
+            switch (card.currentRace)
+            {
+                case Race.Fairy:
+                    hasFairy = true;
+                    break;
+                case Race.Goblin:
+                    hasGoblin = true;
+                    break;
+            }
         }
+
+        if (hasFairy && hasGoblin)
+        {
+            StartCoroutine(PlayOneClipThenTheOther(FAIRY_LAUGH, GOBLIN_LAUGH, 0.5f));
+        }
+        else if (hasFairy)
+        {
+            AudioController.Play(FAIRY_LAUGH);
+        }
+        else if (hasGoblin)
+        {
+            AudioController.Play(GOBLIN_LAUGH);
+        }
+    }
+
+    IEnumerator PlayOneClipThenTheOther(string firstClip, string secondClip, float delay)
+    {
+        AudioObject playingAudio = AudioController.Play(firstClip);
+        yield return new WaitForSeconds(playingAudio.clipLength + delay);
+        AudioController.Play(secondClip);
     }
 
 	void OnPlayResult(int quality)

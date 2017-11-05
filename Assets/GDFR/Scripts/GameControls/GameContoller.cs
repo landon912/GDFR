@@ -631,12 +631,11 @@ public class GameContoller : RxFx_FSM {
 			}
 		}
 
-		Card[] cList = new Card[takenCards.Count + 1];
+	    GDFR_Card_Script[] cList = new GDFR_Card_Script[takenCards.Count + 1];
 		for(int tc=0;tc<takenCards.Count;tc++)
 			cList[tc] = takenCards[tc];
 		cList[takenCards.Count] = playedCard;
 		EventReceiver.TriggerSymbolMatchEvent(cList);
-
 
 		if(cardTaken)
 		{
@@ -646,7 +645,7 @@ public class GameContoller : RxFx_FSM {
 		}
 		foreach(GDFR_Card_Script c in takenCards)
 		{
-		    EventReceiver.TriggerCardTakenEvent(c);
+		    EventReceiver.TriggerCardsTakenEvent(takenCards.ToArray());
             yield return StartCoroutine(c.AnimateDrawCard(playerDeck[playersPosition[currentPlayer]],0f));
 		}
 		fairyRingDeck.Refresh();
