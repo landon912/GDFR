@@ -1,9 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class AudioEvents : MonoBehaviour {
+public class AudioEvents : MonoBehaviour
+{
+    const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
 
     public AudioSource audio;
     public AudioClip playedCardClip;
@@ -17,22 +18,33 @@ public class AudioEvents : MonoBehaviour {
 
 	void OnEnable()
 	{
+	    EventReceiver.NewGameStartedEvent += OnNewGameStarted;
 		EventReceiver.CardPlayedEvent += OnCardPlayed;
 		EventReceiver.StarPlayedEvent += OnStarPlayed;
 		EventReceiver.SymbolMatchEvent += OnSymbolMatch;
 	    EventReceiver.CardsTakenEvent += OnCardsTaken;
         EventReceiver.PlayResultEvent += OnPlayResult;
+	    EventReceiver.PlayerSelectEvent += OnPlayerSelect;
 	    EventReceiver.ButtonPressedEvent += OnButtonPressed;
+	    EventReceiver.DeclareWinnerEvent += OnDeclareWinner;
 	}
 
 	void OnDisable()
 	{
+	    EventReceiver.NewGameStartedEvent -= OnNewGameStarted;
 		EventReceiver.CardPlayedEvent -= OnCardPlayed;
 		EventReceiver.StarPlayedEvent -= OnStarPlayed;
 		EventReceiver.SymbolMatchEvent -= OnSymbolMatch;
 	    EventReceiver.CardsTakenEvent -= OnCardsTaken;
 		EventReceiver.PlayResultEvent -= OnPlayResult;
-	    EventReceiver.ButtonPressedEvent -= OnButtonPressed;
+	    EventReceiver.PlayerSelectEvent += OnPlayerSelect;
+        EventReceiver.ButtonPressedEvent -= OnButtonPressed;
+	    EventReceiver.DeclareWinnerEvent -= OnDeclareWinner;
+    }
+
+    void OnNewGameStarted()
+    {
+        StartCoroutine(PlayOneClipThenTheOther(FAIRY_LAUGH, GOBLIN_LAUGH, 0.5f));
     }
 
     void OnCardPlayed(Card card)
@@ -54,7 +66,6 @@ public class AudioEvents : MonoBehaviour {
     void OnCardsTaken(GDFR_Card_Script[] cards)
     {
         bool hasFairy = false, hasGoblin = false;
-        const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
 
         foreach (GDFR_Card_Script card in cards)
         {
@@ -85,13 +96,6 @@ public class AudioEvents : MonoBehaviour {
         }
     }
 
-    IEnumerator PlayOneClipThenTheOther(string firstClip, string secondClip, float delay)
-    {
-        AudioObject playingAudio = AudioController.Play(firstClip);
-        yield return new WaitForSeconds(playingAudio.clipLength + delay);
-        AudioController.Play(secondClip);
-    }
-
 	void OnPlayResult(int quality)
 	{
 		Debug.Log("Result Hit");
@@ -107,10 +111,37 @@ public class AudioEvents : MonoBehaviour {
 		}
 	}
 
+    void OnPlayerSelect(PlayersProfile newPlayer)
+    {
+        if (newPlayer.type == PlayersProfile.Type.Human)
+        {
+            AudioController.Play("Notification");
+        }
+    }
+
     public void OnButtonPressed()
     {
         Debug.Log("Trying to play");
         AudioController.Play(
             SceneManager.GetActiveScene().name == "MainGame" ? "Button Pressed" : "Menu Button Pressed");
+    }
+
+    void OnDeclareWinner(PlayersProfile winner)
+    {
+        switch (winner.type)
+        {
+            case PlayersProfile.Type.Human:
+                AudioController.Play("Children Cheer");
+                break;
+            case PlayersProfile.Type.AI:
+                AudioController.Play("Children Sad");
+                break;
+        }
+    }
+
+    public IEnumerator PlayOneClipThenTheOther(string firstClip, string secondClip, float delay)
+    {
+        yield return new WaitForSeconds(AudioController.Play(firstClip).clipLength + delay);
+        AudioController.Play(secondClip);
     }
 }

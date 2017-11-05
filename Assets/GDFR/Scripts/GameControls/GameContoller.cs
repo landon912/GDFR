@@ -17,16 +17,15 @@ public class GameContoller : RxFx_FSM {
     public Avatar[] avatars;
     public GDFR_Deck_Script playedCardDeck;
 	public int currentPlayer = 0;
-	public int humanPlayerID = 0;
 	public Card selectedCard = null;
 	public GDFR_Card_Script playedCard = null;
-	delegate void selectEventHandler(Card card);
-	event selectEventHandler selectEvent; 
-	public float debugDelay = 0f;
-	public float dealSpeed = 0.1f;
-	public UI_Functions uiFunctionScript;
+    //delegate void selectEventHandler(Card card);
+    //event selectEventHandler selectEvent; 
+    //public float debugDelay = 0f;
+    public float dealSpeed = 0.1f;
+    public UI_Functions uiFunctionScript;
 	public MonoBehaviour[] starEffectActivateList;
-	int _playResult = 0;
+	//int _playResult = 0;
     int turnsCount = 0;
     List<int> playersPosition = new List<int>();
     public UILabel turnsCounter;
@@ -50,8 +49,6 @@ public class GameContoller : RxFx_FSM {
 		new FSM_Event("ChangePlayer",State_ChangePlayer);
 		new FSM_Event("DeclareWinner",State_DeclareWinner);
 		new FSM_Event("PlayResolve",State_PlayResolve);
-
-        UI_Event_Receiver.CardSelected += OnCardSelected;
 
         callEvent("StartEvent");
 	}
@@ -98,8 +95,8 @@ public class GameContoller : RxFx_FSM {
 
     void OnEnable()
 	{
-
-	}
+	    UI_Event_Receiver.CardSelected += OnCardSelected;
+    }
 
 	void OnDestroy()
 	{
@@ -110,7 +107,6 @@ public class GameContoller : RxFx_FSM {
 	{
 		callEvent("CardPicked",card);
 	}
-
 
 	IEnumerator State_LoadData(params object[] data)
 	{
@@ -180,10 +176,6 @@ public class GameContoller : RxFx_FSM {
                 if (playerProfile.type == PlayersProfile.Type.Human)
                 {
                     name = "Player " + (playerIdx + 1);
-                }
-                else
-                {
-
                 }
             }
             avatars[position].Name = name;
@@ -256,8 +248,8 @@ public class GameContoller : RxFx_FSM {
 
 
         //yield return new WaitForSeconds(2f);
-		yield return StartCoroutine(uiFunctionScript.SendGameMessage("New Game!",2f));
-		//yield return new WaitForSeconds(2f);
+	    EventReceiver.TriggerNewGameStartedEvent();
+        yield return StartCoroutine(uiFunctionScript.SendGameMessage("New Game!",2f));
 
 		callEvent("DrawPhase1");
 	}
@@ -480,6 +472,8 @@ public class GameContoller : RxFx_FSM {
 	{
 		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: PlayerSelect");
 
+	    EventReceiver.TriggerPlayerSelectEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
+
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
             case GameSettings.RulesVariant.Classic:
@@ -640,12 +634,13 @@ public class GameContoller : RxFx_FSM {
 		if(cardTaken)
 		{
 			playedCard.symbolMatchEffect();
-		//	uiFunctionScript.StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + " Collects " + cardCount + " Cards!",2f));
-			yield return new WaitForSeconds(2f);
-		}
-		foreach(GDFR_Card_Script c in takenCards)
-		{
+            yield return new WaitForSeconds(2f);
 		    EventReceiver.TriggerCardsTakenEvent(takenCards.ToArray());
+        }
+
+        foreach (GDFR_Card_Script c in takenCards)
+		{
+		    
             yield return StartCoroutine(c.AnimateDrawCard(playerDeck[playersPosition[currentPlayer]],0f));
 		}
 		fairyRingDeck.Refresh();
@@ -769,10 +764,10 @@ public class GameContoller : RxFx_FSM {
 		
 		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_DeclareWinner " + currentPlayer);
 
-		yield return StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + " Wins!",2f));
+	    EventReceiver.TriggerDeclareWinnerEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
+		yield return StartCoroutine(uiFunctionScript.SendGameMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!",2f));
 
 		callEvent("GameReset");
-		yield break;
 	}
 
 	IEnumerator State_ChangePlayer (params object[] data)
@@ -780,7 +775,7 @@ public class GameContoller : RxFx_FSM {
         avatars[playersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(false);
 
 		currentPlayer++;
-		currentPlayer = currentPlayer%Toolbox.Instance.gameSettings.numberOfPlayers;
+		currentPlayer = currentPlayer % Toolbox.Instance.gameSettings.numberOfPlayers;
 
         avatars[playersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
 

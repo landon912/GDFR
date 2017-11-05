@@ -114,6 +114,10 @@ public class GameSettingUIEvents : MonoBehaviour {
         {
             SelectDefaultName(playerUI);
         }
+        else
+        {
+            Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].name = "Player " + (idx + 1);
+        }
 
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
         newPlayerPanel.name = "player" + (idx+1);

@@ -1,6 +1,13 @@
 ﻿using UnityEngine;
 
-public class EventReceiver : MonoBehaviour {
+public class EventReceiver : MonoBehaviour
+{
+    public delegate void NewGameStartedEventHandler();
+    public static event NewGameStartedEventHandler NewGameStartedEvent;
+    public static void TriggerNewGameStartedEvent()
+    {
+        if(NewGameStartedEvent != null) NewGameStartedEvent();
+    }
 
 	public delegate void CardPlayedEventHandler(GDFR_Card_Script card);
 	public static event CardPlayedEventHandler CardPlayedEvent; 
@@ -37,10 +44,24 @@ public class EventReceiver : MonoBehaviour {
 	    if (PlayResultEvent != null) PlayResultEvent(resultValue);
 	}
 
+    public delegate void PlayerSelectEventHandler(PlayersProfile newPlayer);
+    public static event PlayerSelectEventHandler PlayerSelectEvent;
+    public static void TriggerPlayerSelectEvent(PlayersProfile newPlayer)
+    {
+        if (PlayerSelectEvent != null) PlayerSelectEvent(newPlayer);
+    }
+
     public delegate void ButtonPressedEventHandler();
     public static event ButtonPressedEventHandler ButtonPressedEvent;
     public static void TriggerButtonPressedEvent()
     {
         if (ButtonPressedEvent != null) ButtonPressedEvent();
+    }
+
+    public delegate void DeclareWinnerEventHandler(PlayersProfile winner);
+    public static event DeclareWinnerEventHandler DeclareWinnerEvent;
+    public static void TriggerDeclareWinnerEvent(PlayersProfile winner)
+    {
+        if (DeclareWinnerEvent != null) DeclareWinnerEvent(winner);
     }
 }
