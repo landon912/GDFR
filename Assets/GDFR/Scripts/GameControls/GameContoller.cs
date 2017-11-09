@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-public class GameContoller : RxFx_FSM {
-	
+public class GameContoller : RxFx_FSM
+{
+    public GameObject GiveUpButtonGameObject;
 	public Object mainDeckXmlData;
 	public GDFR_Deck_Script swapDeck;
 	public GDFR_Deck_Script mainDeck;
@@ -91,6 +92,12 @@ public class GameContoller : RxFx_FSM {
             AudioController.SetGlobalVolume(lastVolume);
             lastVolume = 0;
         }
+    }
+
+    public void PlayerGiveUp()
+    {
+        callEvent("GameReset");
+        GiveUpButtonGameObject.SetActive(false);
     }
 
     void OnEnable()
@@ -251,7 +258,15 @@ public class GameContoller : RxFx_FSM {
 	    EventReceiver.TriggerNewGameStartedEvent();
         yield return StartCoroutine(uiFunctionScript.SendGameMessage("New Game!",2f));
 
-		callEvent("DrawPhase1");
+	    switch(Toolbox.Instance.gameSettings.rulesVariant)
+	    {
+            case GameSettings.RulesVariant.Solitaire:
+            case GameSettings.RulesVariant.Ultimate_Solitaire:
+                GiveUpButtonGameObject.SetActive(true);
+            break;
+	    }
+
+	    callEvent("DrawPhase1");
 	}
 
 	//Remove Star Boarder Cards Give 1 random one to each player
