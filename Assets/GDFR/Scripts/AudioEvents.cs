@@ -6,15 +6,6 @@ public class AudioEvents : MonoBehaviour
 {
     const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
 
-    public AudioSource audio;
-	public AudioClip goodPlayClip;
-	public AudioClip badPlayClip;
-
-	void Start()
-	{
-		audio = GetComponent<AudioSource>();
-	}
-
 	void OnEnable()
 	{
 	    EventReceiver.NewGameStartedEvent += OnNewGameStarted;
@@ -121,16 +112,6 @@ public class AudioEvents : MonoBehaviour
 	void OnPlayResult(int quality)
 	{
 		Debug.Log("Result Hit");
-		if(quality > 2)
-		{
-			audio.clip = goodPlayClip;
-			audio.Play();
-		}
-		if(quality < 0)
-		{
-			audio.clip = badPlayClip;
-			audio.Play();
-		}
 	}
 
     void OnPlayerSelect(PlayersProfile newPlayer)
