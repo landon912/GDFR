@@ -138,6 +138,7 @@ public class GDFR_Card_Script : Card {
 	public override void Flip ()
 	{
 		base.Flip ();
+	    EventReceiver.TriggerCardFlipEvent(this);
 		StartCoroutine(AnimateFlip());
 	}
 

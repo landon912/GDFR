@@ -551,11 +551,13 @@ public class GameContoller : RxFx_FSM
 		//Get the select card from the event data;
 		selectedCard = playedCard = (GDFR_Card_Script)data[0];
 		playerDeck[playersPosition[currentPlayer]].DeckUiEnabled(false);
-		//selectedCard.DrawCard(playedCardDeck);
-		yield return StartCoroutine(playedCard.AnimateDrawCard(playedCardDeck,1.5f));
-		callEvent("PlayResolve");
+        //selectedCard.DrawCard(playedCardDeck);
 
-		yield break;
+        EventReceiver.TriggerCardPlayedEvent(playedCard);
+
+        yield return StartCoroutine(playedCard.AnimateDrawCard(playedCardDeck,1.5f));
+
+        callEvent("PlayResolve");
 	}	
 
 	IEnumerator State_AIMove(params object[] data)
@@ -570,11 +572,11 @@ public class GameContoller : RxFx_FSM
 		//selectedCard = playedCard = playerDeck[playersPosition[currentPlayer]].drawRandomCard() as GDFR_Card_Script;
 		selectedCard = playedCard = AI_PickBestCard(playerDeck[playersPosition[currentPlayer]],fairyRingDeck);
 
+	    EventReceiver.TriggerCardPlayedEvent(playedCard);
 
-		yield return StartCoroutine(playedCard.AnimateDrawCard(playedCardDeck,1.5f));
+        yield return StartCoroutine(playedCard.AnimateDrawCard(playedCardDeck,1.5f));
 
-		callEvent("PlayResolve");
-		yield break;
+        callEvent("PlayResolve");
 	}	
 
 	IEnumerator State_PlayResolve(params object[] data)
@@ -655,7 +657,6 @@ public class GameContoller : RxFx_FSM
 
         foreach (GDFR_Card_Script c in takenCards)
 		{
-		    
             yield return StartCoroutine(c.AnimateDrawCard(playerDeck[playersPosition[currentPlayer]],0f));
 		}
 		fairyRingDeck.Refresh();
@@ -676,13 +677,12 @@ public class GameContoller : RxFx_FSM
                 yield return new WaitForSeconds(0.5f);
                 break;
         }
+
         //playerDeck[playersPosition[currentPlayer]].VisuallyActive = false;
         yield return new WaitForSeconds(0.5f);
         playerDeck[playersPosition[currentPlayer]].zDepth = 0;
 
         callEvent("CheckVictoryConditions");
-
-		yield break;
 	}	
 
 	IEnumerator State_CheckVictoryConditions (params object[] data)

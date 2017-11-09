@@ -179,7 +179,7 @@ public class GDFR_Deck_Script : Deck {
 		base.AddCard(card);
 
 
-		EventReceiver.TriggerCardPlayedEvent((GDFR_Card_Script)card);
+		EventReceiver.TriggerCardMovedEvent((GDFR_Card_Script)card);
 
 		//newCardTrans.localScale = tempScale;
 		//newCardTrans.localPosition = GetGridPosition(deckTransform.childCount-1);

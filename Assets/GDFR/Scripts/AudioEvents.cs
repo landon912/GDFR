@@ -7,7 +7,6 @@ public class AudioEvents : MonoBehaviour
     const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
 
     public AudioSource audio;
-    public AudioClip playedCardClip;
 	public AudioClip goodPlayClip;
 	public AudioClip badPlayClip;
 
@@ -19,9 +18,11 @@ public class AudioEvents : MonoBehaviour
 	void OnEnable()
 	{
 	    EventReceiver.NewGameStartedEvent += OnNewGameStarted;
-		EventReceiver.CardPlayedEvent += OnCardPlayed;
+		EventReceiver.CardMovedEvent += OnCardMoved;
+	    EventReceiver.CardPlayedEvent += OnCardPlayed;
 		EventReceiver.StarPlayedEvent += OnStarPlayed;
 		EventReceiver.SymbolMatchEvent += OnSymbolMatch;
+	    EventReceiver.CardFlipEvent += OnCardFlip;
 	    EventReceiver.CardsTakenEvent += OnCardsTaken;
         EventReceiver.PlayResultEvent += OnPlayResult;
 	    EventReceiver.PlayerSelectEvent += OnPlayerSelect;
@@ -32,12 +33,14 @@ public class AudioEvents : MonoBehaviour
 	void OnDisable()
 	{
 	    EventReceiver.NewGameStartedEvent -= OnNewGameStarted;
-		EventReceiver.CardPlayedEvent -= OnCardPlayed;
-		EventReceiver.StarPlayedEvent -= OnStarPlayed;
+		EventReceiver.CardMovedEvent -= OnCardMoved;
+	    EventReceiver.CardPlayedEvent -= OnCardPlayed;
+        EventReceiver.StarPlayedEvent -= OnStarPlayed;
 		EventReceiver.SymbolMatchEvent -= OnSymbolMatch;
-	    EventReceiver.CardsTakenEvent -= OnCardsTaken;
+	    EventReceiver.CardFlipEvent -= OnCardFlip;
+        EventReceiver.CardsTakenEvent -= OnCardsTaken;
 		EventReceiver.PlayResultEvent -= OnPlayResult;
-	    EventReceiver.PlayerSelectEvent += OnPlayerSelect;
+	    EventReceiver.PlayerSelectEvent -= OnPlayerSelect;
         EventReceiver.ButtonPressedEvent -= OnButtonPressed;
 	    EventReceiver.DeclareWinnerEvent -= OnDeclareWinner;
     }
@@ -47,13 +50,26 @@ public class AudioEvents : MonoBehaviour
         StartCoroutine(PlayOneClipThenTheOther(FAIRY_LAUGH, GOBLIN_LAUGH, 0.5f));
     }
 
-    void OnCardPlayed(Card card)
-	{
-		audio.clip = playedCardClip;
-		audio.Play();
+    void OnCardMoved(GDFR_Card_Script card)
+    {
+        AudioController.Play("Card Moved");
 	}
 
-	void OnStarPlayed(Card card)
+    void OnCardPlayed(GDFR_Card_Script card)
+    {
+        //TODO: Replace with saying the name of the card
+        switch (card.currentRace)
+        {
+            case Race.Fairy:
+                AudioController.Play(FAIRY_LAUGH);
+                break;
+            case Race.Goblin:
+                AudioController.Play(GOBLIN_LAUGH);
+                break;
+        }
+    }
+
+    void OnStarPlayed(Card card)
 	{
 	    AudioController.Play("Star Card");
 	}
@@ -62,6 +78,12 @@ public class AudioEvents : MonoBehaviour
 	{
 	    AudioController.Play("Symbol Match");
 	}
+
+    void OnCardFlip(GDFR_Card_Script card)
+    {
+        //TODO: Replace with saying the rhyme
+        AudioController.Play("Card Flip");
+    }
 
     void OnCardsTaken(GDFR_Card_Script[] cards)
     {
@@ -119,13 +141,6 @@ public class AudioEvents : MonoBehaviour
         }
     }
 
-    public void OnButtonPressed()
-    {
-        Debug.Log("Trying to play");
-        AudioController.Play(
-            SceneManager.GetActiveScene().name == "MainGame" ? "Button Pressed" : "Menu Button Pressed");
-    }
-
     void OnDeclareWinner(PlayersProfile winner)
     {
         switch (winner.type)
@@ -137,6 +152,17 @@ public class AudioEvents : MonoBehaviour
                 AudioController.Play("Children Sad");
                 break;
         }
+    }
+
+    public void OnButtonPressed()
+    {
+        AudioController.Play(
+            SceneManager.GetActiveScene().name == "MainGame" ? "Button Pressed" : "Menu Button Pressed");
+    }
+
+    public void OnGiveUpButtonPressed()
+    {
+        AudioController.Play("Children Sad");
     }
 
     public IEnumerator PlayOneClipThenTheOther(string firstClip, string secondClip, float delay)

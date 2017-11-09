@@ -9,12 +9,19 @@ public class EventReceiver : MonoBehaviour
         if(NewGameStartedEvent != null) NewGameStartedEvent();
     }
 
-	public delegate void CardPlayedEventHandler(GDFR_Card_Script card);
-	public static event CardPlayedEventHandler CardPlayedEvent; 
-	public static void TriggerCardPlayedEvent(GDFR_Card_Script card)
+	public delegate void CardMovedEventHandler(GDFR_Card_Script card);
+	public static event CardMovedEventHandler CardMovedEvent; 
+	public static void TriggerCardMovedEvent(GDFR_Card_Script card)
 	{
-	    if (CardPlayedEvent != null) CardPlayedEvent(card);
+	    if (CardMovedEvent != null) CardMovedEvent(card);
 	}
+
+    public delegate void CardPlayedEventHandler(GDFR_Card_Script card);
+    public static event CardPlayedEventHandler CardPlayedEvent;
+    public static void TriggerCardPlayedEvent(GDFR_Card_Script card)
+    {
+        if (CardPlayedEvent != null) CardPlayedEvent(card);
+    }
 
 	public delegate void StarPlayedEventHandler(GDFR_Card_Script card);
 	public static event StarPlayedEventHandler StarPlayedEvent; 
@@ -29,6 +36,13 @@ public class EventReceiver : MonoBehaviour
 	{
 	    if (SymbolMatchEvent != null) SymbolMatchEvent(cards);
 	}
+
+    public delegate void CardFlipEventHandler(GDFR_Card_Script card);
+    public static event CardFlipEventHandler CardFlipEvent;
+    public static void TriggerCardFlipEvent(GDFR_Card_Script card)
+    {
+        if (CardFlipEvent != null) CardFlipEvent(card);
+    }
 
     public delegate void CardsTakenEventHandler(GDFR_Card_Script[] cards);
     public static event CardsTakenEventHandler CardsTakenEvent;
