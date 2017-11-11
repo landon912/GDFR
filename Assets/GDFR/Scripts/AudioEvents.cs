@@ -58,6 +58,8 @@ public class AudioEvents : MonoBehaviour
                 AudioController.Play(GOBLIN_LAUGH);
                 break;
         }
+
+        //AudioController.Play(card.NameSound);
     }
 
     void OnStarPlayed(Card card)
@@ -70,10 +72,10 @@ public class AudioEvents : MonoBehaviour
 	    AudioController.Play("Symbol Match");
 	}
 
-    void OnCardFlip(GDFR_Card_Script card)
+    void OnCardFlip(GDFR_Card_Script card, bool wasFromStar)
     {
         //TODO: Replace with saying the rhyme
-        AudioController.Play("Card Flip");
+        if(!wasFromStar) { AudioController.Play("Card Flip"); }
     }
 
     void OnCardsTaken(GDFR_Card_Script[] cards)

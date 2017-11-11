@@ -22,26 +22,31 @@ public class GDFR_Card_Script : Card
     public nEmitter cardSparkleEmitter = null;
     public GameObject defaultLabelPosition;
     public UILabel fadingFlipText;
-    public Rhyme fairyRhyme;
-    public string fairySpriteName = "";
     public bool fairyStarBorder = false;
-    public Symbol fairySymbol;
     public string fairyText = "Fairy Test";
-    public string FrogSpriteName = "";
-    public Rhyme goblinRhyme;
-    public string goblinSpriteName = "";
     public bool goblinStarBorder = false;
 
-    public Symbol goblinSymbol;
     public string goblinText = "Goblin Test";
     private bool isFront = true;
     public GameObject labelPositionOnFlip;
 
+    public Rhyme fairyRhyme;
+    public Rhyme goblinRhyme;
+    public Symbol fairySymbol;
+    public Symbol goblinSymbol;
+
     private Race mCurrentRace;
 
-    private string mNameSound;
-    public string MoonSpriteName = "";
-    public string MushroomSpriteName = "";
+    private string mNameSound = "Not Set";
+
+    public string fairySpriteName = "";
+    public string goblinSpriteName = "";
+    public string moonSpriteName = "SYMBOL_Moon_Small";
+    public string mushroomSpriteName = "SYMBOL_Mushroom_Small";
+    public string sunSpriteName = "SYMBOL_Sun_Small";
+    public string frogSpriteName = "SYMBOL_Frog_Small";
+
+
 
     public Transform scaleTransform = null;
     public UISprite shadowSprite;
@@ -49,7 +54,6 @@ public class GDFR_Card_Script : Card
     public UISprite sprite;
     public bool starBorder = false;
     public playStars starsScript;
-    public string SunSpriteName = "";
     public UISprite symbolGlowSprite;
     public UISprite symbolSprite;
     public UILabel text;
@@ -82,6 +86,8 @@ public class GDFR_Card_Script : Card
     public Symbol CurrentSymbol { get; private set; }
 
     public Rhyme CurrentRhyme { get; private set; }
+
+    public string NameSound { get { return mNameSound; } }
 
     public int zDepth
     {
@@ -137,17 +143,21 @@ public class GDFR_Card_Script : Card
             widgetDefaultDepth[w] = widgetList[w].depth;
     }
 
-    public override void Flip()
+    public override IEnumerator Flip(bool wasFromStar)
     {
-        base.Flip();
-        EventReceiver.TriggerCardFlipEvent(this);
-        StartCoroutine(AnimateFlip());
+        yield return base.Flip(wasFromStar);
+        EventReceiver.TriggerCardFlipEvent(this, wasFromStar);
+        yield return StartCoroutine(AnimateFlip(wasFromStar));
     }
 
-    public IEnumerator AnimateFlip()
+    public IEnumerator AnimateFlip(bool wasFromStar)
     {
-        fadingFlipText.text = text.text;
-        fadingFlipText.gameObject.SetActive(true);
+        if (!wasFromStar)
+        {
+            fadingFlipText.text = text.text;
+            fadingFlipText.gameObject.SetActive(true);
+        }
+
         text.gameObject.SetActive(false);
         MoveLabel(labelPositionOnFlip.transform, 1f);
 
@@ -199,16 +209,16 @@ public class GDFR_Card_Script : Card
         switch (symbol)
         {
             case Symbol.Sun:
-                symbolSprite.spriteName = SunSpriteName;
+                symbolSprite.spriteName = sunSpriteName;
                 break;
             case Symbol.Moon:
-                symbolSprite.spriteName = MoonSpriteName;
+                symbolSprite.spriteName = moonSpriteName;
                 break;
             case Symbol.Mushroom:
-                symbolSprite.spriteName = MushroomSpriteName;
+                symbolSprite.spriteName = mushroomSpriteName;
                 break;
             case Symbol.Frog:
-                symbolSprite.spriteName = FrogSpriteName;
+                symbolSprite.spriteName = frogSpriteName;
                 break;
         }
         symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Glow";

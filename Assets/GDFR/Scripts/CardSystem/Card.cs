@@ -14,7 +14,7 @@ public interface ICard
 	void Inspect();
 	void Discard();
 	void UpdateCardData();
-	void Flip();
+	IEnumerator Flip(bool wasFromStar);
 	Transform GetTransform();
 	void LoadData(XmlNode root);
 }
@@ -44,9 +44,9 @@ public class Card: MonoBehaviour, ICard
 		//Debug.Log("Card Data Update Activated");
 	}
 	
-	public virtual void Flip()
+	public virtual IEnumerator Flip(bool wasFromStar)
 	{
-		//Debug.Log("Card Flipped");
+	    yield return null;
 	}
 	
 	public virtual void LoadData(XmlNode root)
@@ -59,7 +59,6 @@ public class Card: MonoBehaviour, ICard
 		return transform;
 	}
 
-
 	public virtual void DrawCard(Deck toDeck,Transform parent = null)
 	{
 		//Debug.Log("Hit");
@@ -71,13 +70,6 @@ public class Card: MonoBehaviour, ICard
 		transform.localScale = tempScale;
 		transform.localPosition = Vector3.zero; 
 	}
-
-
-
-	//public virtual void DrawCard(Deck toDeck,out Transform newCardTranform)
-	//{
-	//	DrawCard(toDeck);
-	//}
 }
 
 public class CardDeck<T> : List<T>,IShufflable

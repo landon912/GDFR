@@ -37,11 +37,11 @@ public class EventReceiver : MonoBehaviour
 	    if (SymbolMatchEvent != null) SymbolMatchEvent(cards);
 	}
 
-    public delegate void CardFlipEventHandler(GDFR_Card_Script card);
+    public delegate void CardFlipEventHandler(GDFR_Card_Script card, bool wasFromStar);
     public static event CardFlipEventHandler CardFlipEvent;
-    public static void TriggerCardFlipEvent(GDFR_Card_Script card)
+    public static void TriggerCardFlipEvent(GDFR_Card_Script card, bool wasFromStar)
     {
-        if (CardFlipEvent != null) CardFlipEvent(card);
+        if (CardFlipEvent != null) CardFlipEvent(card, wasFromStar);
     }
 
     public delegate void CardsTakenEventHandler(GDFR_Card_Script[] cards);

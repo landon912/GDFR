@@ -592,18 +592,21 @@ public class GameContoller : RxFx_FSM
 		//Flip rhyming cards or star cards
 		int Rhymecount = 0;
 		bool cardFlipped = false;
-		//if(playedCard.starsShowing)
-			//yield return StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + "Played a stared card!",2f));
-			//yield return new WaitForSeconds(2f);
-		if(playedCard.StarsShowing)
+        //if(playedCard.starsShowing)
+        //yield return StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + "Played a stared card!",2f));
+        //yield return new WaitForSeconds(2f);
+
+        if (playedCard.StarsShowing)
 		{
 			playedCard.PlayStarsEffect();
 			EventReceiver.TriggerStarPlayedEvent(playedCard);
-			//yield return new WaitForSeconds(0.5f);
 			yield return new WaitForSeconds(1f);
 		}
-		foreach(GDFR_Card_Script c in fCard)
+
+        //go from right to left
+        for(int i = fCard.Length-1; i>=0; i--)
 		{
+		    GDFR_Card_Script c = (GDFR_Card_Script) fCard[i];
 			if(c!=playedCard)
 			{
 				if(c.CurrentRhyme==playedCard.CurrentRhyme || playedCard.StarsShowing)
@@ -611,7 +614,7 @@ public class GameContoller : RxFx_FSM
 					cardFlipped = true;
 					Rhymecount++;
 					//Debug.Log ("Rhyme Match Found");
-					c.Flip();
+					yield return StartCoroutine(c.Flip(playedCard.StarsShowing));
 				}
 			}
 			else
