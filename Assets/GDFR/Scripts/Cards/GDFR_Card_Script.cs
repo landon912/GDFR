@@ -1,160 +1,160 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using UnityEngine;
 
-public enum Race {Goblin,Fairy};
-public enum Symbol {Sun, Moon, Mushroom, Frog};
-public enum Rhyme {Our = 1, Oop = 2, Ock = 3, Elly = 4, Ew = 5};
+public class GDFR_Card_Script : Card
+{
+    private bool _cardSparkle;
 
-public class GDFR_Card_Script : Card {
+    public bool _inspecting;
 
-	public UISprite sprite;
-	public UISprite shadowSprite;
-	public UILabel text;
-    public UILabel fadingFlipText;
-    public UISprite symbolSprite;
-	public UISprite symbolGlowSprite;
-	public playStars starsScript;
-	public string goblinSpriteName = "";
-	public string fairySpriteName = "";
-	public string SunSpriteName = "";
-	public string MoonSpriteName = "";
-	public string MushroomSpriteName = "";
-	public string FrogSpriteName = "";
-	public Symbol goblinSymbol;
-	public Symbol fairySymbol;
-	public Rhyme goblinRhyme;
-	public Rhyme fairyRhyme;
-	public string goblinText = "Goblin Test";
-	public string fairyText = "Fairy Test";
-	public Race _currentRace;
-	public bool _inspecting = false;
-	public bool goblinStarBorder = false;
-	public bool fairyStarBorder = false;
-	public bool starBorder = false;
-	bool isFront = true;
+    //public TweenAlpha symbolGlowTweener = null;
+    //public TweenScale symbolGlowScaleTweener = null;
+    public int _zDepth;
+
+    private int _zDepthOffset;
+    public TweenScale cardBumpTweener = null;
+    public TweenRotation cardFlipTweenerA = null;
+    public TweenRotation cardFlipTweenerB = null;
+    public TweenTransform cardLabelMoveOnFlipTweener = null;
+    public TweenTransform cardMoveTweener = null;
+    public TweenScale cardScaleTweener = null;
+
+    public nEmitter cardSparkleEmitter = null;
     public GameObject defaultLabelPosition;
+    public UILabel fadingFlipText;
+    public Rhyme fairyRhyme;
+    public string fairySpriteName = "";
+    public bool fairyStarBorder = false;
+    public Symbol fairySymbol;
+    public string fairyText = "Fairy Test";
+    public string FrogSpriteName = "";
+    public Rhyme goblinRhyme;
+    public string goblinSpriteName = "";
+    public bool goblinStarBorder = false;
+
+    public Symbol goblinSymbol;
+    public string goblinText = "Goblin Test";
+    private bool isFront = true;
     public GameObject labelPositionOnFlip;
 
-    public bool starsShowing
-	{
-		get
-		{
-			if(_currentRace==Race.Goblin && goblinStarBorder)
-				return true;
-			if(_currentRace==Race.Fairy && fairyStarBorder)
-				return true;
-			return false;
-		}
-	}
-	public Race currentRace
-	{
-		set
-		{
-			if(value != _currentRace)
-			{
-				ChangeRace(value);
-			}
-		}
-		get{return _currentRace;}
-	}
-	public Symbol _currentSymbol;
-	public Symbol currentSymbol
-	{
-		get{return _currentSymbol;}
-	}
-	public Rhyme _currentRhyme;
-	public Rhyme currentRhyme
-	{
-		get{return _currentRhyme;}
-	}	
-	public Transform scaleTransform = null;
-	public TweenTransform cardMoveTweener = null;
-	public TweenScale cardScaleTweener = null;
-	public TweenRotation cardFlipTweenerA = null;
-	public TweenRotation cardFlipTweenerB = null;
-    public TweenTransform cardLabelMoveOnFlipTweener = null;
-    public TweenScale cardBumpTweener = null;
-	//public TweenAlpha symbolGlowTweener = null;
-	//public TweenScale symbolGlowScaleTweener = null;
-	public int _zDepth = 0;
-	UITweener[] tweenerList = null;
-	public int zDepth
-	{
-		set
-		{
-			_zDepth = value;
-			SetZDepth(_zDepth);
-		}
-		get{return _zDepth;}
-	}
-	int _zDepthOffset = 0;
-	public int zDepthOffset
-	{
-		set
-		{
-			_zDepthOffset = value;
-			SetZDepth(_zDepth);
-		}
-		get{return _zDepthOffset;}
-	}
-	bool _cardSparkle = false;
-	public bool cardSparkle
-	{
-		set
-		{
-			_cardSparkle = value;
-			cardSparkleEmitter.enabled=_cardSparkle;
-		}
-		get{return _cardSparkle;}
-	}
+    private Race mCurrentRace;
 
-	public nEmitter cardSparkleEmitter = null;
-	UIWidget[] widgetList;
-	int[] widgetDefaultDepth;
+    private string mNameSound;
+    public string MoonSpriteName = "";
+    public string MushroomSpriteName = "";
+
+    public Transform scaleTransform = null;
+    public UISprite shadowSprite;
+
+    public UISprite sprite;
+    public bool starBorder = false;
+    public playStars starsScript;
+    public string SunSpriteName = "";
+    public UISprite symbolGlowSprite;
+    public UISprite symbolSprite;
+    public UILabel text;
+    private UITweener[] tweenerList;
+    private int[] widgetDefaultDepth;
+    private UIWidget[] widgetList;
+
+    public bool StarsShowing
+    {
+        get
+        {
+            if (mCurrentRace == Race.Goblin && goblinStarBorder)
+                return true;
+            if (mCurrentRace == Race.Fairy && fairyStarBorder)
+                return true;
+            return false;
+        }
+    }
+
+    public Race CurrentRace
+    {
+        set
+        {
+            if (value != mCurrentRace)
+                ChangeRace(value);
+        }
+        get { return mCurrentRace; }
+    }
+
+    public Symbol CurrentSymbol { get; private set; }
+
+    public Rhyme CurrentRhyme { get; private set; }
+
+    public int zDepth
+    {
+        set
+        {
+            _zDepth = value;
+            SetZDepth(_zDepth);
+        }
+        get { return _zDepth; }
+    }
+
+    public int zDepthOffset
+    {
+        set
+        {
+            _zDepthOffset = value;
+            SetZDepth(_zDepth);
+        }
+        get { return _zDepthOffset; }
+    }
+
+    public bool cardSparkle
+    {
+        set
+        {
+            _cardSparkle = value;
+            cardSparkleEmitter.enabled = _cardSparkle;
+        }
+        get { return _cardSparkle; }
+    }
 
 
-	// Use this for initialization
-	void Start () {
-		ChangeRace(_currentRace);
-		//currentRace = Race.Fairy;
-		UIButton button = GetComponent<UIButton>();
-		button.normalSprite = null;
-	}
+    // Use this for initialization
+    private void Start()
+    {
+        ChangeRace(mCurrentRace);
+        //mCurrentRace = Race.Fairy;
+        var button = GetComponent<UIButton>();
+        button.normalSprite = null;
+    }
 
-	void Awake() {
-		transform.localScale = scaleTransform.localScale = new Vector3(1,1,1);
-		tweenerList = GetComponentsInChildren<UITweener>();
-		cardSparkle = _cardSparkle;
+    private void Awake()
+    {
+        transform.localScale = scaleTransform.localScale = new Vector3(1, 1, 1);
+        tweenerList = GetComponentsInChildren<UITweener>();
+        cardSparkle = _cardSparkle;
 
-	    widgetList = GetComponentsInChildren<UIWidget>(true);
+        widgetList = GetComponentsInChildren<UIWidget>(true);
 
-		//Capture default z
-		widgetDefaultDepth = new int[widgetList.Length];
-		for(int w=0;w<widgetList.Length; w++)
-		{
-			widgetDefaultDepth[w]=widgetList[w].depth;
-		}
-	}
-	
-	public override void Flip ()
-	{
-		base.Flip ();
-	    EventReceiver.TriggerCardFlipEvent(this);
-		StartCoroutine(AnimateFlip());
-	}
+        //Capture default z
+        widgetDefaultDepth = new int[widgetList.Length];
+        for (var w = 0; w < widgetList.Length; w++)
+            widgetDefaultDepth[w] = widgetList[w].depth;
+    }
 
-    public IEnumerator AnimateFlip ()
-	{
+    public override void Flip()
+    {
+        base.Flip();
+        EventReceiver.TriggerCardFlipEvent(this);
+        StartCoroutine(AnimateFlip());
+    }
+
+    public IEnumerator AnimateFlip()
+    {
         fadingFlipText.text = text.text;
         fadingFlipText.gameObject.SetActive(true);
         text.gameObject.SetActive(false);
         MoveLabel(labelPositionOnFlip.transform, 1f);
 
         if (isFront)
-			cardFlipTweenerA.PlayForward();
-		else
-			cardFlipTweenerA.PlayReverse();
+            cardFlipTweenerA.PlayForward();
+        else
+            cardFlipTweenerA.PlayReverse();
 
         yield return new WaitForSeconds(0.5f);
 
@@ -162,12 +162,12 @@ public class GDFR_Card_Script : Card {
 
         isFront = !isFront;
 
-		if(_currentRace==Race.Fairy)
-		{
-			currentRace = Race.Goblin;
+        if (mCurrentRace == Race.Fairy)
+        {
+            CurrentRace = Race.Goblin;
             if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
             {
-                text.text = ((int)_currentRhyme).ToString();
+                text.text = ((int) CurrentRhyme).ToString();
                 text.fontSize = 40;
             }
             else
@@ -175,69 +175,69 @@ public class GDFR_Card_Script : Card {
                 text.text = goblinText;
                 text.fontSize = 23;
             }
-			SetSymbol(goblinSymbol);
-		}
-		else
-		{
-			currentRace = Race.Fairy;
-            text.text = Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers ? ((int)_currentRhyme).ToString() : fairyText;
-			SetSymbol(fairySymbol);
-		}
+            SetSymbol(goblinSymbol);
+        }
+        else
+        {
+            CurrentRace = Race.Fairy;
+            text.text = Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers
+                ? ((int) CurrentRhyme).ToString()
+                : fairyText;
+            SetSymbol(fairySymbol);
+        }
 
-		scaleTransform.localScale = isFront ? new Vector3(1,1,1) : new Vector3(-1,1,1);
+        scaleTransform.localScale = isFront ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
 
 
-		yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);
 
-	    fadingFlipText.gameObject.SetActive(false);
+        fadingFlipText.gameObject.SetActive(false);
     }
 
-	void SetSymbol(Symbol symbol)
-	{
-		switch (symbol)
-		{
-		case Symbol.Sun:
-			symbolSprite.spriteName = SunSpriteName;
-			break;
-		case Symbol.Moon:
-			symbolSprite.spriteName = MoonSpriteName;
-			break;
-		case Symbol.Mushroom:
-			symbolSprite.spriteName = MushroomSpriteName;
-			break;
-		case Symbol.Frog:
-			symbolSprite.spriteName = FrogSpriteName;
-			break;
-		}
-		symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Glow";
-	}
+    private void SetSymbol(Symbol symbol)
+    {
+        switch (symbol)
+        {
+            case Symbol.Sun:
+                symbolSprite.spriteName = SunSpriteName;
+                break;
+            case Symbol.Moon:
+                symbolSprite.spriteName = MoonSpriteName;
+                break;
+            case Symbol.Mushroom:
+                symbolSprite.spriteName = MushroomSpriteName;
+                break;
+            case Symbol.Frog:
+                symbolSprite.spriteName = FrogSpriteName;
+                break;
+        }
+        symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Glow";
+    }
 
-	public IEnumerator AnimateDrawCard(Deck toDeck,float duration)
-	{
-		//Debug.Log("animate draw card");
-		//start animation, when done execute draw card.
-		//GDFR_Deck_Script GDeck = (GDFR_Deck_Script)toDeck;
+    public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
+    {
+        //Debug.Log("animate draw card");
+        //start animation, when done execute draw card.
+        //GDFR_Deck_Script GDeck = (GDFR_Deck_Script)toDeck;
 
-		//GameObject toGo = GameObject.FindGameObjectWithTag("to");
-		//Card cs= toGo.GetComponent<Card>();
-		//cs.DrawCard(toDeck,GDeck.deckPivot);
-		//toGo.transform.localScale = new Vector3(1f,1f,1f);
-		//Vector3 newPos = GDeck.GetGridPosition(GDeck.count);
-		//toGo.transform.localPosition = newPos;
-		//toDeck.Refresh();
-		//MoveCard(toGo.transform,duration);
-	
-		//GDeck.Refresh();
-		//yield return new WaitForSeconds(duration);
-		toDeck.AddCard(this);
-		yield return new WaitForSeconds(duration);
-		//scaleTransform.localScale = new Vector3(1f,1f,1f);
+        //GameObject toGo = GameObject.FindGameObjectWithTag("to");
+        //Card cs= toGo.GetComponent<Card>();
+        //cs.DrawCard(toDeck,GDeck.deckPivot);
+        //toGo.transform.localScale = new Vector3(1f,1f,1f);
+        //Vector3 newPos = GDeck.GetGridPosition(GDeck.count);
+        //toGo.transform.localPosition = newPos;
+        //toDeck.Refresh();
+        //MoveCard(toGo.transform,duration);
 
-
-	}
+        //GDeck.Refresh();
+        //yield return new WaitForSeconds(duration);
+        toDeck.AddCard(this);
+        yield return new WaitForSeconds(duration);
+        //scaleTransform.localScale = new Vector3(1f,1f,1f);
+    }
 
 
-	/*
+    /*
 	public IEnumerator Co_Animate_DrawCard(Deck toDeck,float duration)
 	{
 		Debug.Log("New animate draw card");
@@ -253,24 +253,24 @@ public class GDFR_Card_Script : Card {
 	}
 	*/
 
-	public override void Inspect ()
-	{
-		base.Inspect ();
-		_inspecting = !_inspecting;
-	}
-	
-	public void ChangeRace(Race race)
-	{
-		switch (race)
-		{
-			case Race.Fairy:
-				sprite.spriteName = fairySpriteName;
-				_currentRace = Race.Fairy;
-				_currentRhyme = fairyRhyme;
-				_currentSymbol = fairySymbol;
+    public override void Inspect()
+    {
+        base.Inspect();
+        _inspecting = !_inspecting;
+    }
+
+    public void ChangeRace(Race race)
+    {
+        switch (race)
+        {
+            case Race.Fairy:
+                sprite.spriteName = fairySpriteName;
+                mCurrentRace = Race.Fairy;
+                CurrentRhyme = fairyRhyme;
+                CurrentSymbol = fairySymbol;
                 if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
                 {
-                    text.text = ((int)_currentRhyme).ToString();
+                    text.text = ((int) CurrentRhyme).ToString();
                     text.fontSize = 40;
                 }
                 else
@@ -281,14 +281,14 @@ public class GDFR_Card_Script : Card {
 
                 //Debug.Log ("HIT  Race Set To Fairy");
                 break;
-			case Race.Goblin:
-				sprite.spriteName = goblinSpriteName;
-				_currentRace = Race.Goblin;
-				_currentRhyme = goblinRhyme;
-				_currentSymbol = goblinSymbol;
+            case Race.Goblin:
+                sprite.spriteName = goblinSpriteName;
+                mCurrentRace = Race.Goblin;
+                CurrentRhyme = goblinRhyme;
+                CurrentSymbol = goblinSymbol;
                 if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
                 {
-                    text.text = ((int)_currentRhyme).ToString();
+                    text.text = ((int) CurrentRhyme).ToString();
                     text.fontSize = 40;
                 }
                 else
@@ -296,29 +296,18 @@ public class GDFR_Card_Script : Card {
                     text.text = goblinText;
                     text.fontSize = 23;
                 }
-				
-				//Debug.Log ("Race Set To goblin");
-				break;
-		}
-		SetSymbol(_currentSymbol);
-		starsScript.gameObject.SetActive(starsShowing);
-	}
-	
-	void OnClick()
-	{
-		//Debug.Log("Clicked");
-		//Flip();
-	}
-	
-	void OnHover()
-	{
-		//Inspect();
-	}
 
-	public void MoveCard(Transform to,float duration)
-	{
-        Move(to, duration, cardMoveTweener, this.transform);
-	}
+                //Debug.Log ("Race Set To goblin");
+                break;
+        }
+        SetSymbol(CurrentSymbol);
+        starsScript.gameObject.SetActive(StarsShowing);
+    }
+
+    public void MoveCard(Transform to, float duration)
+    {
+        Move(to, duration, cardMoveTweener, transform);
+    }
 
     public void MoveLabel(Transform to, float duration)
     {
@@ -327,7 +316,7 @@ public class GDFR_Card_Script : Card {
 
     public void Move(Transform to, float duration, TweenTransform tween, Transform from)
     {
-        Transform toParent = to.parent;
+        var toParent = to.parent;
 
         tween.from = from;
         tween.to = to;
@@ -337,85 +326,70 @@ public class GDFR_Card_Script : Card {
         tween.Play(true);
     }
 
-    public override void DrawCard (Deck toDeck, Transform parent = null)
-	{
-		//base.DrawCard (toDeck);
-		//GDFR_Deck_Script GtoDeck = (GDFR_Deck_Script)toDeck;
-		//Vector3 tempScale = scaleTransform.localScale;
-		bool deckActive = toDeck.gameObject.activeSelf;
-		toDeck.gameObject.SetActive(true);
-		toDeck.AddCard(this);
-		toDeck.gameObject.SetActive(deckActive);
-	}
+    public override void DrawCard(Deck toDeck, Transform parent = null)
+    {
+        //base.DrawCard (toDeck);
+        //GDFR_Deck_Script GtoDeck = (GDFR_Deck_Script)toDeck;
+        //Vector3 tempScale = scaleTransform.localScale;
+        var deckActive = toDeck.gameObject.activeSelf;
+        toDeck.gameObject.SetActive(true);
+        toDeck.AddCard(this);
+        toDeck.gameObject.SetActive(deckActive);
+    }
 
-	public void DrawCardInstant (Deck toDeck, Transform parent = null)
-	{
-		bool deckActive = toDeck.gameObject.activeSelf;
-		toDeck.gameObject.SetActive(true);
-		((GDFR_Deck_Script)toDeck).AddCardInstant(this);
-		toDeck.gameObject.SetActive(deckActive);
-	}
+    public void DrawCardInstant(Deck toDeck, Transform parent = null)
+    {
+        var deckActive = toDeck.gameObject.activeSelf;
+        toDeck.gameObject.SetActive(true);
+        ((GDFR_Deck_Script) toDeck).AddCardInstant(this);
+        toDeck.gameObject.SetActive(deckActive);
+    }
 
-    public void MoveCardTestA()
-	{
-		//GameObject fromGO = GameObject.FindWithTag("from");
-		GameObject toGo = GameObject.FindWithTag("to");
-		MoveCard(toGo.transform,1f);
-	}
+    public void Bump()
+    {
+        cardBumpTweener.ResetToBeginning();
+        cardBumpTweener.PlayForward();
+    }
 
-	public void MoveCardTestB()
-	{
-		//GameObject fromGO = GameObject.FindWithTag("from");
-		GameObject toGo = GameObject.FindWithTag("from");
-		MoveCard(toGo.transform,1f);
-	}
+    private void SetZDepth(int z)
+    {
+        z += _zDepthOffset;
 
-	public void Bump()
-	{
-		cardBumpTweener.ResetToBeginning();
-		cardBumpTweener.PlayForward();
-	}
+        for (var w = 0; w < widgetList.Length; w++)
+            widgetList[w].depth = widgetDefaultDepth[w] + z;
+    }
 
-	void SetZDepth(int z)
-	{
-		z +=_zDepthOffset;
+    public void SymbolMatchEffect()
+    {
+        PlayTweenGroup(1);
+    }
 
-		for(int w=0;w<widgetList.Length;w++)
-		{
-			widgetList[w].depth = widgetDefaultDepth[w] + z;
-		}
-	}
+    public void PlayTweenGroup(int index)
+    {
+        foreach (var t in tweenerList)
+        {
+            if (t.tweenGroup == index)
+            {
+                t.ResetToBeginning();
+                t.PlayForward();
+            }
+        }
+    }
 
-	public void SymbolMatchEffect()
-	{
-		PlayTweenGroup(1);
-	}
+    public void CardSparkleOverTime(float duration)
+    {
+        StartCoroutine(CO_CardSparkleOverTime(duration));
+    }
 
-	public void PlayTweenGroup(int index)
-	{
-		foreach(UITweener t in tweenerList)
-		{
-			if(t.tweenGroup==index)
-			{
-				t.ResetToBeginning();
-				t.PlayForward();
-			}
-		}
-	}
-	public void CardSparkleOverTime(float duration)
-	{
-		StartCoroutine(CO_CardSparkleOverTime(duration));
-	}
+    private IEnumerator CO_CardSparkleOverTime(float duration)
+    {
+        cardSparkle = true;
+        yield return new WaitForSeconds(duration);
+        cardSparkle = false;
+    }
 
-	IEnumerator CO_CardSparkleOverTime(float duration)
-	{
-		cardSparkle = true;
-		yield return new WaitForSeconds(duration);
-		cardSparkle = false;
-	}
-
-	public void PlayStarsEffect()
-	{
-		starsScript.enabled  = true;
-	}
+    public void PlayStarsEffect()
+    {
+        starsScript.enabled = true;
+    }
 }

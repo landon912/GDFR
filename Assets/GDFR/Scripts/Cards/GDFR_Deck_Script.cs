@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Xml;
 
 
@@ -229,58 +228,56 @@ public class GDFR_Deck_Script : Deck {
 			if(node.Name=="card")
 			{
 				//new card
-				GameObject newCard = GameObject.Instantiate(cardPrefab) as GameObject;
-				//newCard.transform.parent = deckTransform;
-				//newCard.transform.position = Vector3.zero;
-				GDFR_Card_Script CardScript = newCard.GetComponent<GDFR_Card_Script>();
-				AddCardInstant(CardScript);
+				GameObject newCard = Instantiate(cardPrefab);
+				GDFR_Card_Script cardScript = newCard.GetComponent<GDFR_Card_Script>();
+				AddCardInstant(cardScript);
 				foreach(XmlNode cNode in node.ChildNodes)
 				{
 	                if(cNode.Name=="GoblinSpriteName")
 					{
-						CardScript.goblinSpriteName = cNode.InnerText;
+						cardScript.goblinSpriteName = cNode.InnerText;
 					}
 	                if(cNode.Name=="FairySpriteName")
 					{
-						CardScript.fairySpriteName = cNode.InnerText;
+						cardScript.fairySpriteName = cNode.InnerText;
 					}	
 	                if(cNode.Name=="GoblinSymbol")
 					{
-						CardScript.goblinSymbol =  (Symbol)System.Enum.Parse(typeof(Symbol), cNode.InnerText);;
+						cardScript.goblinSymbol =  (Symbol)System.Enum.Parse(typeof(Symbol), cNode.InnerText);;
 					}						
 	                if(cNode.Name=="FairySymbol")
 					{
-						CardScript.fairySymbol =  (Symbol)System.Enum.Parse(typeof(Symbol), cNode.InnerText);;
+						cardScript.fairySymbol =  (Symbol)System.Enum.Parse(typeof(Symbol), cNode.InnerText);;
 					}	
 	                if(cNode.Name=="GoblinRhyme")
 					{
-						CardScript.goblinRhyme =  (Rhyme)System.Enum.Parse(typeof(Rhyme), cNode.InnerText);;
+						cardScript.goblinRhyme =  (Rhyme)System.Enum.Parse(typeof(Rhyme), cNode.InnerText);;
 					}	
 	                if(cNode.Name=="FairyRhyme")
 					{
-						CardScript.fairyRhyme =  (Rhyme)System.Enum.Parse(typeof(Rhyme), cNode.InnerText);;
+						cardScript.fairyRhyme =  (Rhyme)System.Enum.Parse(typeof(Rhyme), cNode.InnerText);;
 					}	
 					if(cNode.Name=="GoblinStarBorder")
 					{
-						CardScript.goblinStarBorder =  XmlConvert.ToBoolean(cNode.InnerText);
-						if(!CardScript.starBorder && CardScript.goblinStarBorder)
-							CardScript.starBorder = true;
+						cardScript.goblinStarBorder =  XmlConvert.ToBoolean(cNode.InnerText);
+						if(!cardScript.starBorder && cardScript.goblinStarBorder)
+							cardScript.starBorder = true;
 					}			
 					if(cNode.Name=="FairyStarBorder")
 					{
-						CardScript.fairyStarBorder =  XmlConvert.ToBoolean(cNode.InnerText);
-						if(!CardScript.starBorder && CardScript.fairyStarBorder)
-							CardScript.starBorder = true;
+						cardScript.fairyStarBorder =  XmlConvert.ToBoolean(cNode.InnerText);
+						if(!cardScript.starBorder && cardScript.fairyStarBorder)
+							cardScript.starBorder = true;
 					}	
 					if(cNode.Name=="GoblinText")
 					{
-						CardScript.goblinText =  cNode.InnerText;
+						cardScript.goblinText =  cNode.InnerText;
 					}	
 					if(cNode.Name=="FairyText")
 					{
-						CardScript.fairyText =  cNode.InnerText;
+						cardScript.fairyText =  cNode.InnerText;
 					}	
-					CardScript.gameObject.transform.localScale = new Vector3(1f,1f,1f);
+					cardScript.gameObject.transform.localScale = new Vector3(1f,1f,1f);
 				}
 			}
         }	

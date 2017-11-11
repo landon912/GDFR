@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class AudioEvents : MonoBehaviour
 {
-    const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
+    private const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
 
 	void OnEnable()
 	{
@@ -49,7 +49,7 @@ public class AudioEvents : MonoBehaviour
     void OnCardPlayed(GDFR_Card_Script card)
     {
         //TODO: Replace with saying the name of the card
-        switch (card.currentRace)
+        switch (card.CurrentRace)
         {
             case Race.Fairy:
                 AudioController.Play(FAIRY_LAUGH);
@@ -84,7 +84,7 @@ public class AudioEvents : MonoBehaviour
         {
             if (hasFairy && hasGoblin){ break; }
 
-            switch (card.currentRace)
+            switch (card.CurrentRace)
             {
                 case Race.Fairy:
                     hasFairy = true;

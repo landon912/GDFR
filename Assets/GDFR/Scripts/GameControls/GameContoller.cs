@@ -280,7 +280,7 @@ public class GameContoller : RxFx_FSM
 		GDFR_Card_Script[] cards = mainDeck.GetCardList() as GDFR_Card_Script[];
 		foreach(GDFR_Card_Script c in cards)
 		{
-			c.currentRace = Race.Goblin;
+			c.CurrentRace = Race.Goblin;
 			if(c.goblinStarBorder)
 			{
 				c.DrawCardInstant(starDeck);
@@ -433,7 +433,7 @@ public class GameContoller : RxFx_FSM
 		{
 			//GDFR_Card_Script card = (GDFR_Card_Script)mainDeck.drawRandomCard(fairyRingDeck);
 			GDFR_Card_Script card = (GDFR_Card_Script)mainDeck.drawRandomCard();
-			card.currentRace = Race.Fairy;
+			card.CurrentRace = Race.Fairy;
 			yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck,dealSpeed));
 		}
 		fairyRingDeck.Refresh();
@@ -595,7 +595,7 @@ public class GameContoller : RxFx_FSM
 		//if(playedCard.starsShowing)
 			//yield return StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + "Played a stared card!",2f));
 			//yield return new WaitForSeconds(2f);
-		if(playedCard.starsShowing)
+		if(playedCard.StarsShowing)
 		{
 			playedCard.PlayStarsEffect();
 			EventReceiver.TriggerStarPlayedEvent(playedCard);
@@ -606,7 +606,7 @@ public class GameContoller : RxFx_FSM
 		{
 			if(c!=playedCard)
 			{
-				if(c.currentRhyme==playedCard.currentRhyme || playedCard.starsShowing)
+				if(c.CurrentRhyme==playedCard.CurrentRhyme || playedCard.StarsShowing)
 				{
 					cardFlipped = true;
 					Rhymecount++;
@@ -632,7 +632,7 @@ public class GameContoller : RxFx_FSM
 		{
 			if(c!=playedCard)
 			{
-				if(c.currentSymbol==playedCard.currentSymbol)
+				if(c.CurrentSymbol==playedCard.CurrentSymbol)
 				{
 					cardTaken = true;
 					takenCards.Add(c);
@@ -702,9 +702,9 @@ public class GameContoller : RxFx_FSM
 		int goblinCount = 0;
 		foreach(GDFR_Card_Script c in cardList)
 		{
-			if(c.currentRace==Race.Fairy)
+			if(c.CurrentRace==Race.Fairy)
 				fairyCount++;
-			if(c.currentRace==Race.Goblin)
+			if(c.CurrentRace==Race.Goblin)
 				goblinCount++;
 		}
 
@@ -878,14 +878,14 @@ public class GameContoller : RxFx_FSM
 
 		foreach(GDFR_Card_Script tCard in tCards)
 		{
-			Symbol tSymbol = tCard.currentSymbol;
-			Race tRace = tCard.currentRace;
+			Symbol tSymbol = tCard.CurrentSymbol;
+			Race tRace = tCard.CurrentRace;
 
 			// is it a rhyme or pCard = star?
             // invert symbol and race to make the calculation
-			if(tCard.currentRhyme==pCard.currentRhyme || pCard.starsShowing)
+			if(tCard.CurrentRhyme==pCard.CurrentRhyme || pCard.StarsShowing)
 			{
-				switch (tCard.currentSymbol)
+				switch (tCard.CurrentSymbol)
 				{
 				    case Symbol.Sun:
 					    tSymbol = Symbol.Moon;
@@ -900,7 +900,7 @@ public class GameContoller : RxFx_FSM
 					    tSymbol = Symbol.Mushroom;
 					    break;
 				}
-				switch (tCard.currentRace)
+				switch (tCard.CurrentRace)
 				{
 				    case Race.Fairy:
 					    tRace = Race.Goblin;
@@ -912,7 +912,7 @@ public class GameContoller : RxFx_FSM
 			}
 			
 			//is it a match?
-			if(tSymbol==pCard.currentSymbol)
+			if(tSymbol==pCard.CurrentSymbol)
 			{
 				if(tRace==Race.Goblin)
 					discardValue-=1;
@@ -921,7 +921,7 @@ public class GameContoller : RxFx_FSM
 			}
 		}
 
-        if (pCard.currentRace == Race.Goblin)
+        if (pCard.CurrentRace == Race.Goblin)
         {
             // Best play is to discard goblins if it doesnt get more goblins
             if (discardValue == 0)
@@ -937,7 +937,7 @@ public class GameContoller : RxFx_FSM
             discardValue += 1;
         }
         
-        if (pCard.currentRace == Race.Fairy) discardValue -= 1;
+        if (pCard.CurrentRace == Race.Fairy) discardValue -= 1;
 
         return discardValue;
 	}
