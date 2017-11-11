@@ -636,7 +636,7 @@ public class GameContoller : RxFx_FSM
 				{
 					cardTaken = true;
 					takenCards.Add(c);
-					c.symbolMatchEffect();
+					c.SymbolMatchEffect();
 					cardCount++;
 				}
 			}
@@ -650,7 +650,7 @@ public class GameContoller : RxFx_FSM
 
 		if(cardTaken)
 		{
-			playedCard.symbolMatchEffect();
+			playedCard.SymbolMatchEffect();
             yield return new WaitForSeconds(2f);
 		    EventReceiver.TriggerCardsTakenEvent(takenCards.ToArray());
         }

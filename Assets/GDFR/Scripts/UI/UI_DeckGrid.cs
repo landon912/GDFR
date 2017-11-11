@@ -47,11 +47,8 @@ public class UI_DeckGrid : UIWidgetContainer
 		get{return transform.childCount;}
 	}
 
-	void Update()
-	{
-	}
-
-	public void Reposition()
+    private const int OFFSET_PER_CARD = 6;
+    public void Reposition()
 	{
 		if(!enabled)
 		{
@@ -85,12 +82,11 @@ public class UI_DeckGrid : UIWidgetContainer
 			int yZ = (int)getYindex(c);
 			int zOffset = 0;
 			if(hJustify==HorizontalJustify.Right)
-				zOffset = yZ + c * -3;
+				zOffset = yZ + c * OFFSET_PER_CARD;
 			else
-				zOffset = yZ + c * 3;
-			card.zDepth = (int)(zOffset * zBiasFactor);
+				zOffset = yZ + c * OFFSET_PER_CARD;
 
-
+            card.zDepth = (int)(zOffset * zBiasFactor);
 		}
 
 		if(positionTweener==null)
@@ -106,8 +102,6 @@ public class UI_DeckGrid : UIWidgetContainer
 
 		positionTweener.ResetToBeginning();
 		positionTweener.enabled = true;
-
-
 	}
 
 	public Vector2 GetGridBounds()

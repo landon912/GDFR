@@ -17,7 +17,7 @@ public class GDFR_Deck_Script : Deck {
 		set
 		{
 			if(_VisuallyActive!=value)
-				setVisuallyActive(value);
+				SetVisuallyActive(value);
 			_VisuallyActive = value;
 
 		}
@@ -29,7 +29,7 @@ public class GDFR_Deck_Script : Deck {
 		set
 		{
 			_zDepth = value;
-			setZdepth(_zDepth);
+			SetZDepthOffset(_zDepth);
 		}
 		get{return _zDepth;}
 	}
@@ -45,12 +45,6 @@ public class GDFR_Deck_Script : Deck {
 	}
 
 	public bool playSparklesOnDraw = true;
-
-
-
-
-
-
 
 	public Vector3 GetGridPosition(int index)
 	{
@@ -68,7 +62,7 @@ public class GDFR_Deck_Script : Deck {
 
 	}
 
-	void setVisuallyActive(bool VisActive)
+	void SetVisuallyActive(bool VisActive)
 	{
 
 		if(VisActive)
@@ -84,8 +78,6 @@ public class GDFR_Deck_Script : Deck {
 			deckGrid.Reposition();
 		}
 	}
-
-
 	
 	public override void Refresh ()
 	{
@@ -178,13 +170,12 @@ public class GDFR_Deck_Script : Deck {
 
 		base.AddCard(card);
 
-
 		EventReceiver.TriggerCardMovedEvent((GDFR_Card_Script)card);
 
 		//newCardTrans.localScale = tempScale;
 		//newCardTrans.localPosition = GetGridPosition(deckTransform.childCount-1);
 		Refresh();
-		setZdepth(_zDepth);
+		SetZDepthOffset(_zDepth);
 		GDFR_Card_Script gCard = (GDFR_Card_Script)card;
 		gCard.zDepth = _zDepth + 100;
 		if(playSparklesOnDraw)
@@ -198,7 +189,7 @@ public class GDFR_Deck_Script : Deck {
 	{
 		base.AddCard(card);
 		card.transform.localPosition = Vector3.zero;
-		setZdepth(_zDepth);
+		SetZDepthOffset(_zDepth);
 		GDFR_Card_Script gCard = (GDFR_Card_Script)card;
 		gCard.zDepth = _zDepth + 100;
 		return card;
@@ -215,7 +206,7 @@ public class GDFR_Deck_Script : Deck {
 		Debug.Log("Card Removed");
 	}
 
-	public void setZdepth(int z)
+	public void SetZDepthOffset(int z)
 	{
 		GDFR_Card_Script[] cards = GetCardList() as GDFR_Card_Script[];
 		foreach(GDFR_Card_Script card in cards)

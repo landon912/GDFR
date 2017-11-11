@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum Race {Goblin,Fairy};
 public enum Symbol {Sun, Moon, Mushroom, Frog};
@@ -83,7 +84,7 @@ public class GDFR_Card_Script : Card {
 		set
 		{
 			_zDepth = value;
-			setZdepth(_zDepth);
+			SetZDepth(_zDepth);
 		}
 		get{return _zDepth;}
 	}
@@ -93,7 +94,7 @@ public class GDFR_Card_Script : Card {
 		set
 		{
 			_zDepthOffset = value;
-			setZdepth(_zDepth);
+			SetZDepth(_zDepth);
 		}
 		get{return _zDepthOffset;}
 	}
@@ -125,14 +126,15 @@ public class GDFR_Card_Script : Card {
 		transform.localScale = scaleTransform.localScale = new Vector3(1,1,1);
 		tweenerList = GetComponentsInChildren<UITweener>();
 		cardSparkle = _cardSparkle;
-		widgetList = GetComponentsInChildren<UIWidget>();
-		//Capture deafault z
+
+	    widgetList = GetComponentsInChildren<UIWidget>(true);
+
+		//Capture default z
 		widgetDefaultDepth = new int[widgetList.Length];
-		for(int w=0;w<widgetList.Length;w++)
+		for(int w=0;w<widgetList.Length; w++)
 		{
 			widgetDefaultDepth[w]=widgetList[w].depth;
 		}
-
 	}
 	
 	public override void Flip ()
@@ -173,13 +175,13 @@ public class GDFR_Card_Script : Card {
                 text.text = goblinText;
                 text.fontSize = 23;
             }
-			setSymbol(goblinSymbol);
+			SetSymbol(goblinSymbol);
 		}
 		else
 		{
 			currentRace = Race.Fairy;
             text.text = Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers ? ((int)_currentRhyme).ToString() : fairyText;
-			setSymbol(fairySymbol);
+			SetSymbol(fairySymbol);
 		}
 
 		scaleTransform.localScale = isFront ? new Vector3(1,1,1) : new Vector3(-1,1,1);
@@ -190,7 +192,7 @@ public class GDFR_Card_Script : Card {
 	    fadingFlipText.gameObject.SetActive(false);
     }
 
-	void setSymbol(Symbol symbol)
+	void SetSymbol(Symbol symbol)
 	{
 		switch (symbol)
 		{
@@ -298,7 +300,7 @@ public class GDFR_Card_Script : Card {
 				//Debug.Log ("Race Set To goblin");
 				break;
 		}
-		setSymbol(_currentSymbol);
+		SetSymbol(_currentSymbol);
 		starsScript.gameObject.SetActive(starsShowing);
 	}
 	
@@ -311,14 +313,6 @@ public class GDFR_Card_Script : Card {
 	void OnHover()
 	{
 		//Inspect();
-	}
-
-	public void SwapRace()
-	{
-		if(_currentRace==Race.Goblin)
-			ChangeRace(Race.Fairy);
-		else
-			ChangeRace(Race.Goblin);
 	}
 
 	public void MoveCard(Transform to,float duration)
@@ -376,13 +370,13 @@ public class GDFR_Card_Script : Card {
 		MoveCard(toGo.transform,1f);
 	}
 
-	public void bump()
+	public void Bump()
 	{
 		cardBumpTweener.ResetToBeginning();
 		cardBumpTweener.PlayForward();
 	}
 
-	void setZdepth(int z)
+	void SetZDepth(int z)
 	{
 		z +=_zDepthOffset;
 
@@ -390,16 +384,14 @@ public class GDFR_Card_Script : Card {
 		{
 			widgetList[w].depth = widgetDefaultDepth[w] + z;
 		}
-		
-
 	}
 
-	public void symbolMatchEffect()
+	public void SymbolMatchEffect()
 	{
-		playTweenGroup(1);
+		PlayTweenGroup(1);
 	}
 
-	public void playTweenGroup(int index)
+	public void PlayTweenGroup(int index)
 	{
 		foreach(UITweener t in tweenerList)
 		{
@@ -427,5 +419,3 @@ public class GDFR_Card_Script : Card {
 		starsScript.enabled  = true;
 	}
 }
-
-
