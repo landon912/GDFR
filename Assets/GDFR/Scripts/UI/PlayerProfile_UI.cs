@@ -72,8 +72,17 @@ public class PlayerProfile_UI : MonoBehaviour {
     // Events
     public void OnNameChanged(string value)
     {
+        if (value == String.Empty)
+        {
+            HasDefaultName = true;
+            Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
+            Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
+
+            return;
+        }
+
         Toolbox.Instance.playerProfiles[ProfileIndex].name = value;
-        Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + value);
+        Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
 
         //dont reset default name flag b/c we are assigning the default name
         if (NameChangeStringToIgnore != value)
@@ -90,6 +99,8 @@ public class PlayerProfile_UI : MonoBehaviour {
             if (HasDefaultName)
             {
                 nameField.text = "";
+                Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
+                Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
             }
         }
         else
@@ -107,7 +118,7 @@ public class PlayerProfile_UI : MonoBehaviour {
             EventReceiver.TriggerButtonPressedEvent();
         }
 
-        Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].type);
+        Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[ProfileIndex].type);
     }
 
     void OnAvatarChanged(int listValue)

@@ -126,7 +126,7 @@ public class GameSettingUIEvents : MonoBehaviour {
     public void SelectDefaultName(PlayerProfile_UI playerUI)
     {
         //select AI name from list
-        playerUI.nameField.text = "AI Name";
+        playerUI.nameField.text = "AI Name " + (playerUI.ProfileIndex+1);
         playerUI.NameChangeStringToIgnore = playerUI.nameField.text;
         playerUI.HasDefaultName = true;
 
