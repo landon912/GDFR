@@ -156,17 +156,16 @@ public class GDFR_Card_Script : Card
         {
             fadingFlipText.text = text.text;
             fadingFlipText.gameObject.SetActive(true);
+            text.gameObject.SetActive(false);
+            MoveLabel(labelPositionOnFlip.transform, 1f);
         }
-
-        text.gameObject.SetActive(false);
-        MoveLabel(labelPositionOnFlip.transform, 1f);
 
         if (isFront)
             cardFlipTweenerA.PlayForward();
         else
             cardFlipTweenerA.PlayReverse();
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(cardFlipTweenerA.duration/2.0f);
 
         text.gameObject.SetActive(true);
 

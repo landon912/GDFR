@@ -148,6 +148,7 @@ public class AudioEvents : MonoBehaviour
         AudioController.Play("Children Sad");
     }
 
+    //Does not support playing audioitems that pick more than one subitem at a time
     public IEnumerator PlayOneClipThenTheOther(string firstClip, string secondClip, float delay)
     {
         //audio controller does not play sounds when volume is zero, therefore, we have to force it's hand on actually picking a clip

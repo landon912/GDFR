@@ -41,11 +41,9 @@ public class DeckGrid : MonoBehaviour {
 	public virtual void Refresh()
 	{
 		int count = transform.childCount;
-		int t = 0;
 		for(int c=0;c<count;c++)
 		{
 			transform.GetChild(c).localPosition = new Vector3(GetGridPosition(c).x,GetGridPosition(c).y,0f);
-			t = c;
 		}
 
 		if(count<2)return;

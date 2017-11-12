@@ -540,8 +540,6 @@ public class GameContoller : RxFx_FSM
 			//Debug.Log ("Waiting");
 			yield return null;
 		}
-
-		yield break;
 	}
 
 	IEnumerator State_PlayerMove(params object[] data)
@@ -609,8 +607,18 @@ public class GameContoller : RxFx_FSM
 				{
 					cardFlipped = true;
 					Rhymecount++;
-					//Debug.Log ("Rhyme Match Found");
-					yield return StartCoroutine(c.Flip(playedCard.StarsShowing));
+                    //Debug.Log ("Rhyme Match Found");
+				    if (playedCard.StarsShowing)
+				    {
+                        //faster flip
+				        StartCoroutine(c.Flip(playedCard.StarsShowing));
+				        yield return new WaitForSeconds(c.cardFlipTweenerA.duration / 3f);
+                    }
+				    else
+				    {
+                        //slow flip
+				        yield return StartCoroutine(c.Flip(playedCard.StarsShowing));
+				    }
 				}
 			}
 			else
