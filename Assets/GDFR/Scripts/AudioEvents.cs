@@ -150,7 +150,14 @@ public class AudioEvents : MonoBehaviour
 
     public IEnumerator PlayOneClipThenTheOther(string firstClip, string secondClip, float delay)
     {
-        yield return new WaitForSeconds(AudioController.Play(firstClip).clipLength + delay);
+        //audio controller does not play sounds when volume is zero, therefore, we have to force it's hand on actually picking a clip
+        AudioItem item = AudioController.GetAudioItem(firstClip);
+        AudioSubItem[] subItems = AudioController._ChooseSubItems(item, item.SubItemPickMode, null);
+
+        AudioListener al = AudioController.GetCurrentAudioListener();
+        AudioController.Instance.PlayAudioSubItem(subItems[0], 1, al.transform.position + al.transform.forward, null, 0,
+            0, false, null);
+        yield return new WaitForSeconds(subItems[0].Clip.length + delay);
         AudioController.Play(secondClip);
     }
 }

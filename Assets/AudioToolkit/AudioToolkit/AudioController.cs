@@ -2235,7 +2235,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>
         return _ChooseSubItems( audioItem, pickMode, useExistingAudioObj )[ 0 ];
     }
 
-    protected static AudioSubItem[ ] _ChooseSubItems( AudioItem audioItem, AudioPickSubItemMode pickMode, AudioObject useExistingAudioObj )
+    public static AudioSubItem[ ] _ChooseSubItems( AudioItem audioItem, AudioPickSubItemMode pickMode, AudioObject useExistingAudioObj )
     {
         if ( audioItem.subItems == null ) return null;
         int arraySize = audioItem.subItems.Length;

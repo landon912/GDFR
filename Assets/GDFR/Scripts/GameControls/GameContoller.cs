@@ -588,13 +588,9 @@ public class GameContoller : RxFx_FSM
 
 		Card[] fCard = fairyRingDeck.GetCardList();
 
-
 		//Flip rhyming cards or star cards
 		int Rhymecount = 0;
 		bool cardFlipped = false;
-        //if(playedCard.starsShowing)
-        //yield return StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + "Played a stared card!",2f));
-        //yield return new WaitForSeconds(2f);
 
         if (playedCard.StarsShowing)
 		{
