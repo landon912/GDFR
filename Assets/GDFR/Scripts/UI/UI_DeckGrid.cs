@@ -15,7 +15,6 @@ public class UI_DeckGrid : UIWidgetContainer
 	public enum VerticalJustify {Top,Center,Bottom};
 
 	TweenPosition positionTweener;
-	float zBiasFactor = -1;
 
 	public int maxPerLine = 10;
 	public float _cellWidth = 200;
@@ -79,14 +78,12 @@ public class UI_DeckGrid : UIWidgetContainer
 			ts.enabled = true;
 			tr.enabled = true;
 			t = c;
-			int yZ = (int)getYindex(c);
-			int zOffset = 0;
-			if(hJustify==HorizontalJustify.Right)
-				zOffset = yZ + c * OFFSET_PER_CARD;
-			else
-				zOffset = yZ + c * OFFSET_PER_CARD;
 
-            card.zDepth = (int)(zOffset * zBiasFactor);
+            //sets card's depth in comparison with the others
+            if (hJustify==HorizontalJustify.Right)
+                card.zDepth = (int)getYindex(c) + c * OFFSET_PER_CARD;
+			else
+		        card.zDepth = (int)getYindex(c) + c * -OFFSET_PER_CARD;
 		}
 
 		if(positionTweener==null)
