@@ -28,7 +28,8 @@ public class GameContoller : RxFx_FSM
 	public MonoBehaviour[] starEffectActivateList;
 	//int _playResult = 0;
     int turnsCount = 0;
-    List<int> playersPosition = new List<int>();
+
+    readonly List<int> mPlayersPosition = new List<int>();
     public UILabel turnsCounter;
 
     protected float lastVolume = 0;
@@ -144,28 +145,28 @@ public class GameContoller : RxFx_FSM
         switch (Toolbox.Instance.gameSettings.numberOfPlayers)
         {
             case 1:
-                playersPosition.Add(0);
+                mPlayersPosition.Add(0);
                 break;
             case 2:
-                playersPosition.Add(0);
-                playersPosition.Add(2);
+                mPlayersPosition.Add(0);
+                mPlayersPosition.Add(2);
                 break;
             case 3:
-                playersPosition.Add(0);
-                playersPosition.Add(1);
-                playersPosition.Add(2);
+                mPlayersPosition.Add(0);
+                mPlayersPosition.Add(1);
+                mPlayersPosition.Add(2);
                 break;
             case 4:
-                playersPosition.Add(0);
-                playersPosition.Add(1);
-                playersPosition.Add(2);
-                playersPosition.Add(3);
+                mPlayersPosition.Add(0);
+                mPlayersPosition.Add(1);
+                mPlayersPosition.Add(2);
+                mPlayersPosition.Add(3);
                 break;
         }
 
-        for(int playerIdx = 0; playerIdx < playersPosition.Count; playerIdx++)
+        for(int playerIdx = 0; playerIdx < mPlayersPosition.Count; playerIdx++)
         {
-            int position = playersPosition[playerIdx];
+            int position = mPlayersPosition[playerIdx];
 
             playerDecks[position].enabled = true;
             playerDecks[position].gameObject.SetActive(true);
@@ -198,7 +199,7 @@ public class GameContoller : RxFx_FSM
         turnsCounter.gameObject.SetActive(false);
 
         //FSM_Event nextPhase = new FSM_Event("",State_DrawPhase1);	
-        Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: GameReset");
+        Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: GameReset");
 
 		mainDeck.DeckUiEnabled(false);
 
@@ -269,7 +270,7 @@ public class GameContoller : RxFx_FSM
 	IEnumerator State_DrawPhase1(params object[] data)
 	{
 		//FSM_Event nextPhase = new FSM_Event("",State_DrawPhase2);	
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: DrawPhase1");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase1");
 
         // Create the star deck
 	    Card[] cards = mainDeck.GetCardList();
@@ -300,7 +301,7 @@ public class GameContoller : RxFx_FSM
 	IEnumerator State_DrawPhase2(params object[] data)
 	{
 		//FSM_Event nextPhase = new FSM_Event("",State_DrawPhase3);	
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: DrawPhase2");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase2");
 
 	    int numberOfCards; // classic mode
 
@@ -377,7 +378,7 @@ public class GameContoller : RxFx_FSM
 	IEnumerator State_DrawPhase3(params object[] data)
 	{
 		//FSM_Event nextPhase = new FSM_Event("",State_Initiative);	
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: DrawPhase3");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase3");
 
         int numberOfCards = 4; // classic mode
         // Solitaire modes?
@@ -445,7 +446,7 @@ public class GameContoller : RxFx_FSM
 	IEnumerator State_Initiative(params object[] data)
 	{
 		//FSM_Event nextPhase = new FSM_Event("",State_PlayerSelect);	
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: Initiative");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: Initiative");
 
         // pick a random player IF Difficulty isn't easy
         // if so, get a human player to start
@@ -477,7 +478,7 @@ public class GameContoller : RxFx_FSM
             currentPlayer = Random.Range(0, Toolbox.Instance.gameSettings.numberOfPlayers);
         }
 
-        avatars[playersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
+        avatars[mPlayersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
 
         callEvent("PlayerSelect");
 		yield break;
@@ -485,7 +486,7 @@ public class GameContoller : RxFx_FSM
 	
 	IEnumerator State_PlayerSelect(params object[] data)
 	{
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: PlayerSelect");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: PlayerSelect");
 
 	    EventReceiver.TriggerPlayerSelectEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
 
@@ -526,12 +527,12 @@ public class GameContoller : RxFx_FSM
 
 	IEnumerator State_PlayerPickCard(params object[] data)
 	{
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_PlayerPickCard");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayerPickCard");
         //FSM_Event cardPickedEvent = new FSM_Event("CardPicked",State_PlayerMove,true);
 
-        playerDecks[playersPosition[currentPlayer]].DeckUiEnabled(true);
-		playerDecks[playersPosition[currentPlayer]].VisuallyActive = true;
-		playerDecks[playersPosition[currentPlayer]].zDepth = 600;
+        playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(true);
+		playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
+		playerDecks[mPlayersPosition[currentPlayer]].zDepth = 600;
 		yield return new WaitForSeconds(0.5f);
 
 		while(true)
@@ -544,11 +545,11 @@ public class GameContoller : RxFx_FSM
 
 	IEnumerator State_PlayerMove(params object[] data)
 	{
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_PlayerMove");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayerMove");
 
 		//Get the select card from the event data;
 		selectedCard = playedCard = (Card)data[0];
-		playerDecks[playersPosition[currentPlayer]].DeckUiEnabled(false);
+		playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(false);
         //selectedCard.DrawCard(playedCardDeck);
 
         EventReceiver.TriggerCardPlayedEvent(playedCard);
@@ -560,15 +561,15 @@ public class GameContoller : RxFx_FSM
 
 	IEnumerator State_AIMove(params object[] data)
 	{
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_AIMove");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_AIMove");
 
-		playerDecks[playersPosition[currentPlayer]].VisuallyActive = true;
-		playerDecks[playersPosition[currentPlayer]].zDepth = 600;
+		playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
+		playerDecks[mPlayersPosition[currentPlayer]].zDepth = 600;
 		yield return new WaitForSeconds(1.5f);
 
 		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard(playedCardDeck) as Card;
 		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard() as Card;
-		selectedCard = playedCard = AI_PickBestCard(playerDecks[playersPosition[currentPlayer]],fairyRingDeck);
+		selectedCard = playedCard = AI_PickBestCard(playerDecks[mPlayersPosition[currentPlayer]],fairyRingDeck);
 
 	    EventReceiver.TriggerCardPlayedEvent(playedCard);
 
@@ -579,7 +580,7 @@ public class GameContoller : RxFx_FSM
 
 	IEnumerator State_PlayResolve(params object[] data)
 	{
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_PlayResolve");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayResolve");
 
 		//Let's see how good this move was
 		int playQuality = GetPlayValue(playedCard,fairyRingDeck);
@@ -664,11 +665,11 @@ public class GameContoller : RxFx_FSM
 
         foreach (Card c in takenCards)
 		{
-            yield return StartCoroutine(c.AnimateDrawCard(playerDecks[playersPosition[currentPlayer]],0f));
+            yield return StartCoroutine(c.AnimateDrawCard(playerDecks[mPlayersPosition[currentPlayer]],0f));
 		}
 		fairyRingDeck.Refresh();
 		fairyRingDeck.DeckUiEnabled(false);
-		playerDecks[playersPosition[currentPlayer]].Refresh();
+		playerDecks[mPlayersPosition[currentPlayer]].Refresh();
 
 
 		//playedCard.DrawCard(fairyRingDeck);
@@ -680,24 +681,24 @@ public class GameContoller : RxFx_FSM
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
             case GameSettings.RulesVariant.Classic:
-                playerDecks[playersPosition[currentPlayer]].VisuallyActive = false;
+                playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = false;
                 yield return new WaitForSeconds(0.5f);
                 break;
         }
 
         //playerDecks[playersPosition[currentPlayer]].VisuallyActive = false;
         yield return new WaitForSeconds(0.5f);
-        playerDecks[playersPosition[currentPlayer]].zDepth = 0;
+        playerDecks[mPlayersPosition[currentPlayer]].zDepth = 0;
 
         callEvent("CheckVictoryConditions");
 	}	
 
 	IEnumerator State_CheckVictoryConditions (params object[] data)
 	{
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_CheckVictoryConditions");
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_CheckVictoryConditions");
 
 		List<Card> cardList = new List<Card>();
-        cardList.AddRange(playerDecks[playersPosition[currentPlayer]].GetCardList());
+        cardList.AddRange(playerDecks[mPlayersPosition[currentPlayer]].GetCardList());
 
         // If ultimate, counts my deck and fairy ring deck
         if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Ultimate_Solitaire)
@@ -784,7 +785,7 @@ public class GameContoller : RxFx_FSM
 	{
 		//FSM_Event playerSelect = new FSM_Event("",State_PlayerSelect);
 		
-		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_DeclareWinner " + currentPlayer);
+		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_DeclareWinner " + currentPlayer);
 
 	    EventReceiver.TriggerDeclareWinnerEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
 		yield return StartCoroutine(uiFunctionScript.SendGameMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!",2f));
@@ -794,14 +795,14 @@ public class GameContoller : RxFx_FSM
 
 	IEnumerator State_ChangePlayer (params object[] data)
 	{
-        avatars[playersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(false);
+        avatars[mPlayersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(false);
 
 		currentPlayer++;
 		currentPlayer = currentPlayer % Toolbox.Instance.gameSettings.numberOfPlayers;
 
-        avatars[playersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
+        avatars[mPlayersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
 
-        Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_ChangePlayer " + currentPlayer);
+        Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_ChangePlayer " + currentPlayer);
 
 		callEvent("PlayerSelect");
 		yield break;

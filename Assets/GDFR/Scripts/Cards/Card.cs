@@ -303,9 +303,6 @@ public class Card : MonoBehaviour
 
     public void DrawCard(Deck toDeck, Transform parent = null)
     {
-        //base.DrawCard (toDeck);
-        //Deck GtoDeck = (Deck)toDeck;
-        //Vector3 tempScale = scaleTransform.localScale;
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
         toDeck.AddCard(this);
