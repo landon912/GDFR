@@ -203,8 +203,13 @@ public class GameContoller : RxFx_FSM
 
 		mainDeck.DeckUiEnabled(false);
 
-		//return all cards to main deck
-		for(int p=0;p<playerDecks.Length;p++)
+	    foreach (int index in mPlayersPosition)
+	    {
+	        avatars[index].avatarGlowSprite.gameObject.SetActive(false);
+	    }
+
+        //return all cards to main deck
+        for (int p=0;p<playerDecks.Length;p++)
 		{
 			playerDecks[p].ReturnAllCards(mainDeck);
 		}
@@ -276,11 +281,22 @@ public class GameContoller : RxFx_FSM
 	    Card[] cards = mainDeck.GetCardList();
 		foreach(Card c in cards)
 		{
-			c.CurrentRace = Race.Goblin;
-			if(c.goblinStarBorder)
-			{
-				c.DrawCardInstant(starDeck);
-			}
+		    if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule)
+		    {
+			    c.CurrentRace = Race.Fairy;
+		        if (c.fairyStarBorder)
+		        {
+		            c.DrawCardInstant(starDeck);
+		        }
+            }
+		    else
+		    {
+			    c.CurrentRace = Race.Goblin;
+		        if (c.goblinStarBorder)
+		        {
+		            c.DrawCardInstant(starDeck);
+		        }
+            }
 		}
 
         // Give 1 star card for each player
@@ -289,7 +305,7 @@ public class GameContoller : RxFx_FSM
             // Enabled player ?
             if (pDeck.enabled)
             {
-                Card card = starDeck.DrawRandomCard() as Card;
+                Card card = starDeck.DrawRandomCard();
                 yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
             }
 		}
@@ -303,10 +319,12 @@ public class GameContoller : RxFx_FSM
 		//FSM_Event nextPhase = new FSM_Event("",State_DrawPhase3);	
 		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase2");
 
-	    int numberOfCards; // classic mode
+	    GameSettings.RulesVariant rulesVariant = Toolbox.Instance.gameSettings.rulesVariant;
+
+        int numberOfCards; // classic mode
 
 	    // Solitaire modes?
-	    switch (Toolbox.Instance.gameSettings.rulesVariant)
+	    switch (rulesVariant)
 	    {
 	        case GameSettings.RulesVariant.Solitaire:
 	        case GameSettings.RulesVariant.Ultimate_Solitaire:
@@ -353,20 +371,17 @@ public class GameContoller : RxFx_FSM
             if (pDeck.enabled)
             {
                 Card secondCard = mainDeck.DrawRandomCardOfSymbolGroup(pDeck.GetCardList()[0].CurrentSymbolGroup == SymbolGroup.FrogMushroom ? SymbolGroup.SunMoon : SymbolGroup.FrogMushroom);
-                secondCard.ChangeRace(Race.Goblin);
+                secondCard.ChangeRace(rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? Race.Fairy : Race.Goblin);
                 yield return StartCoroutine(secondCard.AnimateDrawCard(pDeck, dealSpeed));
 
                 //deal the rest of the cards
                 for (int c = 1; c < numberOfCards; c++)
                 {
-                    Card card = mainDeck.DrawRandomCard() as Card;
-                    card.ChangeRace(Race.Goblin);
+                    Card card = mainDeck.DrawRandomCard();
+                    card.ChangeRace(rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? Race.Fairy : Race.Goblin);
                     yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
                 }
 
-			    //Card[] cards = pDeck.GetCardList();
-			    //foreach(Card c in cards)
-			    //	c.ChangeRace(Race.Goblin);
 			    pDeck.Refresh();
             }
         }
@@ -432,20 +447,17 @@ public class GameContoller : RxFx_FSM
         //draw 4 cards to the fairy ring and make them all fairies.
         for (int d=0; d < numberOfCards; d++)
 		{
-			//Card card = (Card)mainDeck.DrawRandomCard(fairyRingDeck);
-			Card card = (Card)mainDeck.DrawRandomCard();
-			card.CurrentRace = Race.Fairy;
-			yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck,dealSpeed));
+			Card card = mainDeck.DrawRandomCard();
+			card.CurrentRace = Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? Race.Goblin : Race.Fairy;
+            yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck,dealSpeed));
 		}
 		fairyRingDeck.Refresh();
 		
 		callEvent("Initiative");
-		yield break;
 	}
 	
 	IEnumerator State_Initiative(params object[] data)
-	{
-		//FSM_Event nextPhase = new FSM_Event("",State_PlayerSelect);	
+	{	
 		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: Initiative");
 
         // pick a random player IF Difficulty isn't easy
@@ -503,9 +515,6 @@ public class GameContoller : RxFx_FSM
                 break;
         }
 
-        //uiFunctionScript.StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + " Move!",3f));
-        //yield return new WaitForSeconds(3f);
-
         if (turnsCounter.enabled)
         {
             turnsCount++;
@@ -528,7 +537,6 @@ public class GameContoller : RxFx_FSM
 	IEnumerator State_PlayerPickCard(params object[] data)
 	{
 		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayerPickCard");
-        //FSM_Event cardPickedEvent = new FSM_Event("CardPicked",State_PlayerMove,true);
 
         playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(true);
 		playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
@@ -538,7 +546,6 @@ public class GameContoller : RxFx_FSM
 		while(true)
 		{
 			//Wait for player to select a card usinging CardPicked event externally.
-			//Debug.Log ("Waiting");
 			yield return null;
 		}
 	}
@@ -550,7 +557,6 @@ public class GameContoller : RxFx_FSM
 		//Get the select card from the event data;
 		selectedCard = playedCard = (Card)data[0];
 		playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(false);
-        //selectedCard.DrawCard(playedCardDeck);
 
         EventReceiver.TriggerCardPlayedEvent(playedCard);
 
@@ -583,7 +589,7 @@ public class GameContoller : RxFx_FSM
 		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayResolve");
 
 		//Let's see how good this move was
-		int playQuality = GetPlayValue(playedCard,fairyRingDeck);
+		//int playQuality = GetPlayValue(playedCard,fairyRingDeck);
 
 		Card[] fCard = fairyRingDeck.GetCardList();
 
@@ -601,14 +607,13 @@ public class GameContoller : RxFx_FSM
         //go from right to left
         for(int i = fCard.Length-1; i>=0; i--)
 		{
-		    Card c = (Card) fCard[i];
+		    Card c = fCard[i];
 			if(c!=playedCard)
 			{
 				if(c.CurrentRhyme==playedCard.CurrentRhyme || playedCard.StarsShowing)
 				{
 					cardFlipped = true;
 					Rhymecount++;
-                    //Debug.Log ("Rhyme Match Found");
 				    if (playedCard.StarsShowing)
 				    {
                         //faster flip
@@ -627,10 +632,8 @@ public class GameContoller : RxFx_FSM
 		}
 		if(cardFlipped)
 		{
-		//	yield return StartCoroutine(uiFunctionScript.SendGameMessage("player " + (currentPlayer+1) + " Got " + Rhymecount + " Rhymes!",2f));
 			yield return new WaitForSeconds(1f);
 		}
-
 
 		//colect matching symbols
 		bool cardTaken = false;
@@ -671,22 +674,20 @@ public class GameContoller : RxFx_FSM
 		fairyRingDeck.DeckUiEnabled(false);
 		playerDecks[mPlayersPosition[currentPlayer]].Refresh();
 
-
-		//playedCard.DrawCard(fairyRingDeck);
 		yield return StartCoroutine(playedCard.AnimateDrawCard(fairyRingDeck,1f));
-		EventReceiver.TriggerPlayResultEvent(playQuality);
+		//EventReceiver.TriggerPlayResultEvent(playQuality);
 		yield return new WaitForSeconds(1f);
 		fairyRingDeck.Refresh();
 
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
             case GameSettings.RulesVariant.Classic:
+            case GameSettings.RulesVariant.Goblins_Rule:
                 playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = false;
                 yield return new WaitForSeconds(0.5f);
                 break;
         }
 
-        //playerDecks[playersPosition[currentPlayer]].VisuallyActive = false;
         yield return new WaitForSeconds(0.5f);
         playerDecks[mPlayersPosition[currentPlayer]].zDepth = 0;
 
@@ -783,8 +784,6 @@ public class GameContoller : RxFx_FSM
 
 	IEnumerator State_DeclareWinner (params object[] data)
 	{
-		//FSM_Event playerSelect = new FSM_Event("",State_PlayerSelect);
-		
 		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_DeclareWinner " + currentPlayer);
 
 	    EventReceiver.TriggerDeclareWinnerEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
@@ -814,62 +813,11 @@ public class GameContoller : RxFx_FSM
 		Card currentBestCard = null;
 		//start each fromDeck card
 		int bestDiscardValue = -10;
-		Card[] pCards = fromDeck.GetCardList() as Card[];
-		//Card[] tCards = toDeck.GetCardList() as Card[];
+	    Card[] pCards = fromDeck.GetCardList();
 		foreach(Card pCard in pCards)
 		{
-			int discardValue = GetPlayValue(pCard,toDeck);
-			/*
-			int discardValue = 0;
-			if(pCard.currentRace==Race.Goblin)discardValue+=1;
-			if(pCard.currentRace==Race.Fairy)discardValue-=1;
-			//look through target deck and see how many fairies vs goblins we get
-
-			foreach(Card tCard in tCards)
-			{
-
-				Symbol tSymbol = tCard.currentSymbol;
-				Race tRace = tCard.currentRace;
-				//is it a rhyme?
-				if(tCard.currentRhyme==pCard.currentRhyme || pCard.starsShowing)
-				{
-					switch (tCard.currentSymbol)
-					{
-						case Symbol.Sun:
-						tSymbol = Symbol.Moon;
-						break;
-						case Symbol.Moon:
-						tSymbol = Symbol.Sun;
-						break;
-						case Symbol.Mushroom:
-						tSymbol = Symbol.Frog;
-						break;
-						case Symbol.Frog:
-						tSymbol = Symbol.Mushroom;
-						break;
-					}
-					switch (tCard.currentRace)
-					{
-					case Race.Fairy:
-						tRace = Race.Goblin;
-						break;
-					case Race.Goblin:
-						tRace = Race.Fairy;
-						break;
-					}
-				}
-
-				//is it a match?
-				if(tSymbol==pCard.currentSymbol)
-				{
-					if(tRace==Race.Goblin)
-						discardValue-=1;
-					else
-						discardValue+=1;
-				}
-			}
-			*/
-			//Debug.Log("Card Value = " + discardValue);
+			int discardValue = GetPlayValue(pCard,toDeck, Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? -1 : 1);
+			
 			if(discardValue>bestDiscardValue)
 			{
 				currentBestCard = pCard;
@@ -879,9 +827,9 @@ public class GameContoller : RxFx_FSM
 		return currentBestCard;
 	}
 
-	public static int GetPlayValue(Card pCard, Deck toDeck)
+	public static int GetPlayValue(Card pCard, Deck toDeck, int modifier)
 	{
-		Card[] tCards = toDeck.GetCardList() as Card[];
+	    Card[] tCards = toDeck.GetCardList();
 		int discardValue = 0;
 
 		foreach(Card tCard in tCards)
@@ -923,9 +871,9 @@ public class GameContoller : RxFx_FSM
 			if(tSymbol==pCard.CurrentSymbol)
 			{
 				if(tRace==Race.Goblin)
-					discardValue-=1;
+					discardValue -= 1 * modifier;
 				else
-					discardValue+=1;
+					discardValue += 1 * modifier;
 			}
 		}
 
@@ -934,18 +882,18 @@ public class GameContoller : RxFx_FSM
             // Best play is to discard goblins if it doesnt get more goblins
             if (discardValue == 0)
             {
-                discardValue += 1;
+                discardValue += 1 * modifier;
 
                 // In solitaire, best play is to discard goblins without get others
                 if (Toolbox.Instance.gameSettings.numberOfPlayers == 1)
                 {
-                    discardValue += 3;
+                    discardValue += 3 * modifier;
                 }
             }
-            discardValue += 1;
+            discardValue += 1 * modifier;
         }
         
-        if (pCard.CurrentRace == Race.Fairy) discardValue -= 1;
+        if (pCard.CurrentRace == Race.Fairy) discardValue -= 1 * modifier;
 
         return discardValue;
 	}
