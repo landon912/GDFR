@@ -41,12 +41,12 @@ public class AudioEvents : MonoBehaviour
         StartCoroutine(PlayOneClipThenTheOther(FAIRY_LAUGH, GOBLIN_LAUGH, 0.5f));
     }
 
-    void OnCardMoved(GDFR_Card_Script card)
+    void OnCardMoved(Card card)
     {
         AudioController.Play("Card Moved");
 	}
 
-    void OnCardPlayed(GDFR_Card_Script card)
+    void OnCardPlayed(Card card)
     {
         //TODO: Replace with saying the name of the card
         switch (card.CurrentRace)
@@ -72,17 +72,17 @@ public class AudioEvents : MonoBehaviour
 	    AudioController.Play("Symbol Match");
 	}
 
-    void OnCardFlip(GDFR_Card_Script card, bool wasFromStar)
+    void OnCardFlip(Card card, bool wasFromStar)
     {
         //TODO: Replace with saying the rhyme
         if(!wasFromStar) { AudioController.Play("Card Flip"); }
     }
 
-    void OnCardsTaken(GDFR_Card_Script[] cards)
+    void OnCardsTaken(Card[] cards)
     {
         bool hasFairy = false, hasGoblin = false;
 
-        foreach (GDFR_Card_Script card in cards)
+        foreach (Card card in cards)
         {
             if (hasFairy && hasGoblin){ break; }
 

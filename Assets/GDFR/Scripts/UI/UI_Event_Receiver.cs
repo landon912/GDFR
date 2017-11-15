@@ -1,28 +1,28 @@
 ﻿using UnityEngine;
 
-public class UI_Event_Receiver : MonoBehaviour {
-
+public class UI_Event_Receiver : MonoBehaviour
+{
 	public delegate void CardSelectedHandler(Card card);
 	public static event CardSelectedHandler CardSelected;
 
 	public delegate void CardDoubleClickedHandler(Card card);
 	public static event CardDoubleClickedHandler CardDoubleClicked;
 
-	public delegate void backgroundDoubleClickedHandler(Vector2 pos);
-	public static event backgroundDoubleClickedHandler BackgroundDoubleClicked;
+	public delegate void BackgroundDoubleClickedHandler(Vector2 pos);
+	public static event BackgroundDoubleClickedHandler BackgroundDoubleClicked;
 
-	public delegate void backgroundDraggedHandler(Vector2 pos);
-	public static event backgroundDraggedHandler BackgroundDragged;
+	public delegate void BackgroundDraggedHandler(Vector2 pos);
+	public static event BackgroundDraggedHandler BackgroundDragged;
 
-	public delegate void backgroundDroppedHandler();
-	public static event backgroundDroppedHandler BackgroundDropped;
+	public delegate void BackgroundDroppedHandler();
+	public static event BackgroundDroppedHandler BackgroundDropped;
 
 	public delegate void UIScrollHandler(float delta);
 	public static event UIScrollHandler UIScroll;
 
 	public static void UI_Card_Selected(Card card)
 	{
-		if(card!=null && CardSelected!=null)
+		if(card != null && CardSelected != null)
 			CardSelected(card);
 	}
 
@@ -32,7 +32,7 @@ public class UI_Event_Receiver : MonoBehaviour {
 
 	public static void OnCardDoubleClick(Card card)
 	{
-		if(card!=null && CardDoubleClicked!=null)
+		if(card != null && CardDoubleClicked != null)
 			CardDoubleClicked(card);
 	}
 
@@ -43,28 +43,28 @@ public class UI_Event_Receiver : MonoBehaviour {
 
 	public static void OnCardScroll(Card card,float delta)
 	{
-		UIScroll(delta);
+	    if (UIScroll != null && card != null)
+            UIScroll(delta);
 	}
 
 	void OnDoubleClick()
 	{
-		//Debug.Log ("Something happened");
-		BackgroundDoubleClicked(UICamera.currentTouch.pos);
+	    if (BackgroundDoubleClicked != null) BackgroundDoubleClicked(UICamera.currentTouch.pos);
 	}
 
 	void OnDrag(Vector2 delta)
 	{
-		BackgroundDragged(delta);
+	    if (BackgroundDragged != null) BackgroundDragged(delta);
 	}
 
 	void OnDrop()
 	{
-		//Debug.Log("DROPPED");
-		BackgroundDropped();
+	    //Debug.Log("DROPPED");
+	    if (BackgroundDropped != null) BackgroundDropped();
 	}
 
 	void OnScroll (float delta)
 	{
-		UIScroll(delta);
+	    if (UIScroll != null) UIScroll(delta);
 	}
 }

@@ -9,44 +9,44 @@ public class EventReceiver : MonoBehaviour
         if(NewGameStartedEvent != null) NewGameStartedEvent();
     }
 
-	public delegate void CardMovedEventHandler(GDFR_Card_Script card);
+	public delegate void CardMovedEventHandler(Card card);
 	public static event CardMovedEventHandler CardMovedEvent; 
-	public static void TriggerCardMovedEvent(GDFR_Card_Script card)
+	public static void TriggerCardMovedEvent(Card card)
 	{
 	    if (CardMovedEvent != null) CardMovedEvent(card);
 	}
 
-    public delegate void CardPlayedEventHandler(GDFR_Card_Script card);
+    public delegate void CardPlayedEventHandler(Card card);
     public static event CardPlayedEventHandler CardPlayedEvent;
-    public static void TriggerCardPlayedEvent(GDFR_Card_Script card)
+    public static void TriggerCardPlayedEvent(Card card)
     {
         if (CardPlayedEvent != null) CardPlayedEvent(card);
     }
 
-	public delegate void StarPlayedEventHandler(GDFR_Card_Script card);
+	public delegate void StarPlayedEventHandler(Card card);
 	public static event StarPlayedEventHandler StarPlayedEvent; 
-	public static void TriggerStarPlayedEvent(GDFR_Card_Script card)
+	public static void TriggerStarPlayedEvent(Card card)
 	{
 	    if (StarPlayedEvent != null) StarPlayedEvent(card);
 	}
 
-	public delegate void SymbolMatchEventHandler(GDFR_Card_Script[] cards);
+	public delegate void SymbolMatchEventHandler(Card[] cards);
 	public static event SymbolMatchEventHandler SymbolMatchEvent; 
-	public static void TriggerSymbolMatchEvent(GDFR_Card_Script[] cards)
+	public static void TriggerSymbolMatchEvent(Card[] cards)
 	{
 	    if (SymbolMatchEvent != null) SymbolMatchEvent(cards);
 	}
 
-    public delegate void CardFlipEventHandler(GDFR_Card_Script card, bool wasFromStar);
+    public delegate void CardFlipEventHandler(Card card, bool wasFromStar);
     public static event CardFlipEventHandler CardFlipEvent;
-    public static void TriggerCardFlipEvent(GDFR_Card_Script card, bool wasFromStar)
+    public static void TriggerCardFlipEvent(Card card, bool wasFromStar)
     {
         if (CardFlipEvent != null) CardFlipEvent(card, wasFromStar);
     }
 
-    public delegate void CardsTakenEventHandler(GDFR_Card_Script[] cards);
+    public delegate void CardsTakenEventHandler(Card[] cards);
     public static event CardsTakenEventHandler CardsTakenEvent;
-    public static void TriggerCardsTakenEvent(GDFR_Card_Script[] cards)
+    public static void TriggerCardsTakenEvent(Card[] cards)
     {
         if (CardsTakenEvent != null) CardsTakenEvent(cards);
     }

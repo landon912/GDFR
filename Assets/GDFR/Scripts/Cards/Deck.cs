@@ -5,9 +5,11 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-public class GDFR_Deck_Script : Deck
+public class Deck : MonoBehaviour
 {
-    private List<GDFR_Card_Script> cards = new List<GDFR_Card_Script>();
+    private readonly List<Card> mCards = new List<Card>();
+
+    public Transform deckTransform;
 
     public Object xmlDataFile;
 	public GameObject cardPrefab;
@@ -58,7 +60,6 @@ public class GDFR_Deck_Script : Deck
 		if(xmlDataFile!=null)
 			LoadDeckData(xmlDataFile);
 		Refresh();
-
 	}
 
 	void SetVisuallyActive(bool VisActive)
@@ -78,9 +79,8 @@ public class GDFR_Deck_Script : Deck
 		}
 	}
 	
-	public override void Refresh ()
+	public void Refresh ()
 	{
-		base.Refresh ();
 		deckGrid.Reposition();
 	}
 
@@ -92,46 +92,42 @@ public class GDFR_Deck_Script : Deck
 		}
 	}
 	
-	public override Card DrawRandomCard (Deck toDeck)
+	public Card DrawRandomCard (Deck toDeck)
 	{
-        base.DrawRandomCard(toDeck);
-		int count = transform.childCount;
-		if(count>0)
+		if(mCards.Count >0)
 		{
-            int randomTmp = Random.Range(0, count);
-            Debug.Log("Random card: " + randomTmp + " from " + count);
-            Transform t = deckTransform.GetChild(randomTmp);
-			GDFR_Card_Script card = t.gameObject.GetComponent<GDFR_Card_Script>();
-			card.DrawCard(toDeck);
+            int randomTmp = Random.Range(0, mCards.Count);
+            Debug.Log("Random card: " + randomTmp + " from " + mCards.Count);
+
+			mCards[randomTmp].DrawCard(toDeck);
             randomTmp = Random.Range(0, 2);
-            card.ChangeRace((Race)randomTmp);
-			return card;
+            mCards[randomTmp].ChangeRace((Race)randomTmp);
+			return mCards[randomTmp];
 		}
 	    return null;
 	}
 
-	public override Card DrawRandomCard ()
+	public Card DrawRandomCard ()
 	{
-        base.DrawRandomCard();
-		if(cards.Count >0)
+		if(mCards.Count >0)
 		{
-            int randomTmp = Random.Range(0, cards.Count);
-            Debug.Log("Random card: " + randomTmp + " from " + cards.Count);
+            int randomTmp = Random.Range(0, mCards.Count);
+            Debug.Log("Random card: " + randomTmp + " from " + mCards.Count);
             
-			return cards[randomTmp];
+			return mCards[randomTmp];
 		}
 
         return null;
 	}
 
-    public GDFR_Card_Script DrawRandomCardOfSymbolGroup(SymbolGroup symbolGroup)
+    public Card DrawRandomCardOfSymbolGroup(SymbolGroup symbolGroup)
     {
-        if (cards.Count > 0)
+        if (mCards.Count > 0)
         {
-            List<GDFR_Card_Script> tempCards = new List<GDFR_Card_Script>();
+            List<Card> tempCards = new List<Card>();
 
             //sort cards
-            foreach (GDFR_Card_Script c in cards)
+            foreach (Card c in mCards)
             {
                 if (c.CurrentSymbolGroup == symbolGroup)
                 {
@@ -151,9 +147,9 @@ public class GDFR_Deck_Script : Deck
         return null;
     }
 
-    public GDFR_Card_Script[] GetCardList()
+    public Card[] GetCardList()
     {
-        return cards.ToArray();
+        return mCards.ToArray();
     }
 	
 	public void DeckUiEnabled(bool isEnabled)
@@ -166,35 +162,39 @@ public class GDFR_Deck_Script : Deck
 		}
 	}
 
-	public override void ReturnAllCards (Deck toDeck)
+	public void ReturnAllCards (Deck toDeck)
 	{
-		if(toDeck==null)return;
-		base.ReturnAllCards (toDeck);
-		GDFR_Card_Script[] cardList = GetCardList();
-		foreach(GDFR_Card_Script c in cardList)
+		if(toDeck==null) return;
+
+		Card[] cardList = GetCardList();
+		foreach(Card c in cardList)
 		{
 			c.DrawCard(toDeck);
 		}
 	}
 
-	public override Card AddCard(Card card)
+	public Card AddCard(Card card)
 	{
 		Deck fromDeck = card.parentDeck;
 		Transform newCardTrans = card.gameObject.transform;
 		Vector3 tempScale = newCardTrans.localScale;
 
-		base.AddCard(card);
-	    GDFR_Card_Script gCard = (GDFR_Card_Script)card;
-        cards.Add(gCard);
+	    if (card.parentDeck != null)
+	        card.parentDeck.RemoveCard(card);
 
-        EventReceiver.TriggerCardMovedEvent((GDFR_Card_Script)card);
+	    card.gameObject.transform.parent = deckTransform;
+	    card.parentDeck = this;
+
+        mCards.Add(card);
+
+        EventReceiver.TriggerCardMovedEvent(card);
 
 		Refresh();
 		SetZDepthOffset(_zDepth);
-		gCard.zDepth = _zDepth + 100;
+	    card.zDepth = _zDepth + 100;
 
 		if(playSparklesOnDraw)
-			gCard.CardSparkleOverTime(0.4f);
+		    card.CardSparkleOverTime(0.4f);
 		if(fromDeck!=null)
 			fromDeck.Refresh();
 		return card;
@@ -202,22 +202,25 @@ public class GDFR_Deck_Script : Deck
 
 	public Card AddCardInstant(Card card)
 	{
-		base.AddCard(card);
-	    GDFR_Card_Script gCard = (GDFR_Card_Script)card;
-        cards.Add(gCard);
+        if (card.parentDeck != null)
+            card.parentDeck.RemoveCard(card);
+
+        card.gameObject.transform.parent = deckTransform;
+        card.parentDeck = this;
+
+        mCards.Add(card);
 
         card.transform.localPosition = Vector3.zero;
 		SetZDepthOffset(_zDepth);
-
-		gCard.zDepth = _zDepth + 100;
+	    card.zDepth = _zDepth + 100;
 
 		return card;
 	}
 
-    public override Card RemoveCard(Card removeCard)
+    public Card RemoveCard(Card removeCard)
     {
-        base.RemoveCard(removeCard);
-        cards.Remove((GDFR_Card_Script)removeCard);
+        removeCard.gameObject.transform.parent = null;
+        mCards.Remove(removeCard);
         return removeCard;
     }
 
@@ -233,15 +236,13 @@ public class GDFR_Deck_Script : Deck
 
 	public void SetZDepthOffset(int z)
 	{
-		GDFR_Card_Script[] cards = GetCardList() as GDFR_Card_Script[];
-		foreach(GDFR_Card_Script card in cards)
+	    Card[] cards = GetCardList();
+		foreach(Card card in cards)
 			card.zDepthOffset = z;
 	}
 
-	public override void LoadDeckData (Object xmlDataFile)
+	public void LoadDeckData (Object xmlDataFile)
 	{
-		base.LoadDeckData (xmlDataFile);
-
         //Load
         TextAsset textXML = (TextAsset)Resources.Load(xmlDataFile.name, typeof(TextAsset));
         XmlDocument xml = new XmlDocument();
@@ -255,7 +256,7 @@ public class GDFR_Deck_Script : Deck
 			{
 				//new card
 				GameObject newCard = Instantiate(cardPrefab);
-				GDFR_Card_Script cardScript = newCard.GetComponent<GDFR_Card_Script>();
+				Card cardScript = newCard.GetComponent<Card>();
 				AddCardInstant(cardScript);
 				foreach(XmlNode cNode in node.ChildNodes)
 				{

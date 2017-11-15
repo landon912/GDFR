@@ -1,15 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class GDFR_Card_Script : Card
+public class Card : MonoBehaviour
 {
     private bool _cardSparkle;
-
-    public bool _inspecting;
-
-    //public TweenAlpha symbolGlowTweener = null;
-    //public TweenScale symbolGlowScaleTweener = null;
     public int _zDepth;
+
+    public Deck parentDeck = null;
 
     private int _zDepthOffset;
     public TweenScale cardBumpTweener = null;
@@ -151,9 +148,8 @@ public class GDFR_Card_Script : Card
             widgetDefaultDepth[w] = widgetList[w].depth;
     }
 
-    public override IEnumerator Flip(bool wasFromStar)
+    public IEnumerator Flip(bool wasFromStar)
     {
-        yield return base.Flip(wasFromStar);
         EventReceiver.TriggerCardFlipEvent(this, wasFromStar);
         yield return StartCoroutine(AnimateFlip(wasFromStar));
     }
@@ -233,48 +229,9 @@ public class GDFR_Card_Script : Card
 
     public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
     {
-        //Debug.Log("animate draw card");
-        //start animation, when done execute draw card.
-        //GDFR_Deck_Script GDeck = (GDFR_Deck_Script)toDeck;
-
-        //GameObject toGo = GameObject.FindGameObjectWithTag("to");
-        //Card cs= toGo.GetComponent<Card>();
-        //cs.DrawCard(toDeck,GDeck.deckPivot);
-        //toGo.transform.localScale = new Vector3(1f,1f,1f);
-        //Vector3 newPos = GDeck.GetGridPosition(GDeck.count);
-        //toGo.transform.localPosition = newPos;
-        //toDeck.Refresh();
-        //MoveCard(toGo.transform,duration);
-
-        //GDeck.Refresh();
-        //yield return new WaitForSeconds(duration);
         parentDeck.RemoveCard(this);
         toDeck.AddCard(this);
         yield return new WaitForSeconds(duration);
-        //scaleTransform.localScale = new Vector3(1f,1f,1f);
-    }
-
-
-    /*
-	public IEnumerator Co_Animate_DrawCard(Deck toDeck,float duration)
-	{
-		Debug.Log("New animate draw card");
-
-		//Step 1:  remove the card from the deck it's currently in.  add it to the target deck;
-		parentDeck.RemoveCard(this);
-
-		//Step 1:  Open an spot in the toDeck for the card to go into.
-
-		//Step 3:  Animate the card (wait)
-
-		//Step 4:  Add the card to the target deck.
-	}
-	*/
-
-    public override void Inspect()
-    {
-        base.Inspect();
-        _inspecting = !_inspecting;
     }
 
     public void ChangeRace(Race race)
@@ -344,10 +301,10 @@ public class GDFR_Card_Script : Card
         tween.Play(true);
     }
 
-    public override void DrawCard(Deck toDeck, Transform parent = null)
+    public void DrawCard(Deck toDeck, Transform parent = null)
     {
         //base.DrawCard (toDeck);
-        //GDFR_Deck_Script GtoDeck = (GDFR_Deck_Script)toDeck;
+        //Deck GtoDeck = (Deck)toDeck;
         //Vector3 tempScale = scaleTransform.localScale;
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
@@ -359,7 +316,7 @@ public class GDFR_Card_Script : Card
     {
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
-        ((GDFR_Deck_Script) toDeck).AddCardInstant(this);
+        toDeck.AddCardInstant(this);
         toDeck.gameObject.SetActive(deckActive);
     }
 

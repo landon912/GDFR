@@ -57,11 +57,10 @@ public class UI_DeckGrid : UIWidgetContainer
 		}
 		//Debug.Log("Refreshed");
 		int count = transform.childCount;
-		int t = 0;
 		for(int c=0;c<count;c++)
 		{
 			Vector3 newPosition = new Vector3(GetGridPosition(c).x,GetGridPosition(c).y,0f);
-			GDFR_Card_Script card = transform.GetChild(c).GetComponent<GDFR_Card_Script>();
+			Card card = transform.GetChild(c).GetComponent<Card>();
 			TweenPosition tp = transform.GetChild(c).gameObject.GetComponent<TweenPosition>();
 			TweenScale ts = transform.GetChild(c).gameObject.GetComponent<TweenScale>();
 			TweenRotation tr = transform.GetChild(c).gameObject.GetComponent<TweenRotation>();
@@ -77,7 +76,6 @@ public class UI_DeckGrid : UIWidgetContainer
 			tp.enabled = true;
 			ts.enabled = true;
 			tr.enabled = true;
-			t = c;
 
             //sets card's depth in comparison with the others
             if (hJustify==HorizontalJustify.Right)

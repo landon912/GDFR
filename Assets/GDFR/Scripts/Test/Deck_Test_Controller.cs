@@ -3,10 +3,10 @@ using System.Collections;
 
 public class Deck_Test_Controller : MonoBehaviour {
 
-	public static GDFR_Deck_Script masterDeck = null;
-	public static GDFR_Deck_Script testDeck = null;
-	public GDFR_Deck_Script _masterDeck = null;
-	public GDFR_Deck_Script _testDeck = null;
+	public static Deck masterDeck = null;
+	public static Deck testDeck = null;
+	public Deck _masterDeck = null;
+	public Deck _testDeck = null;
 
 	// Use this for initialization
 	void Start () {

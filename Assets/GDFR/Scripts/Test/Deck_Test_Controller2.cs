@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Deck_Test_Controller2 : MonoBehaviour {
 
-	public GDFR_Deck_Script deckA = null;
-	public GDFR_Deck_Script deckB = null;
+	public Deck deckA = null;
+	public Deck deckB = null;
 	public Card testCard = null;
 
 	// Use this for initialization
@@ -19,7 +18,7 @@ public class Deck_Test_Controller2 : MonoBehaviour {
 
 	public void DrawAtoB()
 	{
-		GDFR_Card_Script card = deckA.DrawRandomCard() as GDFR_Card_Script;
+		Card card = deckA.DrawRandomCard() as Card;
 		//StartCoroutine(card.AnimateDrawCard(deckB,1f));
 		//deckB.AddCard(card);
 		card.DrawCard(deckB);
@@ -29,7 +28,7 @@ public class Deck_Test_Controller2 : MonoBehaviour {
 
 	public void DrawBtoA()
 	{
-		GDFR_Card_Script card = deckB.DrawRandomCard() as GDFR_Card_Script;
+		Card card = deckB.DrawRandomCard() as Card;
 		//StartCoroutine(card.AnimateDrawCard(deckA,1f));
 		//deckA.AddCard(card);
 		card.DrawCard(deckA);

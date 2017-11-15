@@ -10,16 +10,16 @@ public class GameContoller : RxFx_FSM
 {
     public GameObject GiveUpButtonGameObject;
 	public Object mainDeckXmlData;
-	public GDFR_Deck_Script swapDeck;
-	public GDFR_Deck_Script mainDeck;
-	public GDFR_Deck_Script starDeck;
-	public GDFR_Deck_Script fairyRingDeck;
-	public GDFR_Deck_Script[] playerDecks;
+	public Deck swapDeck;
+	public Deck mainDeck;
+	public Deck starDeck;
+	public Deck fairyRingDeck;
+	public Deck[] playerDecks;
     public Avatar[] avatars;
-    public GDFR_Deck_Script playedCardDeck;
+    public Deck playedCardDeck;
 	public int currentPlayer = 0;
 	public Card selectedCard = null;
-	public GDFR_Card_Script playedCard = null;
+	public Card playedCard = null;
     //delegate void selectEventHandler(Card card);
     //event selectEventHandler selectEvent; 
     //public float debugDelay = 0f;
@@ -130,7 +130,7 @@ public class GameContoller : RxFx_FSM
         Debug.Log("Number of Players: " + Toolbox.Instance.gameSettings.numberOfPlayers + " - State: SettingUpRules");
 
         // Disable everything first
-        foreach (GDFR_Deck_Script pDeck in playerDecks)
+        foreach (Deck pDeck in playerDecks)
         {
             pDeck.gameObject.SetActive(false);
             pDeck.enabled = false;
@@ -272,8 +272,8 @@ public class GameContoller : RxFx_FSM
 		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: DrawPhase1");
 
         // Create the star deck
-	    GDFR_Card_Script[] cards = mainDeck.GetCardList();
-		foreach(GDFR_Card_Script c in cards)
+	    Card[] cards = mainDeck.GetCardList();
+		foreach(Card c in cards)
 		{
 			c.CurrentRace = Race.Goblin;
 			if(c.goblinStarBorder)
@@ -283,12 +283,12 @@ public class GameContoller : RxFx_FSM
 		}
 
         // Give 1 star card for each player
-		foreach(GDFR_Deck_Script pDeck in playerDecks)
+		foreach(Deck pDeck in playerDecks)
 		{
             // Enabled player ?
             if (pDeck.enabled)
             {
-                GDFR_Card_Script card = starDeck.DrawRandomCard() as GDFR_Card_Script;
+                Card card = starDeck.DrawRandomCard() as Card;
                 yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
             }
 		}
@@ -346,25 +346,25 @@ public class GameContoller : RxFx_FSM
         //For balance reasons, select a random card from the symbol combo OPPOSITE of the dealt star card's symbol combo
         // Ex. If you get a Sun/Moon, your next card should be a random Frog/Mushroom card
         //Then, draw random goblins
-        foreach (GDFR_Deck_Script pDeck in playerDecks)
+        foreach (Deck pDeck in playerDecks)
 		{
             // Enabled player ?
             if (pDeck.enabled)
             {
-                GDFR_Card_Script secondCard = mainDeck.DrawRandomCardOfSymbolGroup(pDeck.GetCardList()[0].CurrentSymbolGroup == SymbolGroup.FrogMushroom ? SymbolGroup.SunMoon : SymbolGroup.FrogMushroom);
+                Card secondCard = mainDeck.DrawRandomCardOfSymbolGroup(pDeck.GetCardList()[0].CurrentSymbolGroup == SymbolGroup.FrogMushroom ? SymbolGroup.SunMoon : SymbolGroup.FrogMushroom);
                 secondCard.ChangeRace(Race.Goblin);
                 yield return StartCoroutine(secondCard.AnimateDrawCard(pDeck, dealSpeed));
 
                 //deal the rest of the cards
                 for (int c = 1; c < numberOfCards; c++)
                 {
-                    GDFR_Card_Script card = mainDeck.DrawRandomCard() as GDFR_Card_Script;
+                    Card card = mainDeck.DrawRandomCard() as Card;
                     card.ChangeRace(Race.Goblin);
                     yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
                 }
 
 			    //Card[] cards = pDeck.GetCardList();
-			    //foreach(GDFR_Card_Script c in cards)
+			    //foreach(Card c in cards)
 			    //	c.ChangeRace(Race.Goblin);
 			    pDeck.Refresh();
             }
@@ -422,7 +422,7 @@ public class GameContoller : RxFx_FSM
         // If the number of players is above 2 (equal 3), return remaining star cards to the mainDeck.
         if (Toolbox.Instance.gameSettings.numberOfPlayers > 2)
         {
-            foreach (GDFR_Card_Script c in starDeck.GetCardList())
+            foreach (Card c in starDeck.GetCardList())
             {
                 c.DrawCardInstant(mainDeck);
             }
@@ -431,8 +431,8 @@ public class GameContoller : RxFx_FSM
         //draw 4 cards to the fairy ring and make them all fairies.
         for (int d=0; d < numberOfCards; d++)
 		{
-			//GDFR_Card_Script card = (GDFR_Card_Script)mainDeck.DrawRandomCard(fairyRingDeck);
-			GDFR_Card_Script card = (GDFR_Card_Script)mainDeck.DrawRandomCard();
+			//Card card = (Card)mainDeck.DrawRandomCard(fairyRingDeck);
+			Card card = (Card)mainDeck.DrawRandomCard();
 			card.CurrentRace = Race.Fairy;
 			yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck,dealSpeed));
 		}
@@ -547,7 +547,7 @@ public class GameContoller : RxFx_FSM
 		Debug.Log("Player " + currentPlayer + "- Position: " + playersPosition[currentPlayer] + " - State: State_PlayerMove");
 
 		//Get the select card from the event data;
-		selectedCard = playedCard = (GDFR_Card_Script)data[0];
+		selectedCard = playedCard = (Card)data[0];
 		playerDecks[playersPosition[currentPlayer]].DeckUiEnabled(false);
         //selectedCard.DrawCard(playedCardDeck);
 
@@ -566,8 +566,8 @@ public class GameContoller : RxFx_FSM
 		playerDecks[playersPosition[currentPlayer]].zDepth = 600;
 		yield return new WaitForSeconds(1.5f);
 
-		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard(playedCardDeck) as GDFR_Card_Script;
-		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard() as GDFR_Card_Script;
+		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard(playedCardDeck) as Card;
+		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard() as Card;
 		selectedCard = playedCard = AI_PickBestCard(playerDecks[playersPosition[currentPlayer]],fairyRingDeck);
 
 	    EventReceiver.TriggerCardPlayedEvent(playedCard);
@@ -600,7 +600,7 @@ public class GameContoller : RxFx_FSM
         //go from right to left
         for(int i = fCard.Length-1; i>=0; i--)
 		{
-		    GDFR_Card_Script c = (GDFR_Card_Script) fCard[i];
+		    Card c = (Card) fCard[i];
 			if(c!=playedCard)
 			{
 				if(c.CurrentRhyme==playedCard.CurrentRhyme || playedCard.StarsShowing)
@@ -634,8 +634,8 @@ public class GameContoller : RxFx_FSM
 		//colect matching symbols
 		bool cardTaken = false;
 		int cardCount = 0;
-		List<GDFR_Card_Script> takenCards = new List<GDFR_Card_Script>();
-		foreach(GDFR_Card_Script c in fCard)
+		List<Card> takenCards = new List<Card>();
+		foreach(Card c in fCard)
 		{
 			if(c!=playedCard)
 			{
@@ -649,7 +649,7 @@ public class GameContoller : RxFx_FSM
 			}
 		}
 
-	    GDFR_Card_Script[] cList = new GDFR_Card_Script[takenCards.Count + 1];
+	    Card[] cList = new Card[takenCards.Count + 1];
 		for(int tc=0;tc<takenCards.Count;tc++)
 			cList[tc] = takenCards[tc];
 		cList[takenCards.Count] = playedCard;
@@ -662,7 +662,7 @@ public class GameContoller : RxFx_FSM
 		    EventReceiver.TriggerCardsTakenEvent(takenCards.ToArray());
         }
 
-        foreach (GDFR_Card_Script c in takenCards)
+        foreach (Card c in takenCards)
 		{
             yield return StartCoroutine(c.AnimateDrawCard(playerDecks[playersPosition[currentPlayer]],0f));
 		}
@@ -707,7 +707,7 @@ public class GameContoller : RxFx_FSM
 
         int fairyCount = 0;
 		int goblinCount = 0;
-		foreach(GDFR_Card_Script c in cardList)
+		foreach(Card c in cardList)
 		{
 			if(c.CurrentRace==Race.Fairy)
 				fairyCount++;
@@ -807,15 +807,15 @@ public class GameContoller : RxFx_FSM
 		yield break;
 	}	
 
-	public static GDFR_Card_Script AI_PickBestCard(GDFR_Deck_Script fromDeck,GDFR_Deck_Script toDeck)
+	public static Card AI_PickBestCard(Deck fromDeck,Deck toDeck)
 	{
 		//grab the first one.  Don't want to return null;
-		GDFR_Card_Script currentBestCard = null;
+		Card currentBestCard = null;
 		//start each fromDeck card
 		int bestDiscardValue = -10;
-		GDFR_Card_Script[] pCards = fromDeck.GetCardList() as GDFR_Card_Script[];
-		//GDFR_Card_Script[] tCards = toDeck.GetCardList() as GDFR_Card_Script[];
-		foreach(GDFR_Card_Script pCard in pCards)
+		Card[] pCards = fromDeck.GetCardList() as Card[];
+		//Card[] tCards = toDeck.GetCardList() as Card[];
+		foreach(Card pCard in pCards)
 		{
 			int discardValue = GetPlayValue(pCard,toDeck);
 			/*
@@ -824,7 +824,7 @@ public class GameContoller : RxFx_FSM
 			if(pCard.currentRace==Race.Fairy)discardValue-=1;
 			//look through target deck and see how many fairies vs goblins we get
 
-			foreach(GDFR_Card_Script tCard in tCards)
+			foreach(Card tCard in tCards)
 			{
 
 				Symbol tSymbol = tCard.currentSymbol;
@@ -878,12 +878,12 @@ public class GameContoller : RxFx_FSM
 		return currentBestCard;
 	}
 
-	public static int GetPlayValue(GDFR_Card_Script pCard, GDFR_Deck_Script toDeck)
+	public static int GetPlayValue(Card pCard, Deck toDeck)
 	{
-		GDFR_Card_Script[] tCards = toDeck.GetCardList() as GDFR_Card_Script[];
+		Card[] tCards = toDeck.GetCardList() as Card[];
 		int discardValue = 0;
 
-		foreach(GDFR_Card_Script tCard in tCards)
+		foreach(Card tCard in tCards)
 		{
 			Symbol tSymbol = tCard.CurrentSymbol;
 			Race tRace = tCard.CurrentRace;
