@@ -46,8 +46,6 @@ public class GDFR_Card_Script : Card
     public string sunSpriteName = "SYMBOL_Sun_Small";
     public string frogSpriteName = "SYMBOL_Frog_Small";
 
-
-
     public Transform scaleTransform = null;
     public UISprite shadowSprite;
 
@@ -84,6 +82,16 @@ public class GDFR_Card_Script : Card
     }
 
     public Symbol CurrentSymbol { get; private set; }
+
+    public SymbolGroup CurrentSymbolGroup
+    {
+        get
+        {
+            return CurrentSymbol == Symbol.Frog || CurrentSymbol == Symbol.Mushroom ? 
+                SymbolGroup.FrogMushroom: 
+                SymbolGroup.SunMoon;
+        }
+    }
 
     public Rhyme CurrentRhyme { get; private set; }
 
@@ -240,6 +248,7 @@ public class GDFR_Card_Script : Card
 
         //GDeck.Refresh();
         //yield return new WaitForSeconds(duration);
+        parentDeck.RemoveCard(this);
         toDeck.AddCard(this);
         yield return new WaitForSeconds(duration);
         //scaleTransform.localScale = new Vector3(1f,1f,1f);

@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 public class Deck : MonoBehaviour {
 	
@@ -12,17 +10,17 @@ public class Deck : MonoBehaviour {
 			deckTransform = transform;
 	}
 
-	public virtual Object drawRandomCard(Deck toDeck)
+	public virtual Card DrawRandomCard(Deck toDeck)
 	{
 		return null;
 	}
 
-	public virtual Object drawRandomCard()
+	public virtual Card DrawRandomCard()
 	{
 		return null;
 	}
 
-	public virtual void loadDeckData(Object xmlDataFile)
+	public virtual void LoadDeckData(Object xmlDataFile)
 	{
 	}
 

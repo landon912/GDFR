@@ -19,7 +19,7 @@ public class Deck_Test_Controller2 : MonoBehaviour {
 
 	public void DrawAtoB()
 	{
-		GDFR_Card_Script card = deckA.drawRandomCard() as GDFR_Card_Script;
+		GDFR_Card_Script card = deckA.DrawRandomCard() as GDFR_Card_Script;
 		//StartCoroutine(card.AnimateDrawCard(deckB,1f));
 		//deckB.AddCard(card);
 		card.DrawCard(deckB);
@@ -29,7 +29,7 @@ public class Deck_Test_Controller2 : MonoBehaviour {
 
 	public void DrawBtoA()
 	{
-		GDFR_Card_Script card = deckB.drawRandomCard() as GDFR_Card_Script;
+		GDFR_Card_Script card = deckB.DrawRandomCard() as GDFR_Card_Script;
 		//StartCoroutine(card.AnimateDrawCard(deckA,1f));
 		//deckA.AddCard(card);
 		card.DrawCard(deckA);

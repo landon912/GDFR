@@ -6,3 +6,9 @@ public enum Symbol
     Mushroom,
     Frog
 }
+
+public enum SymbolGroup
+{
+    SunMoon,
+    FrogMushroom
+}

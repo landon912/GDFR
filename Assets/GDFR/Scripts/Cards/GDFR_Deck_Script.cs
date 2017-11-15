@@ -1,14 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
+using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
+public class GDFR_Deck_Script : Deck
+{
+    private List<GDFR_Card_Script> cards = new List<GDFR_Card_Script>();
 
-public class GDFR_Deck_Script : Deck {
-	
-	public Object xmlDataFile;
+    public Object xmlDataFile;
 	public GameObject cardPrefab;
 	public TweenScale deckScaleTweener = null;
 	UI_DeckGrid deckGrid;
-	public bool _VisuallyActive = false;
+	public bool _VisuallyActive;
 	public float deckActiveWidthLimit = 600f;
 	float deckInActiveWidthLimit = 600f;
 	public bool VisuallyActive
@@ -22,7 +27,7 @@ public class GDFR_Deck_Script : Deck {
 		}
 		get{return _VisuallyActive;}
 	}
-	public int _zDepth = 0;
+	public int _zDepth;
 	public int zDepth
 	{
 		set
@@ -31,11 +36,6 @@ public class GDFR_Deck_Script : Deck {
 			SetZDepthOffset(_zDepth);
 		}
 		get{return _zDepth;}
-	}
-
-	public int count
-	{
-		get{return deckTransform.childCount;}
 	}
 
 	public Transform deckPivot
@@ -52,11 +52,11 @@ public class GDFR_Deck_Script : Deck {
 
 	void Awake()
     {
-		deckGrid = gameObject.GetComponentInChildren<UI_DeckGrid>() as UI_DeckGrid;
+		deckGrid = gameObject.GetComponentInChildren<UI_DeckGrid>();
 		deckInActiveWidthLimit = deckGrid.widthLimit;
 		deckTransform = deckGrid.gameObject.transform;
 		if(xmlDataFile!=null)
-			loadDeckData(xmlDataFile);
+			LoadDeckData(xmlDataFile);
 		Refresh();
 
 	}
@@ -92,14 +92,14 @@ public class GDFR_Deck_Script : Deck {
 		}
 	}
 	
-	public override Object drawRandomCard (Deck toDeck)
+	public override Card DrawRandomCard (Deck toDeck)
 	{
-        base.drawRandomCard(toDeck);
+        base.DrawRandomCard(toDeck);
 		int count = transform.childCount;
 		if(count>0)
 		{
             int randomTmp = Random.Range(0, count);
-            Debug.Log("Random card: " + randomTmp.ToString() + " from " + count.ToString());
+            Debug.Log("Random card: " + randomTmp + " from " + count);
             Transform t = deckTransform.GetChild(randomTmp);
 			GDFR_Card_Script card = t.gameObject.GetComponent<GDFR_Card_Script>();
 			card.DrawCard(toDeck);
@@ -107,46 +107,62 @@ public class GDFR_Deck_Script : Deck {
             card.ChangeRace((Race)randomTmp);
 			return card;
 		}
-		else
-			return null;			
+	    return null;
 	}
 
-	public override Object drawRandomCard ()
+	public override Card DrawRandomCard ()
 	{
-        base.drawRandomCard();
-		int count = deckTransform.childCount;
-		if(count>0)
+        base.DrawRandomCard();
+		if(cards.Count >0)
 		{
-            int randomTmp = Random.Range(0, count);
-            Debug.Log("Random card: " + randomTmp.ToString() + " from " + count.ToString());
-            Transform t = deckTransform.GetChild(randomTmp);
-			GDFR_Card_Script card = t.gameObject.GetComponent<GDFR_Card_Script>();
-			return card;
+            int randomTmp = Random.Range(0, cards.Count);
+            Debug.Log("Random card: " + randomTmp + " from " + cards.Count);
+            
+			return cards[randomTmp];
 		}
-		else
-			return null;			
+
+        return null;
 	}
 
-	public Card[] GetCardList()
-	{
-		/*
-		Card[] cl = new Card[transform.childCount];
-		for(int t=0;t<=transform.childCount-1;t++)
-		{
-			cl[t] = transform.GetChild(t).gameObject.GetComponent<GDFR_Card_Script>();
-		}
-		*/
-		GDFR_Card_Script[] cards = GetComponentsInChildren<GDFR_Card_Script>();
-		return cards;
-	}
+    public GDFR_Card_Script DrawRandomCardOfSymbolGroup(SymbolGroup symbolGroup)
+    {
+        if (cards.Count > 0)
+        {
+            List<GDFR_Card_Script> tempCards = new List<GDFR_Card_Script>();
+
+            //sort cards
+            foreach (GDFR_Card_Script c in cards)
+            {
+                if (c.CurrentSymbolGroup == symbolGroup)
+                {
+                    tempCards.Add(c);
+                }
+            }
+
+            if (tempCards.Count > 0)
+            {
+                int randomTmp = Random.Range(0, tempCards.Count);
+                Debug.Log("Random card of symbol group " + symbolGroup + ": " + randomTmp + " from " + tempCards.Count);
+
+                return tempCards[randomTmp];
+            }
+        }
+
+        return null;
+    }
+
+    public GDFR_Card_Script[] GetCardList()
+    {
+        return cards.ToArray();
+    }
 	
-	public void DeckUiEnabled(bool enabled)
+	public void DeckUiEnabled(bool isEnabled)
 	{
 		UIButton[] buttons = deckTransform.gameObject.GetComponentsInChildren<UIButton>();
 		foreach(UIButton b in buttons)
 		{
-			b.enabled = enabled;
-			b.GetComponent<Collider>().enabled = enabled;
+			b.enabled = isEnabled;
+			b.GetComponent<Collider>().enabled = isEnabled;
 		}
 	}
 
@@ -154,8 +170,8 @@ public class GDFR_Deck_Script : Deck {
 	{
 		if(toDeck==null)return;
 		base.ReturnAllCards (toDeck);
-		Card[] cardList = GetCardList();
-		foreach(Card c in cardList)
+		GDFR_Card_Script[] cardList = GetCardList();
+		foreach(GDFR_Card_Script c in cardList)
 		{
 			c.DrawCard(toDeck);
 		}
@@ -168,15 +184,15 @@ public class GDFR_Deck_Script : Deck {
 		Vector3 tempScale = newCardTrans.localScale;
 
 		base.AddCard(card);
+	    GDFR_Card_Script gCard = (GDFR_Card_Script)card;
+        cards.Add(gCard);
 
-		EventReceiver.TriggerCardMovedEvent((GDFR_Card_Script)card);
+        EventReceiver.TriggerCardMovedEvent((GDFR_Card_Script)card);
 
-		//newCardTrans.localScale = tempScale;
-		//newCardTrans.localPosition = GetGridPosition(deckTransform.childCount-1);
 		Refresh();
 		SetZDepthOffset(_zDepth);
-		GDFR_Card_Script gCard = (GDFR_Card_Script)card;
 		gCard.zDepth = _zDepth + 100;
+
 		if(playSparklesOnDraw)
 			gCard.CardSparkleOverTime(0.4f);
 		if(fromDeck!=null)
@@ -187,13 +203,23 @@ public class GDFR_Deck_Script : Deck {
 	public Card AddCardInstant(Card card)
 	{
 		base.AddCard(card);
-		card.transform.localPosition = Vector3.zero;
+	    GDFR_Card_Script gCard = (GDFR_Card_Script)card;
+        cards.Add(gCard);
+
+        card.transform.localPosition = Vector3.zero;
 		SetZDepthOffset(_zDepth);
-		GDFR_Card_Script gCard = (GDFR_Card_Script)card;
+
 		gCard.zDepth = _zDepth + 100;
+
 		return card;
 	}
 
+    public override Card RemoveCard(Card removeCard)
+    {
+        base.RemoveCard(removeCard);
+        cards.Remove((GDFR_Card_Script)removeCard);
+        return removeCard;
+    }
 
 	void OnCardAdded(Card card)
 	{
@@ -212,9 +238,9 @@ public class GDFR_Deck_Script : Deck {
 			card.zDepthOffset = z;
 	}
 
-	public override void loadDeckData (Object xmlDataFile)
+	public override void LoadDeckData (Object xmlDataFile)
 	{
-		base.loadDeckData (xmlDataFile);
+		base.LoadDeckData (xmlDataFile);
 
         //Load
         TextAsset textXML = (TextAsset)Resources.Load(xmlDataFile.name, typeof(TextAsset));
@@ -243,19 +269,19 @@ public class GDFR_Deck_Script : Deck {
 					}	
 	                if(cNode.Name=="GoblinSymbol")
 					{
-						cardScript.goblinSymbol =  (Symbol)System.Enum.Parse(typeof(Symbol), cNode.InnerText);;
+						cardScript.goblinSymbol =  (Symbol)Enum.Parse(typeof(Symbol), cNode.InnerText);;
 					}						
 	                if(cNode.Name=="FairySymbol")
 					{
-						cardScript.fairySymbol =  (Symbol)System.Enum.Parse(typeof(Symbol), cNode.InnerText);;
+						cardScript.fairySymbol =  (Symbol)Enum.Parse(typeof(Symbol), cNode.InnerText);;
 					}	
 	                if(cNode.Name=="GoblinRhyme")
 					{
-						cardScript.goblinRhyme =  (Rhyme)System.Enum.Parse(typeof(Rhyme), cNode.InnerText);;
+						cardScript.goblinRhyme =  (Rhyme)Enum.Parse(typeof(Rhyme), cNode.InnerText);;
 					}	
 	                if(cNode.Name=="FairyRhyme")
 					{
-						cardScript.fairyRhyme =  (Rhyme)System.Enum.Parse(typeof(Rhyme), cNode.InnerText);;
+						cardScript.fairyRhyme =  (Rhyme)Enum.Parse(typeof(Rhyme), cNode.InnerText);;
 					}	
 					if(cNode.Name=="GoblinStarBorder")
 					{
