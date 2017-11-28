@@ -20,17 +20,16 @@ public class GameContoller : RxFx_FSM
 	public int currentPlayer = 0;
 	public Card selectedCard = null;
 	public Card playedCard = null;
-    //delegate void selectEventHandler(Card card);
-    //event selectEventHandler selectEvent; 
-    //public float debugDelay = 0f;
     public float dealSpeed = 0.1f;
     public UI_Functions uiFunctionScript;
 	public MonoBehaviour[] starEffectActivateList;
-	//int _playResult = 0;
-    int turnsCount = 0;
-
-    readonly List<int> mPlayersPosition = new List<int>();
     public UILabel turnsCounter;
+
+    private int mTurnsCount = 0;
+    private AIModule mAIModule;
+
+    private readonly List<int> mPlayersPosition = new List<int>();
+    private readonly List<Deck> mManuallyControlledDecks = new List<Deck>();
 
     protected float lastVolume = 0;
 
@@ -174,15 +173,13 @@ public class GameContoller : RxFx_FSM
             avatars[position].gameObject.SetActive(true);
 
             PlayersProfile playerProfile = Toolbox.Instance.playerProfiles[playerIdx];
-            string name = playerProfile.name;
-            //if (name == "")
-            //{
-            //    if (playerProfile.type == PlayersProfile.Type.Human)
-            //    {
-            //        name = "Player " + (playerIdx + 1);
-            //    }
-            //}
-            avatars[position].Name = name;
+
+            if (playerProfile.type == PlayersProfile.Type.Human)
+            {
+                mManuallyControlledDecks.Add(playerDecks[position]);
+            }
+
+            avatars[position].Name = playerProfile.name;
             avatars[position].spriteName = "Avatar_" + playerProfile.avatar.ToString().PadLeft(2, '0');
             avatars[position].avatarGlowSprite.gameObject.SetActive(false);
         }
@@ -194,7 +191,7 @@ public class GameContoller : RxFx_FSM
     IEnumerator State_GameReset(params object[] data)
 	{
         // Turns
-        turnsCount = 0;
+        mTurnsCount = 0;
         turnsCounter.enabled = false;
         turnsCounter.gameObject.SetActive(false);
 
@@ -252,9 +249,25 @@ public class GameContoller : RxFx_FSM
             default:
                 Debug.LogError("You Should Not Be Here - Invalid Rule Variant"); break;
         }
+
+	    switch (Toolbox.Instance.gameSettings.difficultyLevel)
+	    {
+	        case GameSettings.Difficulty.Easy:
+	            mAIModule = new EasyAIModule();
+                break;
+	        case GameSettings.Difficulty.Medium:
+	            break;
+	        case GameSettings.Difficulty.Hard:
+                mAIModule = new HardAIModule();
+	            break;
+	        case GameSettings.Difficulty.Very_Hard:
+	            break;
+	        default:
+	            throw new ArgumentOutOfRangeException();
+	    }
+
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(uiFunctionScript.SendGameMessage(rulesMessage, 4f));
-
 
         //yield return new WaitForSeconds(2f);
 	    EventReceiver.TriggerNewGameStartedEvent();
@@ -517,8 +530,8 @@ public class GameContoller : RxFx_FSM
 
         if (turnsCounter.enabled)
         {
-            turnsCount++;
-            turnsCounter.text = "Turns: " + turnsCount;
+            mTurnsCount++;
+            turnsCounter.text = "Turns: " + mTurnsCount;
         }
 
         // Is it AI ?
@@ -807,7 +820,7 @@ public class GameContoller : RxFx_FSM
 		yield break;
 	}	
 
-	public static Card AI_PickBestCard(Deck fromDeck,Deck toDeck)
+	public Card AI_PickBestCard(Deck fromDeck,Deck toDeck)
 	{
 		//grab the first one.  Don't want to return null;
 		Card currentBestCard = null;
@@ -816,7 +829,7 @@ public class GameContoller : RxFx_FSM
 	    Card[] pCards = fromDeck.GetCardList();
 		foreach(Card pCard in pCards)
 		{
-			int discardValue = GetPlayValue(pCard,toDeck, Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? -1 : 1);
+			int discardValue = mAIModule.GetPlayValue(pCard, toDeck, Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? -1 : 1, mManuallyControlledDecks);
 			
 			if(discardValue>bestDiscardValue)
 			{
@@ -825,76 +838,5 @@ public class GameContoller : RxFx_FSM
 			}
 		}
 		return currentBestCard;
-	}
-
-	public static int GetPlayValue(Card pCard, Deck toDeck, int modifier)
-	{
-	    Card[] tCards = toDeck.GetCardList();
-		int discardValue = 0;
-
-		foreach(Card tCard in tCards)
-		{
-			Symbol tSymbol = tCard.CurrentSymbol;
-			Race tRace = tCard.CurrentRace;
-
-			// is it a rhyme or pCard = star?
-            // invert symbol and race to make the calculation
-			if(tCard.CurrentRhyme==pCard.CurrentRhyme || pCard.StarsShowing)
-			{
-				switch (tCard.CurrentSymbol)
-				{
-				    case Symbol.Sun:
-					    tSymbol = Symbol.Moon;
-					    break;
-				    case Symbol.Moon:
-					    tSymbol = Symbol.Sun;
-					    break;
-				    case Symbol.Mushroom:
-					    tSymbol = Symbol.Frog;
-					    break;
-				    case Symbol.Frog:
-					    tSymbol = Symbol.Mushroom;
-					    break;
-				}
-				switch (tCard.CurrentRace)
-				{
-				    case Race.Fairy:
-					    tRace = Race.Goblin;
-					    break;
-				    case Race.Goblin:
-					    tRace = Race.Fairy;
-					    break;
-				}
-			}
-			
-			//is it a match?
-			if(tSymbol==pCard.CurrentSymbol)
-			{
-				if(tRace==Race.Goblin)
-					discardValue -= 1 * modifier;
-				else
-					discardValue += 1 * modifier;
-			}
-		}
-
-        if (pCard.CurrentRace == Race.Goblin)
-        {
-            // Best play is to discard goblins if it doesnt get more goblins
-            if (discardValue == 0)
-            {
-                discardValue += 1 * modifier;
-
-                // In solitaire, best play is to discard goblins without get others
-                if (Toolbox.Instance.gameSettings.numberOfPlayers == 1)
-                {
-                    discardValue += 3 * modifier;
-                }
-            }
-            discardValue += 1 * modifier;
-        }
-        
-        if (pCard.CurrentRace == Race.Fairy) discardValue -= 1 * modifier;
-
-        return discardValue;
 	}
 }
