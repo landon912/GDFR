@@ -197,7 +197,6 @@ public class GameSettingUIEvents : MonoBehaviour {
 	{
         Toolbox.Instance.gameSettings.difficultyLevel = (GameSettings.Difficulty)listValue;
         Debug.Log("Difficulty Set to " + Toolbox.Instance.gameSettings.difficultyLevel);
-
     }
 
     void OnCardVariantChanged(int listValue)

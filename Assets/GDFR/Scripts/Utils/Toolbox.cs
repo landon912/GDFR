@@ -34,7 +34,7 @@ public class GameSettings
     public enum RulesVariant { Classic = 0, Solitaire = 1, Ultimate_Solitaire = 2, Goblins_Rule = 4 }
 
     public int numberOfPlayers = 4;
-    public Difficulty difficultyLevel = Difficulty.Easy;
+    public Difficulty difficultyLevel = Difficulty.Hard;
     public CardVariant cardVariant = CardVariant.Rhymes;
     public RulesVariant rulesVariant = RulesVariant.Solitaire;
 }
