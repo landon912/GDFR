@@ -216,6 +216,7 @@ public class GameContoller : RxFx_FSM
 		fairyRingDeck.ReturnAllCards(mainDeck);
 		swapDeck.ReturnAllCards(mainDeck);
 		starDeck.ReturnAllCards(mainDeck);
+	    playedCardDeck.ReturnAllCards(mainDeck);
 		mainDeck.CollapseDeck();
 
         string rulesMessage = "";
