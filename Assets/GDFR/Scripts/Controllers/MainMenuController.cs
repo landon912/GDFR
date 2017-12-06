@@ -40,7 +40,10 @@ public class MainMenuController : MonoBehaviour
 
 	public void Exit()
 	{
-		Debug.Log("Exit");
+	    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.OSXPlayer ||
+	        Application.platform == RuntimePlatform.LinuxPlayer)
+	    {
+	        Application.Quit();
+	    }
 	}
-
 }
