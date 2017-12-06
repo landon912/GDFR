@@ -1,8 +1,8 @@
 ﻿using System;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -17,21 +17,22 @@ public class GameContoller : RxFx_FSM
 	public Deck[] playerDecks;
     public Avatar[] avatars;
     public Deck playedCardDeck;
-	public int currentPlayer = 0;
-	public Card selectedCard = null;
-	public Card playedCard = null;
+	public int currentPlayer;
+	public Card selectedCard;
+	public Card playedCard;
     public float dealSpeed = 0.1f;
     public UI_Functions uiFunctionScript;
 	public MonoBehaviour[] starEffectActivateList;
     public UILabel turnsCounter;
+    public ButtonSpriteSwaper muteButtonSpriteSwaper;
 
-    private int mTurnsCount = 0;
+    private int mTurnsCount;
     private AIModule mAIModule;
 
     private readonly List<int> mPlayersPosition = new List<int>();
     private readonly List<Deck> mManuallyControlledDecks = new List<Deck>();
 
-    protected float lastVolume = 0;
+    protected float lastVolume;
 
 	void Awake()
 	{
@@ -63,8 +64,8 @@ public class GameContoller : RxFx_FSM
     public void NewGame()
     {
         // Clear all FSM
-        this.StopAllCoroutines();
-        RxFx_FSM.GlobalEventList.Clear();
+        StopAllCoroutines();
+        GlobalEventList.Clear();
 
         Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("NewGame");
@@ -73,8 +74,8 @@ public class GameContoller : RxFx_FSM
     public void ExitGame()
     {
         // Clear all FSM
-        this.StopAllCoroutines();
-        RxFx_FSM.GlobalEventList.Clear();
+        StopAllCoroutines();
+        GlobalEventList.Clear();
 
         Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("MainMenu");
@@ -84,11 +85,13 @@ public class GameContoller : RxFx_FSM
     {
         if (Math.Abs(lastVolume) < 0.005f)
         {
+            muteButtonSpriteSwaper.Swap();
             lastVolume = AudioController.GetGlobalVolume();
             AudioController.SetGlobalVolume(0);
         }
         else
         {
+            muteButtonSpriteSwaper.Swap();
             AudioController.SetGlobalVolume(lastVolume);
             lastVolume = 0;
         }
@@ -538,7 +541,6 @@ public class GameContoller : RxFx_FSM
         if (Toolbox.Instance.playerProfiles[currentPlayer].type == PlayersProfile.Type.AI)
         {
             callEvent("AIMove");
-            yield break;
         }
         else
         {
