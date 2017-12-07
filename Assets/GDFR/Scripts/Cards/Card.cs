@@ -364,4 +364,10 @@ public class Card : MonoBehaviour
     {
         starsScript.enabled = true;
     }
+
+    public override string ToString()
+    {
+        string name = CurrentRace == Race.Fairy ? fairyText : goblinText;
+        return name + ", " + CurrentSymbol + ", " + CurrentRace + ", " + CurrentRhyme;
+    }
 }

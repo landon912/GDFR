@@ -9,38 +9,11 @@ public class HardAIModule : AIModule
 
         foreach (Card tCard in tCards)
         {
-            Symbol tSymbol = tCard.CurrentSymbol;
-            Race tRace = tCard.CurrentRace;
-
             // is it a rhyme or pCard = star?
             // invert symbol and race to make the calculation
-            if (tCard.CurrentRhyme == pCard.CurrentRhyme || pCard.StarsShowing)
-            {
-                switch (tCard.CurrentSymbol)
-                {
-                    case Symbol.Sun:
-                        tSymbol = Symbol.Moon;
-                        break;
-                    case Symbol.Moon:
-                        tSymbol = Symbol.Sun;
-                        break;
-                    case Symbol.Mushroom:
-                        tSymbol = Symbol.Frog;
-                        break;
-                    case Symbol.Frog:
-                        tSymbol = Symbol.Mushroom;
-                        break;
-                }
-                switch (tCard.CurrentRace)
-                {
-                    case Race.Fairy:
-                        tRace = Race.Goblin;
-                        break;
-                    case Race.Goblin:
-                        tRace = Race.Fairy;
-                        break;
-                }
-            }
+            Symbol tSymbol;
+            Race tRace;
+            CheckAndFlipCardIfNeeded(tCard, pCard, out tRace, out tSymbol);
 
             //is it a match?
             if (tSymbol == pCard.CurrentSymbol)
