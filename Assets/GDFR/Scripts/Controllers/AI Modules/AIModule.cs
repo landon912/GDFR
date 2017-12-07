@@ -77,28 +77,53 @@ public abstract class AIModule
             Race centerRace;
             CheckAndFlipCardIfNeeded(centerCard, cardBeingPlayed, out centerRace, out centerSymbol);
 
-            //would be able to take
+            bool flipped = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme || cardBeingPlayed.StarsShowing;
+
+            //would be able to take, CONSIDERING FLIP
             if (centerSymbol == cardBeingPlayed.CurrentSymbol)
             {
                 foreach (Card playerCard in allPlayerCards)
                 {
-                    //player is trying to get rid of this held card
+                    //player is trying to get rid of this card, would the current match help or hurt player??
                     if (playerCard.CurrentSymbol == centerSymbol && playerCard.CurrentRace == Race.Goblin)
                     {
-                        //center card is goblin
-                        if (centerRace == Race.Goblin)
+                        //account for flipped state vs CURRENT state (we should evaluate aid based on current state)
+                        if (!flipped)
                         {
-                            //player card matches this goblin and the player card itself is a goblin, this is a problem for the player, we can remove and help them out
-                            aidToPlayers++;
-                            Debug.Log("Would remove a goblin of symbol " + centerSymbol +
-                                      "which would help with player's " + playerCard);
+                            //center card is goblin
+                            if (centerRace == Race.Goblin)
+                            {
+                                //player card matches this goblin and the player card itself is a goblin, this is a problem for the player, we can remove and help them out
+                                aidToPlayers++;
+                                Debug.Log("Would remove a goblin of symbol " + centerSymbol +
+                                          "which would help with player's " + playerCard);
+                            }
+                            //center card is fairy
+                            else
+                            {
+                                aidToPlayers--;
+                                Debug.Log("Would remove a fairy of symbol " + centerSymbol +
+                                          "which would hurt with player's " + playerCard);
+                            }
                         }
-                        //center card is fairy
+                        //cards have flipped, their actual game state if the current card is not played would be the opposite
                         else
                         {
-                            aidToPlayers--;
-                            Debug.Log("Would remove a fairy of symbol " + centerSymbol +
-                                      "which would hurt with player's " + playerCard);
+                            //center card is ACTUALLY Goblin before flip; this is what we should consider
+                            if (centerCard.CurrentRace == Race.Goblin)
+                            {
+                                //player card matches this goblin and the player card itself is a goblin, this is a problem for the player, we can remove and help them out
+                                aidToPlayers++;
+                                Debug.Log("Would remove a goblin of symbol " + centerCard.CurrentSymbol +
+                                          "which would help with player's " + playerCard);
+                            }
+                            //center card is ACTUALLY GOBLIN, before flip; this is what we should consider
+                            else
+                            {
+                                aidToPlayers--;
+                                Debug.Log("Would remove a fairy of symbol " + centerCard.CurrentSymbol +
+                                          "which would hurt with player's " + playerCard);
+                            }
                         }
                     }
                 }
@@ -112,7 +137,7 @@ public abstract class AIModule
         //calculate passive effects
         foreach (Card playerCard in allPlayerCards)
         {
-            //calculate before vs after effect on the entire deck due to flip or rhyme
+            //calculate before vs after effect on the entire deck considering flip or rhyme
             foreach (Card centerCard in centerCards)
             {
                 bool wouldFlip = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme ||
@@ -121,43 +146,83 @@ public abstract class AIModule
                 if (wouldFlip)
                 {
                     //check current card status
-                    if (playerCard.CurrentSymbol == centerCard.CurrentSymbol)
+                    if (!playerCard.StarsShowing && playerCard.CurrentSymbol == centerCard.CurrentSymbol)
                     {
                         //center card is currently of use to player before flip
                         if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Fairy)
                         {
+                            Debug.Log(centerCard + " is currently of use to player before flip when compared to " + playerCard + "; taking away one aid point");
                             aidToPlayers--;
                         }
                         //center card is currently bad for the player before the flip
                         if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Goblin)
                         {
+                            Debug.Log(centerCard + " is currently bad for the player before flip when compared to " + playerCard + "; adding one aid point");
+                            aidToPlayers++;
+                        }
+                    }
+                    //if the player card is a star card or would rhyme with the center card if played, flip our evaluation
+                    if ((playerCard.StarsShowing || centerCard.CurrentRhyme == playerCard.CurrentRhyme) &&
+                        playerCard.CurrentSymbolGroup == centerCard.CurrentSymbolGroup && playerCard.CurrentSymbol != centerCard.CurrentSymbol)
+                    {
+                        if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Goblin)
+                        {
+                            Debug.Log(centerCard + " is currently of use to player before flip when compared to " + playerCard + "; taking away one aid point");
+                            aidToPlayers--;
+                        }
+                        if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Fairy)
+                        {
+                            Debug.Log(centerCard + " is currently bad for the player before flip when compared to " + playerCard + "; adding one aid point");
                             aidToPlayers++;
                         }
                     }
 
                     Symbol centerSymbol;
                     Race centerRace;
+                    Rhyme centerRhyme;
                     //actually flip now
-                    CheckAndFlipCardIfNeeded(centerCard, playerCard, out centerRace, out centerSymbol);
+                    CheckAndFlipCardIfNeeded(centerCard, cardBeingPlayed, out centerRace, out centerSymbol, out centerRhyme);
 
-                    //check effects after flip
-                    if (playerCard.CurrentSymbol == centerSymbol)
+                    
+                    //if the player card is a star card or would rhyme with the center card if played, flip our evaluation
+                    if (playerCard.StarsShowing || centerRhyme == playerCard.CurrentRhyme)
+                    {
+                        //would take
+                        if (playerCard.CurrentSymbolGroup == centerCard.CurrentSymbolGroup && playerCard.CurrentSymbol != centerSymbol)
+                        {
+                            //since player card is a star card or rhyme
+                            if (playerCard.CurrentRace == Race.Goblin && centerRace == Race.Goblin)
+                            {
+                                Debug.Log(centerCard + " would be good for the player after flip when compared to " + playerCard + "; taking away one aid point");
+                                aidToPlayers++;
+                            }
+                            if (playerCard.CurrentRace == Race.Goblin && centerRace == Race.Fairy)
+                            {
+                                Debug.Log(centerCard + " would be bad for the player after flip when compared to " + playerCard + "; adding one aid point");
+                                aidToPlayers--;
+                            }
+                        }
+                    }
+                    //check effects after flip normally, would be able to take
+                    else if (playerCard.CurrentSymbol == centerSymbol)
                     {
                         //center card is now of use to player after flip
-                        if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Fairy)
+                        if (playerCard.CurrentRace == Race.Goblin && centerRace == Race.Fairy)
                         {
+                            Debug.Log(centerCard + " would be good for the player after flip when compared to " + playerCard + "; adding one aid point");
                             aidToPlayers++;
                         }
                         //center card is now bad for the player after the flip
-                        if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Goblin)
+                        if (playerCard.CurrentRace == Race.Goblin && centerRace == Race.Goblin)
                         {
+                            Debug.Log(centerCard + " would be bad for the player after flip when compared to " + playerCard + "; taking one aid point");
                             aidToPlayers--;
                         }
                     }
                 }
             }
 
-            Debug.Log("After accounting for rhymes and star cards, the aidValue is " + aidToPlayers + " which is a change of " + (aidToPlayers - tempOldAidValue));
+            Debug.Log("After accounting for rhymes and star cards in comparison to " + playerCard + ", the aidValue is " + aidToPlayers + " which is a change of " + (aidToPlayers - tempOldAidValue));
             tempOldAidValue = aidToPlayers;
 
             Symbol cardAddedToCenterSymbol;
@@ -223,6 +288,20 @@ public abstract class AIModule
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+    }
+
+    public void CheckAndFlipCardIfNeeded(Card cardToFlip, Card playerCard, out Race tRace, out Symbol tSymbol,
+        out Rhyme tRhyme)
+    {
+        tRace = cardToFlip.CurrentRace;
+        tSymbol = cardToFlip.CurrentSymbol;
+        tRhyme = cardToFlip.CurrentRhyme;
+        CheckAndFlipCardIfNeeded(cardToFlip, playerCard, out tRace, out tSymbol);
+
+        if (cardToFlip.CurrentRhyme == playerCard.CurrentRhyme || playerCard.StarsShowing)
+        {
+            tRhyme = cardToFlip.CurrentRace == Race.Fairy ? cardToFlip.goblinRhyme : cardToFlip.fairyRhyme;
         }
     }
 }

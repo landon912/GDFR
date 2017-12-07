@@ -15,12 +15,13 @@ public class EasyAIModule : AIModule
         }
 
         //get base play value
-        discardValue = new HardAIModule().GetPlayValue(pCard, toDeck, modifier);
-        int temp = discardValue;
-        Debug.Log(pCard + " 's discard value before evaluating aid is " + discardValue);
+        //discardValue = new HardAIModule().GetPlayValue(pCard, toDeck, modifier);
+        //int temp = discardValue;
+        //Debug.Log(pCard + " 's discard value before evaluating aid is " + discardValue);
 
-        discardValue += CalculateAidToPlayers(playerDecks, pCard, toDeck, modifier);
-        Debug.Log(pCard + " 's discard value after evaluating aid is " + discardValue + "; aid contributed " + (discardValue-temp));
+        discardValue = CalculateAidToPlayers(playerDecks, pCard, toDeck, modifier);
+        //Debug.Log(pCard + " 's discard value after evaluating aid is " + discardValue + "; aid contributed " + (discardValue-temp));
+        Debug.Log("---------------------------------------------------------------------- \n " + pCard + "'s aid value was " + discardValue);
 
         //help the players
 

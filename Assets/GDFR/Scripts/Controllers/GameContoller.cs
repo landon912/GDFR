@@ -260,11 +260,13 @@ public class GameContoller : RxFx_FSM
 	            mAIModule = new EasyAIModule();
                 break;
 	        case GameSettings.Difficulty.Medium:
+                mAIModule = new HardAIModule();
 	            break;
 	        case GameSettings.Difficulty.Hard:
                 mAIModule = new HardAIModule();
 	            break;
 	        case GameSettings.Difficulty.Very_Hard:
+                mAIModule = new HardAIModule();
 	            break;
 	        default:
 	            throw new ArgumentOutOfRangeException();
