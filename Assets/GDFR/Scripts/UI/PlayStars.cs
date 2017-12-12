@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class playStars : MonoBehaviour {
+public class PlayStars : MonoBehaviour {
 	
 	UITweener[] starTweeners;
 

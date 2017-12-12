@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class playTweens : MonoBehaviour {
-
+public class PlayTweens : MonoBehaviour
+{
 	public GameObject _target = null;
 	public int _direction =  1;
 	public int _group = 0;
@@ -41,6 +40,4 @@ public class playTweens : MonoBehaviour {
 			}
 		}
 	}
-
-
 }

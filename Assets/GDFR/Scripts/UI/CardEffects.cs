@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class cardEffects : MonoBehaviour {
+public class CardEffects : MonoBehaviour
+{
 
 	AnimationClip shakeClip = null;
 	Animation anim = null;
@@ -16,5 +16,4 @@ public class cardEffects : MonoBehaviour {
 	{
 		anim.Play("Shake01");
 	}
-
 }

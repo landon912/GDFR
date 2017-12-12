@@ -48,7 +48,7 @@ public class Card : MonoBehaviour
 
     public UISprite sprite;
     public bool starBorder = false;
-    public playStars starsScript;
+    public PlayStars starsScript;
     public UISprite symbolGlowSprite;
     public UISprite symbolSprite;
     public UILabel text;
