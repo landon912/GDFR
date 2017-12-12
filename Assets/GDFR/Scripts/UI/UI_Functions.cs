@@ -17,11 +17,11 @@ public class UI_Functions : MonoBehaviour {
 
         messageLabel.text = messageString;
 		messageLabel.enabled = true;
-		PlayTweens.playTweenGroup(messageLabel.gameObject,1,true,1);
+		PlayTweens.PlayTweenGroup(messageLabel.gameObject,1,true,1);
 
         yield return new WaitForSeconds(duration);
 
-        PlayTweens.playTweenGroup(messageLabel.gameObject,2,true,1);
+        PlayTweens.PlayTweenGroup(messageLabel.gameObject,2,true,1);
 
         yield return new WaitForSeconds(0.5f);
 

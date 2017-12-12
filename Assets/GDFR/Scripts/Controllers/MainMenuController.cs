@@ -18,7 +18,7 @@ public class MainMenuController : MonoBehaviour
 		SceneManager.LoadScene("NewGame");
 	}
 
-	public void ResumeGame()
+	public void HowToPlay()
 	{
 		Debug.Log("Resume Game");
 	}

@@ -17,11 +17,11 @@ public class PlayTweens : MonoBehaviour
 
 	public void OnEnable()
 	{
-		playTweenGroup(_target,_group,_resetOnStart,_direction,randomMinDelay,randomMaxDelay);
+		PlayTweenGroup(_target,_group,_resetOnStart,_direction,randomMinDelay,randomMaxDelay);
 		enabled = false;
 	}
 
-	public static void playTweenGroup(GameObject target,int group,bool resetOnStart,int direction,float minDelay = 0f,float maxDelay = 0f)
+	public static void PlayTweenGroup(GameObject target,int group,bool resetOnStart,int direction,float minDelay = 0f,float maxDelay = 0f)
 	{
 		UITweener[] tList = target.GetComponentsInChildren<UITweener>();
 		foreach(UITweener t in tList)
