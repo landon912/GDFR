@@ -20,7 +20,7 @@ public class MainMenuController : MonoBehaviour
 
 	public void HowToPlay()
 	{
-		Debug.Log("Resume Game");
+	    SceneManager.LoadSceneAsync("Help_Additive", LoadSceneMode.Additive);
 	}
 
 	public void Settings()

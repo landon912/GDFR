@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Slides>
+    <Slide>
+        <Index>1</Index>
+        <ImagePath>HowToPlay_Slide_01</ImagePath>
+        <Text>Testing page 1. Try to win the game! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test.</Text>
+    </Slide>
+    <Slide>
+        <Index>2</Index>
+        <ImagePath>HowToPlay_Slide_02</ImagePath>
+        <Text>Testing page 2. Don't lose the game! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test.</Text>
+    </Slide>
+    <Slide>
+        <Index>3</Index>
+        <ImagePath>HowToPlay_Slide_03</ImagePath>
+        <Text>Testing page 3. More stuff! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test.</Text>
+    </Slide>
+    <Slide>
+        <Index>4</Index>
+        <ImagePath>HowToPlay_Slide_04</ImagePath>
+        <Text>Testing page 4. More stuff! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test.</Text>
+    </Slide>
+    <Slide>
+        <Index>5</Index>
+        <ImagePath>HowToPlay_Slide_05</ImagePath>
+        <Text>Testing page 5. More stuff! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test.</Text>
+    </Slide>
+    <Slide>
+        <Index>6</Index>
+        <ImagePath>HowToPlay_Slide_06</ImagePath>
+        <Text>Testing page 6. More stuff! Test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test.</Text>
+    </Slide>
+</Slides>

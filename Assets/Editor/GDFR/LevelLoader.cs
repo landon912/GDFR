@@ -28,5 +28,9 @@ public class LevelLoader : ScriptableObject
         EditorSceneManager.OpenScene("Assets/GDFR/Scenes/MainGame.unity");
     }
 
-    
+    [MenuItem("GDFR/Help Menu")]
+    static void LoadHelpMenu()
+    {
+        EditorSceneManager.OpenScene("Assets/GDFR/Scenes/Help_Additive.unity");
+    }
 }
