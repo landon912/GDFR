@@ -8,13 +8,10 @@ public class SizeMatcher : MonoBehaviour
 
     private Vector2 mParentReferenceSize;
     private RectTransform mTarget;
-    //private RectTransform mParent;
 
     void Start()
     {
         mTarget = GetComponent<RectTransform>();
-        //mParent = transform.parent.GetComponent<RectTransform>();
-
         mParentReferenceSize = GetComponentInParent<BackgroundScaler>().referenceResolution;
     }
 

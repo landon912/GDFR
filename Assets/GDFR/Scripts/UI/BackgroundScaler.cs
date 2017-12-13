@@ -16,74 +16,67 @@ public class BackgroundScaler : MonoBehaviour
     public SizeMatcher matcher;
 
     private RectTransform mBackgroundImage;
-    //private Resolution mOldResolution;
-    private float aspectRatio;
-
+    private float mAspectRatio;
 
     void Start()
     {
         mBackgroundImage = GetComponent<RectTransform>();
 
-        aspectRatio = referenceResolution.x / referenceResolution.y;
-
+        mAspectRatio = referenceResolution.x / referenceResolution.y;
     }
 
     void Update()
     {
+        float scaledWidthBuffer = widthBuffer * (Screen.width / referenceResolution.x);
+        float scaledHeightBuffer = heightBuffer * (Screen.height / referenceResolution.y);
 
-        // if (mOldResolution.width != Screen.width && mOldResolution.height != Screen.height)
+        float screenAspectRatio = Screen.width / (float) Screen.height;
+
+        if (scaleMode == ScaleMode.FillLargest)
         {
-            float scaledWidthBuffer = widthBuffer * (Screen.width / referenceResolution.x);
-            float scaledHeightBuffer = heightBuffer * (Screen.height / referenceResolution.y);
-
-            float screenAspectRatio = Screen.width / (float)Screen.height;
-
-            if (scaleMode == ScaleMode.FillLargest)
+            if (screenAspectRatio > mAspectRatio)
             {
-                if (screenAspectRatio > aspectRatio)
-                {
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
-                        Screen.width - scaledWidthBuffer);
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-                        (Screen.width - scaledHeightBuffer) / aspectRatio);
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+                    Screen.width - scaledWidthBuffer);
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+                    (Screen.width - scaledHeightBuffer) / mAspectRatio);
 
-                    if(matcher != null)
-                        matcher.Fix(new Vector2(Screen.width, Screen.width / aspectRatio));
-                }
-                else
-                {
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height - scaledHeightBuffer);
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
-                        (Screen.height - scaledWidthBuffer) * aspectRatio );
-
-                    if (matcher != null)
-                        matcher.Fix(new Vector2(Screen.height * aspectRatio, Screen.height));
-                }
+                if (matcher != null)
+                    matcher.Fix(new Vector2(Screen.width, Screen.width / mAspectRatio));
             }
             else
             {
-                if (screenAspectRatio > aspectRatio)
-                {
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-                        Screen.height - scaledHeightBuffer);
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
-                        (Screen.height - scaledWidthBuffer) * aspectRatio);
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+                    Screen.height - scaledHeightBuffer);
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+                    (Screen.height - scaledWidthBuffer) * mAspectRatio);
 
-                    if (matcher != null)
-                        matcher.Fix(new Vector2(Screen.height * aspectRatio, Screen.height));
-                }
-                else
-                {
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width - scaledWidthBuffer);
-                    mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-                        (Screen.width - scaledHeightBuffer) / aspectRatio);
-
-                    if (matcher != null)
-                        matcher.Fix(new Vector2(Screen.width, Screen.width / aspectRatio));
-                }
+                if (matcher != null)
+                    matcher.Fix(new Vector2(Screen.height * mAspectRatio, Screen.height));
             }
+        }
+        else
+        {
+            if (screenAspectRatio > mAspectRatio)
+            {
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+                    Screen.height - scaledHeightBuffer);
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+                    (Screen.height - scaledWidthBuffer) * mAspectRatio);
 
-            //mOldResolution = Screen.currentResolution;
+                if (matcher != null)
+                    matcher.Fix(new Vector2(Screen.height * mAspectRatio, Screen.height));
+            }
+            else
+            {
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+                    Screen.width - scaledWidthBuffer);
+                mBackgroundImage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+                    (Screen.width - scaledHeightBuffer) / mAspectRatio);
+
+                if (matcher != null)
+                    matcher.Fix(new Vector2(Screen.width, Screen.width / mAspectRatio));
+            }
         }
     }
 }
