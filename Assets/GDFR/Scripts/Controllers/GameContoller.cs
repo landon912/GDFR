@@ -25,6 +25,7 @@ public class GameContoller : RxFx_FSM
 	public MonoBehaviour[] starEffectActivateList;
     public UILabel turnsCounter;
     public ButtonSpriteSwaper muteButtonSpriteSwaper;
+    public UICamera mainUICamera;
 
     private int mTurnsCount;
     private AIModule mAIModule;
@@ -61,7 +62,7 @@ public class GameContoller : RxFx_FSM
 	    AudioController.Instance._GetAudioItem("Game Music").subItems[0].Probability = 100;
     }
 
-    public void NewGame()
+    private void NewGame()
     {
         // Clear all FSM
         StopAllCoroutines();
@@ -71,7 +72,7 @@ public class GameContoller : RxFx_FSM
         SceneManager.LoadScene("NewGame");
     }
 
-    public void ExitGame()
+    private void ExitGame()
     {
         // Clear all FSM
         StopAllCoroutines();
@@ -81,7 +82,7 @@ public class GameContoller : RxFx_FSM
         SceneManager.LoadScene("MainMenu");
     }
 
-    public void MuteSound()
+    private void MuteSound()
     {
         if (Math.Abs(lastVolume) < 0.005f)
         {
@@ -97,7 +98,12 @@ public class GameContoller : RxFx_FSM
         }
     }
 
-    public void PlayerGiveUp()
+    private void LoadHelpMenu()
+    {
+        SceneManager.LoadSceneAsync("Help_Additive", LoadSceneMode.Additive);
+    }
+
+    private void ForfeitGame()
     {
         callEvent("GameReset");
         GiveUpButtonGameObject.SetActive(false);
@@ -106,14 +112,22 @@ public class GameContoller : RxFx_FSM
     void OnEnable()
 	{
 	    UI_Event_Receiver.CardSelected += OnCardSelected;
-    }
+	    UI_Event_Receiver.MuteButtonPressed += MuteSound;
+	    UI_Event_Receiver.HelpButtonPressed += LoadHelpMenu;
+	    UI_Event_Receiver.ExitButtonPressed += NewGame;
+	    UI_Event_Receiver.ForfeitButtonPressed += ForfeitGame;
+	}
 
 	void OnDestroy()
 	{
 		UI_Event_Receiver.CardSelected -= OnCardSelected;
+	    UI_Event_Receiver.MuteButtonPressed -= MuteSound;
+	    UI_Event_Receiver.HelpButtonPressed -= LoadHelpMenu;
+	    UI_Event_Receiver.ExitButtonPressed -= NewGame;
+	    UI_Event_Receiver.ForfeitButtonPressed -= ForfeitGame;
     }
 
-	void OnCardSelected(Card card)
+    void OnCardSelected(Card card)
 	{
 		callEvent("CardPicked",card);
 	}

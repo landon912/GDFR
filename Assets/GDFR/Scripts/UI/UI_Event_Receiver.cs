@@ -8,63 +8,77 @@ public class UI_Event_Receiver : MonoBehaviour
 	public delegate void CardDoubleClickedHandler(Card card);
 	public static event CardDoubleClickedHandler CardDoubleClicked;
 
-	public delegate void BackgroundDoubleClickedHandler(Vector2 pos);
-	public static event BackgroundDoubleClickedHandler BackgroundDoubleClicked;
+    public delegate void CardDraggedEventHandler(Vector2 pos);
+    public static event CardDraggedEventHandler CardDragged;
 
-	public delegate void BackgroundDraggedHandler(Vector2 pos);
-	public static event BackgroundDraggedHandler BackgroundDragged;
+ //   public delegate void BackgroundDoubleClickedHandler(Vector2 pos);
+ //   public static event BackgroundDoubleClickedHandler BackgroundDoubleClicked;
 
-	public delegate void BackgroundDroppedHandler();
-	public static event BackgroundDroppedHandler BackgroundDropped;
+ //   public delegate void BackgroundDraggedHandler(Vector2 pos);
+	//public static event BackgroundDraggedHandler BackgroundDragged;
 
-	public delegate void UIScrollHandler(float delta);
-	public static event UIScrollHandler UIScroll;
+ //   public delegate void BackgroundDroppedHandler();
+ //   public static event BackgroundDroppedHandler BackgroundDropped;
 
-	public static void UI_Card_Selected(Card card)
+    public delegate void UIScrollHandler(float delta);
+    public static event UIScrollHandler UIScroll;
+
+    public delegate void MuteButtonPressedHandler();
+    public static event MuteButtonPressedHandler MuteButtonPressed;
+
+    public delegate void HelpButtonPressedHandler();
+    public static event HelpButtonPressedHandler HelpButtonPressed;
+
+    public delegate void ExitButtonPressedHandler();
+    public static event ExitButtonPressedHandler ExitButtonPressed;
+
+    public delegate void ForfeitButtonPressedHandler();
+    public static event ForfeitButtonPressedHandler ForfeitButtonPressed;
+
+    public static void TriggerCardSelectedEvent(Card card)
 	{
 		if(card != null && CardSelected != null)
 			CardSelected(card);
 	}
 
-	public static void OnCardClick(Card card)
-	{
-	}
-
-	public static void OnCardDoubleClick(Card card)
+	public static void TriggerCardDoubleClickEvent(Card card)
 	{
 		if(card != null && CardDoubleClicked != null)
 			CardDoubleClicked(card);
 	}
 
-	public static void OnCardDrag(Card card,Vector2 delta)
+	public static void TriggerCardDragEvent(Card card,Vector2 delta)
 	{
-		//BackgroundDragged(delta);
+	    if (CardDragged != null) CardDragged(delta);
 	}
 
-	public static void OnCardScroll(Card card,float delta)
+	public static void TriggerCardScrollEvent(Card card,float delta)
 	{
 	    if (UIScroll != null && card != null)
             UIScroll(delta);
 	}
 
-	void OnDoubleClick()
-	{
-	    if (BackgroundDoubleClicked != null) BackgroundDoubleClicked(UICamera.currentTouch.pos);
-	}
+    public void TriggerMuteButtonPressedEvent()
+    {
+        if (MuteButtonPressed != null)
+            MuteButtonPressed();
+    }
 
-	void OnDrag(Vector2 delta)
-	{
-	    if (BackgroundDragged != null) BackgroundDragged(delta);
-	}
+    public void TriggerHelpButtonPressedEvent()
+    {
+        if (HelpButtonPressed != null)
+            HelpButtonPressed();
+    }
 
-	void OnDrop()
-	{
-	    //Debug.Log("DROPPED");
-	    if (BackgroundDropped != null) BackgroundDropped();
-	}
+    public void TriggerExitButtonPressedEvent()
+    {
+        if (ExitButtonPressed != null)
+            ExitButtonPressed();
+    }
 
-	void OnScroll (float delta)
-	{
-	    if (UIScroll != null) UIScroll(delta);
-	}
+    public void TriggerForfeitButtonPressedEvent()
+    {
+        if (ForfeitButtonPressed != null)
+            ForfeitButtonPressed();
+    }
 }

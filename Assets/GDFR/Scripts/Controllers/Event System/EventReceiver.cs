@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class EventReceiver : MonoBehaviour
+﻿public class EventReceiver
 {
     public delegate void NewGameStartedEventHandler();
     public static event NewGameStartedEventHandler NewGameStartedEvent;

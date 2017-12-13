@@ -14,17 +14,17 @@ public class CameraZoom : MonoBehaviour {
 
 	void OnEnable()
 	{
-		UI_Event_Receiver.BackgroundDoubleClicked+=OnBackgroundDoubleClicked;
-		UI_Event_Receiver.BackgroundDragged+=OnBackgroundDragged;
-		UI_Event_Receiver.BackgroundDropped+=OnBackgroundDropped;
+		//UI_Event_Receiver.BackgroundDoubleClicked+=OnBackgroundDoubleClicked;
+		//UI_Event_Receiver.BackgroundDragged+=OnBackgroundDragged;
+		//UI_Event_Receiver.BackgroundDropped+=OnBackgroundDropped;
 		UI_Event_Receiver.UIScroll+=OnUiScroll;
 	}
 
 	void OnDissable()
 	{
-		UI_Event_Receiver.BackgroundDoubleClicked-=OnBackgroundDoubleClicked;
-		UI_Event_Receiver.BackgroundDragged-=OnBackgroundDragged;
-		UI_Event_Receiver.BackgroundDropped-=OnBackgroundDropped;
+		//UI_Event_Receiver.BackgroundDoubleClicked-=OnBackgroundDoubleClicked;
+		//UI_Event_Receiver.BackgroundDragged-=OnBackgroundDragged;
+		//UI_Event_Receiver.BackgroundDropped-=OnBackgroundDropped;
 		UI_Event_Receiver.UIScroll-=OnUiScroll;
 	}
 

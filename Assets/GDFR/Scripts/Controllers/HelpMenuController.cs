@@ -19,11 +19,20 @@ public class HelpMenuController : MonoBehaviour
     public Button backButton;
     public Button forwardButton;
 
-    private int mCurrentSlideIndex = 0;
+    private int mCurrentSlideIndex;
     private SlideData[] mSlideData;
 
     void Start()
     {
+        //hide main game to stop you from being able to click on things
+        GameContoller gameContoller = FindObjectOfType<GameContoller>();
+        if (gameContoller)
+        {
+            gameContoller.mainUICamera.enabled = false;
+        }
+
+        Time.timeScale = 0;
+
         LoadXMLFile();
 
         ApplySlide(mCurrentSlideIndex);
@@ -41,6 +50,22 @@ public class HelpMenuController : MonoBehaviour
 
     public void Exit()
     {
+        //bring back menu if within main menu
+        MainMenuController menuContoller = FindObjectOfType<MainMenuController>();
+        if (menuContoller)
+        {
+            menuContoller.mainAlphaTweener.PlayReverse();
+        }
+
+        //bring back main game to allow you to click on things
+        GameContoller gameContoller = FindObjectOfType<GameContoller>();
+        if (gameContoller)
+        {
+            gameContoller.mainUICamera.enabled = true;
+        }
+
+        Time.timeScale = 1;
+
         SceneManager.UnloadSceneAsync("Help_Additive");
     }
 

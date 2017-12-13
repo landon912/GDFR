@@ -3,13 +3,14 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
-    public GameObject MenuAudioController;
+    public GameObject menuAudioController;
+    public TweenAlpha mainAlphaTweener;
 
     public void Awake()
     {
         if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
         {
-            Instantiate(MenuAudioController);
+            Instantiate(menuAudioController);
         }
     }
 
