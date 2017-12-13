@@ -1,29 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Avatars>
   <Avatar>
-    <id>0</id>
-    <names>
-      <name>Sugar Plum</name>
-      <name>Sugar Plum 2</name>
-    </names>
-  </Avatar>
-  <Avatar>
     <id>1</id>
     <names>
-      <name>Jareth</name>
-      <name>Rodrigo</name>
+      <name>Tink</name>
+      <name>Teresa</name>
     </names>
   </Avatar>
   <Avatar>
     <id>2</id>
     <names>
-      <name>Tinker Bell</name>
+      <name>Blinky</name>
+      <name>Thing One</name>
     </names>
   </Avatar>
   <Avatar>
     <id>3</id>
     <names>
-      <name>Contributor 1</name>
+      <name>Sugar Plum</name>
+      <name>Alice</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>4</id>
+    <names>
+      <name>Rodrigo</name>
+      <name>Thing Two</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>5</id>
+    <names>
+      <name>Mal</name>
+      <name>Punky</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>6</id>
+    <names>
+      <name>Smiley</name>
+      <name>Jareth</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>7</id>
+    <names>
+      <name>Tiana</name>
+      <name>Evie</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>8</id>
+    <names>
+      <name>Tricky</name>
+      <name>Shifty</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>9</id>
+    <names>
+      <name>Uma</name>
+      <name>Cindy Lou</name>
+    </names>
+  </Avatar>
+  <Avatar>
+    <id>10</id>
+    <names>
+      <name>Teddy</name>
+      <name>Gummy</name>
     </names>
   </Avatar>
 </Avatars>

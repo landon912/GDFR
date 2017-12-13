@@ -11,6 +11,11 @@ public class PlayerProfile_UI : MonoBehaviour {
     public bool HasDefaultName = false;
     public string NameChangeStringToIgnore = String.Empty;
 
+    [HideInInspector]
+    public AIData defaultProfileAssigned = null;
+    [HideInInspector]
+    public GameSettingUIEvents gsUI = null;
+
     int _profileIndex = 0;
     public int ProfileIndex
     {
@@ -99,6 +104,11 @@ public class PlayerProfile_UI : MonoBehaviour {
             if (HasDefaultName)
             {
                 nameField.text = "";
+                avatarDropdown.value = 0;
+
+                gsUI.AddProfileBack(defaultProfileAssigned);
+                defaultProfileAssigned = null;
+
                 Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
                 Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
             }
@@ -108,7 +118,7 @@ public class PlayerProfile_UI : MonoBehaviour {
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.AI;
             if (nameField.text == string.Empty)
             {
-                FindObjectOfType<GameSettingUIEvents>().SelectDefaultName(this);
+                FindObjectOfType<GameSettingUIEvents>().SelectDefaultProfile(this);
             }
         }
 

@@ -76,7 +76,6 @@ public class HelpMenuController : MonoBehaviour
 
         XmlNode rootSlideNode = slideDocument.SelectSingleNode("Slides");
 
-        Debug.Assert(rootSlideNode != null, "rootSlideNode != null");
         mSlideData = new SlideData[rootSlideNode.ChildNodes.Count];
 
         foreach (XmlNode slide in rootSlideNode.ChildNodes)

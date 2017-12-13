@@ -1,5 +1,13 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
+using System.Xml;
+
+public class AIData
+{
+    public List<string> names = new List<string>(2);
+    public int avatarID;
+}
 
 public class GameSettingUIEvents : MonoBehaviour {
 
@@ -11,6 +19,9 @@ public class GameSettingUIEvents : MonoBehaviour {
 	public UnityEngine.UI.Dropdown rulesVariantDropDown = null;
     public GameObject playerControl = null;
     public GameObject playerItemControl = null;
+    public string AIDataXMLPath;
+
+    private List<AIData> mAIProfiles;
 
     void OnEnable()
 	{
@@ -36,6 +47,8 @@ public class GameSettingUIEvents : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        LoadXMLData();
+
         // Set the current numberOfPlayers
         playerCountLabel.text = Toolbox.Instance.gameSettings.numberOfPlayers.ToString();
 
@@ -70,9 +83,34 @@ public class GameSettingUIEvents : MonoBehaviour {
         //OnPlayerCountChanged(Toolbox.Instance.gameSettings.numberOfPlayers);
     }
 
-    void Destroy()
+    void LoadXMLData()
     {
+        XmlDocument aiDocument = new XmlDocument();
+        aiDocument.Load(Application.dataPath + AIDataXMLPath);
 
+        XmlNode rootAINode = aiDocument.SelectSingleNode("Avatars");
+
+        mAIProfiles = new List<AIData>(rootAINode.ChildNodes.Count * 2);
+
+        foreach (XmlNode avatar in rootAINode.ChildNodes)
+        {
+            XmlNode idNode = avatar.SelectSingleNode("id");
+            int avatarID = Int32.Parse(idNode.InnerText);
+
+            XmlNode names = avatar.SelectSingleNode("names");
+
+            AIData data = new AIData
+            {
+                avatarID = avatarID
+            };
+
+            foreach (XmlNode name in names.ChildNodes)
+            {
+                data.names.Add(name.InnerText);
+            }
+
+            mAIProfiles.Add(data);
+        }
     }
 
     void OnClickAddPlayer()
@@ -112,7 +150,7 @@ public class GameSettingUIEvents : MonoBehaviour {
 
         if (isAI)
         {
-            SelectDefaultName(playerUI);
+            SelectDefaultProfile(playerUI);
         }
         else
         {
@@ -120,17 +158,34 @@ public class GameSettingUIEvents : MonoBehaviour {
         }
 
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
-        newPlayerPanel.name = "player" + (idx+1);
+        newPlayerPanel.name = Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].name;
     }
 
-    public void SelectDefaultName(PlayerProfile_UI playerUI)
+    public void SelectDefaultProfile(PlayerProfile_UI playerUI)
     {
-        //select AI name from list
-        playerUI.nameField.text = "AI Name " + (playerUI.ProfileIndex+1);
+        //get random AIProfile
+        int count = mAIProfiles.Count;
+        int index = UnityEngine.Random.Range(0, count);
+        AIData profileToUse = mAIProfiles[index];
+
+        count = profileToUse.names.Count;
+        playerUI.nameField.text = profileToUse.names[UnityEngine.Random.Range(0, count)];
         playerUI.NameChangeStringToIgnore = playerUI.nameField.text;
         playerUI.HasDefaultName = true;
 
+        playerUI.avatarDropdown.value = profileToUse.avatarID;
+
+        //do not have the AI use the same avatar more than once
+        playerUI.defaultProfileAssigned = profileToUse;
+        playerUI.gsUI = this;
+        mAIProfiles.Remove(profileToUse);
+
         playerUI.OnNameChanged(playerUI.nameField.text);
+    }
+
+    public void AddProfileBack(AIData profile)
+    {
+        mAIProfiles.Add(profile);
     }
 
     void ValidateAddAndRemoveButtons()
