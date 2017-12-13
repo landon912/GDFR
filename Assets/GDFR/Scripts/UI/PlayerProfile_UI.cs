@@ -13,8 +13,6 @@ public class PlayerProfile_UI : MonoBehaviour {
 
     [HideInInspector]
     public AIData defaultProfileAssigned = null;
-    [HideInInspector]
-    public GameSettingUIEvents gsUI = null;
 
     int _profileIndex = 0;
     public int ProfileIndex
@@ -106,7 +104,7 @@ public class PlayerProfile_UI : MonoBehaviour {
                 nameField.text = "";
                 avatarDropdown.value = 0;
 
-                gsUI.AddProfileBack(defaultProfileAssigned);
+                FindObjectOfType<GameSettingUIEvents>().AddProfileBack(defaultProfileAssigned);
                 defaultProfileAssigned = null;
 
                 Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);

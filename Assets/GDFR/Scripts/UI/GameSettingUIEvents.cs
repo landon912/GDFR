@@ -148,11 +148,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         playerUI.aiToggle.isOn = isAI;
         playerUI.PlayToggleSound = true;
 
-        if (isAI)
-        {
-            SelectDefaultProfile(playerUI);
-        }
-        else
+        if(!isAI)
         {
             Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].name = "Player " + (idx + 1);
         }
@@ -177,7 +173,6 @@ public class GameSettingUIEvents : MonoBehaviour {
 
         //do not have the AI use the same avatar more than once
         playerUI.defaultProfileAssigned = profileToUse;
-        playerUI.gsUI = this;
         mAIProfiles.Remove(profileToUse);
 
         playerUI.OnNameChanged(playerUI.nameField.text);
