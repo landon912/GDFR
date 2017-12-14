@@ -53,9 +53,10 @@ Shader "Hidden/Unlit/Transparent Packed 1"
 				float2 worldPos : TEXCOORD1;
 			};
 
+			v2f o;
+
 			v2f vert (appdata_t v)
 			{
-				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				o.texcoord = v.texcoord;

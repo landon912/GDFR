@@ -154,7 +154,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         }
 
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
-        newPlayerPanel.name = Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].name;
+        newPlayerPanel.name = "player" + (idx + 1);
     }
 
     public void SelectDefaultProfile(PlayerProfile_UI playerUI)
@@ -204,7 +204,7 @@ public class GameSettingUIEvents : MonoBehaviour {
                 delta--;
             }
         }
-        else if ((currentNumber > count) && (count > 0)) // removing and > 0
+        else if (currentNumber > count && count > 0) // removing and > 0
         {
             int delta = Mathf.Abs(count - currentNumber);
             for(int i = delta; i > 0; i--)

@@ -26,7 +26,6 @@ Shader "Hidden/Unlit/Text 1"
 			Offset -1, -1
 			Fog { Mode Off }
 			//ColorMask RGB
-			AlphaTest Greater .01
 			Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
