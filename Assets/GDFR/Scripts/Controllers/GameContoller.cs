@@ -274,7 +274,7 @@ public class GameContoller : RxFx_FSM
 	            mAIModule = new EasyAIModule();
                 break;
 	        case GameSettings.Difficulty.Medium:
-                mAIModule = new HardAIModule();
+                mAIModule = new MediumAIModule();
 	            break;
 	        case GameSettings.Difficulty.Hard:
                 mAIModule = new HardAIModule();
