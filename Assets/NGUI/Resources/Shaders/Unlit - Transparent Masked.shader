@@ -1,5 +1,3 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 Shader "Unlit/Transparent Masked"
 {
 	Properties
@@ -17,6 +15,7 @@ Shader "Unlit/Transparent Masked"
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
 			"RenderType" = "Transparent"
+			"DisableBatching" = "True"
 		}
 		
 		Pass
@@ -64,7 +63,7 @@ Shader "Unlit/Transparent Masked"
 				return o;
 			}
 				
-			fixed4 frag (v2f IN) : COLOR
+			fixed4 frag (v2f IN) : SV_Target
 			{
 				half4 col = tex2D(_MainTex, IN.texcoord) * IN.color;
 				col.a *= tex2D(_Mask, IN.texcoord1).a;
@@ -83,6 +82,7 @@ Shader "Unlit/Transparent Masked"
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
 			"RenderType" = "Transparent"
+			"DisableBatching" = "True"
 		}
 		
 		Pass
@@ -92,7 +92,7 @@ Shader "Unlit/Transparent Masked"
 			ZWrite Off
 			Fog { Mode Off }
 			Offset -1, -1
-			ColorMask RGB
+			//ColorMask RGB
 			Blend SrcAlpha OneMinusSrcAlpha
 			ColorMaterial AmbientAndDiffuse
 			
