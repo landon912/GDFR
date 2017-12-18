@@ -37,7 +37,7 @@ public class TweenAlpha : UITweener
 
 			if (mLight == null)
 			{
-				Renderer ren = GetComponent<Renderer>();
+				Renderer ren = GetComponent<Renderer>();   
 				if (ren != null) mMat = ren.material;
 				if (mMat == null) mRect = GetComponentInChildren<UIRect>();
 			}

@@ -21,7 +21,7 @@ public class MediumAIModule : AIModule
 
         discardValue = Mathf.RoundToInt(discardValue / 5.0f);
 
-        Debug.Log("---------------------------------------------------------------------- \n " + pCard + "'s discard value was " + 2 * discardValue);
+        Debug.Log("---------------------------------------------------------------------- \n " + pCard + "'s discard value was " + discardValue);
 
         return discardValue;
     }
