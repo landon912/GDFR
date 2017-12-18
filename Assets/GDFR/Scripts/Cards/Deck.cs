@@ -112,7 +112,6 @@ public class Deck : MonoBehaviour
 		if(mCards.Count >0)
 		{
             int randomTmp = Random.Range(0, mCards.Count);
-            Debug.Log("Random card: " + randomTmp + " from " + mCards.Count);
             
 			return mCards[randomTmp];
 		}
@@ -138,7 +137,6 @@ public class Deck : MonoBehaviour
             if (tempCards.Count > 0)
             {
                 int randomTmp = Random.Range(0, tempCards.Count);
-                Debug.Log("Random card of symbol group " + symbolGroup + ": " + randomTmp + " from " + tempCards.Count);
 
                 return tempCards[randomTmp];
             }

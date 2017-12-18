@@ -10,14 +10,14 @@ public class MediumAIModule : AIModule
         mHardAI = new HardAIModule();
     }
 
-    public override int GetPlayValue(Card pCard, Deck toDeck, int modifier, List<Deck> playerDecks)
+    public override int GetPlayValue(Card pCard, Deck toDeck, List<Deck> playerControlledDecks)
     {
         //get base play value
-        int discardValue = 3 * mHardAI.GetPlayValue(pCard, toDeck, modifier);
+        int discardValue = 3 * mHardAI.GetPlayValue(pCard, toDeck);
         Debug.Log(pCard + " 's discard value before evaluating aid is " + discardValue);
 
         //calculate aid
-        discardValue += 2 * CalculateAidToPlayers(playerDecks, pCard, toDeck, modifier);
+        discardValue += 2 * CalculateAidToPlayers(playerControlledDecks, pCard, toDeck);
 
         discardValue = Mathf.RoundToInt(discardValue / 5.0f);
 

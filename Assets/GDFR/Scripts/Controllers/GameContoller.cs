@@ -605,9 +605,7 @@ public class GameContoller : RxFx_FSM
 		playerDecks[mPlayersPosition[currentPlayer]].zDepth = 600;
 		yield return new WaitForSeconds(1.5f);
 
-		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard(playedCardDeck) as Card;
-		//selectedCard = playedCard = playerDecks[playersPosition[currentPlayer]].DrawRandomCard() as Card;
-		selectedCard = playedCard = AI_PickBestCard(playerDecks[mPlayersPosition[currentPlayer]],fairyRingDeck);
+		selectedCard = playedCard = mAIModule.PickBestCard(playerDecks[mPlayersPosition[currentPlayer]],fairyRingDeck, mManuallyControlledDecks);
 
 	    EventReceiver.TriggerCardPlayedEvent(playedCard);
 
@@ -837,25 +835,5 @@ public class GameContoller : RxFx_FSM
 
 		callEvent("PlayerSelect");
 		yield break;
-	}	
-
-	public Card AI_PickBestCard(Deck fromDeck,Deck toDeck)
-	{
-		//grab the first one.  Don't want to return null;
-		Card currentBestCard = null;
-		//start each fromDeck card
-		int bestDiscardValue = -10;
-	    Card[] pCards = fromDeck.GetCardList();
-		foreach(Card pCard in pCards)
-		{
-			int discardValue = mAIModule.GetPlayValue(pCard, toDeck, Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? -1 : 1, mManuallyControlledDecks);
-			
-			if(discardValue>bestDiscardValue)
-			{
-				currentBestCard = pCard;
-				bestDiscardValue = discardValue;
-			}
-		}
-		return currentBestCard;
 	}
 }
