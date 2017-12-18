@@ -12,7 +12,7 @@ public class SlideData
 
 public class HelpMenuController : MonoBehaviour
 {
-    public string slideXmlDataPath = "/GDFR/Data/Resources/HowToPlaySlidesData.xml";
+    public TextAsset slideXMLData;
     public Sprite[] mainImageSprites;
     public Image mainImage;
     public Text text;
@@ -72,7 +72,7 @@ public class HelpMenuController : MonoBehaviour
     private void LoadXMLFile()
     {
         XmlDocument slideDocument = new XmlDocument();
-        slideDocument.Load(Application.dataPath + slideXmlDataPath);
+        slideDocument.LoadXml(slideXMLData.text);
 
         XmlNode rootSlideNode = slideDocument.SelectSingleNode("Slides");
 

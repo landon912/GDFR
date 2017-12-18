@@ -19,7 +19,7 @@ public class GameSettingUIEvents : MonoBehaviour {
 	public UnityEngine.UI.Dropdown rulesVariantDropDown = null;
     public GameObject playerControl = null;
     public GameObject playerItemControl = null;
-    public string AIDataXMLPath;
+    public TextAsset AIDataAsset;
 
     private List<AIData> mAIProfiles;
 
@@ -86,7 +86,7 @@ public class GameSettingUIEvents : MonoBehaviour {
     void LoadXMLData()
     {
         XmlDocument aiDocument = new XmlDocument();
-        aiDocument.Load(Application.dataPath + AIDataXMLPath);
+        aiDocument.LoadXml(AIDataAsset.text);
 
         XmlNode rootAINode = aiDocument.SelectSingleNode("Avatars");
 
