@@ -136,7 +136,9 @@ public class GameSettingUIEvents : MonoBehaviour {
     void createNewPlayerProfile(int idx, bool canBeAI = true, bool isAI = false)
     {
         // add a new player panel
-        GameObject newPlayerPanel = Instantiate(playerItemControl, new Vector3(0, -(32.8f + (68.6f * idx)), 0), Quaternion.identity);
+        GameObject newPlayerPanel = Instantiate(playerItemControl, Vector3.zero, Quaternion.identity);
+
+        newPlayerPanel.GetComponent<RectTransform>().localPosition = new Vector3(0, -(68.6f * idx), 0);
 
         // set the player profile index on the UI component, so it can modify this player settings
         PlayerProfile_UI playerUI = newPlayerPanel.GetComponent<PlayerProfile_UI>();
