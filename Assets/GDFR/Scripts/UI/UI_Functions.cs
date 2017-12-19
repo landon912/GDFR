@@ -51,6 +51,8 @@ public class UI_Functions : MonoBehaviour {
         SetActivateGameObjectState(true, true);
 
         PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
+        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 1, true, 1);
+        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 1, true, 1);
     }
 
     public IEnumerator HideGameOverMessage()
@@ -58,9 +60,13 @@ public class UI_Functions : MonoBehaviour {
         yield return new WaitForSeconds(0.01f);
 
         PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
+        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 2, true, 1);
+        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 2, true, 1);
 
         yield return new WaitForSeconds(0.5f);
 
         SetActivateGameObjectState(false);
+
+        yield return new WaitForSeconds(0.2f);
     }
 }

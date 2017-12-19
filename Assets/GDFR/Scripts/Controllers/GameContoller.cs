@@ -65,7 +65,7 @@ public class GameContoller : RxFx_FSM
 
     private void NewGame()
     {
-        callEvent("GameReset");
+        callEvent("StartNewGame");
     }
 
     private void ReturnToSetupMenu()
@@ -584,12 +584,6 @@ public class GameContoller : RxFx_FSM
 		playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
 		playerDecks[mPlayersPosition[currentPlayer]].zDepth = 600;
 		yield return new WaitForSeconds(0.5f);
-
-		while(true)
-		{
-			//Wait for player to select a card usinging CardPicked event externally.
-			yield return null;
-		}
 	}
 
 	IEnumerator State_PlayerMove(params object[] data)
@@ -828,12 +822,6 @@ public class GameContoller : RxFx_FSM
 
 	    EventReceiver.TriggerDeclareWinnerEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
 		yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!"));
-
-        //the next state is triggered through the NewGameButtonPressedEvent; just stall untill then
-	    while (true)
-	    {
-	        yield return null;
-	    }
 	}
 
     IEnumerator State_StartNewGame(params object[] data)
