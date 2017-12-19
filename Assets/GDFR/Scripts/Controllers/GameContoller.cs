@@ -52,6 +52,7 @@ public class GameContoller : RxFx_FSM
 		new FSM_Event("ChangePlayer",State_ChangePlayer);
 		new FSM_Event("DeclareWinner",State_DeclareWinner);
 		new FSM_Event("PlayResolve",State_PlayResolve);
+	    new FSM_Event("StartNewGame", State_StartNewGame);
 
         callEvent("StartEvent");
 	}
@@ -64,6 +65,11 @@ public class GameContoller : RxFx_FSM
 
     private void NewGame()
     {
+        callEvent("GameReset");
+    }
+
+    private void ReturnToSetupMenu()
+    {
         // Clear all FSM
         StopAllCoroutines();
         GlobalEventList.Clear();
@@ -72,7 +78,7 @@ public class GameContoller : RxFx_FSM
         SceneManager.LoadScene("NewGame");
     }
 
-    private void ExitGame()
+    private void ReturnToMainMenu()
     {
         // Clear all FSM
         StopAllCoroutines();
@@ -114,8 +120,10 @@ public class GameContoller : RxFx_FSM
 	    UI_Event_Receiver.CardSelected += OnCardSelected;
 	    UI_Event_Receiver.MuteButtonPressed += MuteSound;
 	    UI_Event_Receiver.HelpButtonPressed += LoadHelpMenu;
-	    UI_Event_Receiver.ExitButtonPressed += NewGame;
+	    UI_Event_Receiver.ExitButtonPressed += ReturnToSetupMenu;
 	    UI_Event_Receiver.ForfeitButtonPressed += ForfeitGame;
+	    UI_Event_Receiver.NewGameButtonPressed += NewGame;
+	    UI_Event_Receiver.SetupButtonPressed += ReturnToSetupMenu;
 	}
 
 	void OnDestroy()
@@ -123,8 +131,10 @@ public class GameContoller : RxFx_FSM
 		UI_Event_Receiver.CardSelected -= OnCardSelected;
 	    UI_Event_Receiver.MuteButtonPressed -= MuteSound;
 	    UI_Event_Receiver.HelpButtonPressed -= LoadHelpMenu;
-	    UI_Event_Receiver.ExitButtonPressed -= NewGame;
+	    UI_Event_Receiver.ExitButtonPressed -= ReturnToSetupMenu;
 	    UI_Event_Receiver.ForfeitButtonPressed -= ForfeitGame;
+	    UI_Event_Receiver.NewGameButtonPressed -= NewGame;
+	    UI_Event_Receiver.SetupButtonPressed -= ReturnToSetupMenu;
     }
 
     void OnCardSelected(Card card)
@@ -817,12 +827,23 @@ public class GameContoller : RxFx_FSM
 		Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_DeclareWinner " + currentPlayer);
 
 	    EventReceiver.TriggerDeclareWinnerEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
-		yield return StartCoroutine(uiFunctionScript.SendGameMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!",2f));
+		yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!"));
 
-		callEvent("GameReset");
+        //the next state is triggered through the NewGameButtonPressedEvent; just stall untill then
+	    while (true)
+	    {
+	        yield return null;
+	    }
 	}
 
-	IEnumerator State_ChangePlayer (params object[] data)
+    IEnumerator State_StartNewGame(params object[] data)
+    {
+        yield return StartCoroutine(uiFunctionScript.HideGameOverMessage());
+
+        callEvent("GameReset");
+    }
+    
+    IEnumerator State_ChangePlayer (params object[] data)
 	{
         avatars[mPlayersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(false);
 

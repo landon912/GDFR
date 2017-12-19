@@ -104,7 +104,7 @@ public class PlayerProfile_UI : MonoBehaviour {
                 nameField.text = "";
                 avatarDropdown.value = 0;
 
-                FindObjectOfType<GameSettingUIEvents>().AddProfileBack(defaultProfileAssigned);
+                FindObjectOfType<GameSettingUIEvents>().AddProfileBackToUnassignedList(defaultProfileAssigned);
                 defaultProfileAssigned = null;
 
                 Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
@@ -114,7 +114,7 @@ public class PlayerProfile_UI : MonoBehaviour {
         else
         {
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.AI;
-            if (nameField.text == string.Empty)
+            if (nameField.text == string.Empty || nameField.text == "Player " + (ProfileIndex + 1))
             {
                 FindObjectOfType<GameSettingUIEvents>().SelectDefaultProfile(this);
             }

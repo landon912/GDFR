@@ -180,7 +180,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         playerUI.OnNameChanged(playerUI.nameField.text);
     }
 
-    public void AddProfileBack(AIData profile)
+    public void AddProfileBackToUnassignedList(AIData profile)
     {
         mAIProfiles.Add(profile);
     }
@@ -255,7 +255,7 @@ public class GameSettingUIEvents : MonoBehaviour {
 	{
         Toolbox.Instance.gameSettings.cardVariant = (GameSettings.CardVariant)listValue;
         Debug.Log("CardVariant Set to " + Toolbox.Instance.gameSettings.cardVariant);
-    }	
+    }
 
 	void OnRulesVariantChanged(int listValue)
 	{

@@ -35,6 +35,12 @@ public class UI_Event_Receiver : MonoBehaviour
     public delegate void ForfeitButtonPressedHandler();
     public static event ForfeitButtonPressedHandler ForfeitButtonPressed;
 
+    public delegate void NewGameButtonPressedHandler();
+    public static event NewGameButtonPressedHandler NewGameButtonPressed;
+
+    public delegate void SetupButtonPressedHandler();
+    public static event SetupButtonPressedHandler SetupButtonPressed;
+
     public static void TriggerCardSelectedEvent(Card card)
 	{
 		if(card != null && CardSelected != null)
@@ -80,5 +86,17 @@ public class UI_Event_Receiver : MonoBehaviour
     {
         if (ForfeitButtonPressed != null)
             ForfeitButtonPressed();
+    }
+
+    public void TriggerNewGameButtonPressedEvent()
+    {
+        if (NewGameButtonPressed != null)
+            NewGameButtonPressed();  
+    }
+
+    public void TriggerSetupButtonPressedEvent()
+    {
+        if (SetupButtonPressed != null)
+            SetupButtonPressed();
     }
 }
