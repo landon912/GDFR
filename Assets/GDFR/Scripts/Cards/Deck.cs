@@ -45,7 +45,7 @@ public class Deck : MonoBehaviour
 		get{return deckTransform;}
 	}
 
-	public bool playSparklesOnDraw = true;
+	public bool playSparklesOnDraw = false;
 
 	public Vector3 GetGridPosition(int index)
 	{

@@ -48,7 +48,7 @@ public class Card : MonoBehaviour
 
     public UISprite sprite;
     public bool starBorder = false;
-    public PlayStars starsScript;
+    public CardStars starsScript;
     public UISprite symbolGlowSprite;
     public UISprite symbolSprite;
     public UILabel text;
@@ -276,7 +276,15 @@ public class Card : MonoBehaviour
                 break;
         }
         SetSymbol(CurrentSymbol);
-        starsScript.gameObject.SetActive(StarsShowing);
+        if (StarsShowing)
+        {
+            starsScript.Show();
+            //PlayStarsEffect();
+        }
+        else
+        {
+            starsScript.Hide();
+        }
     }
 
     public void MoveCard(Transform to, float duration)
@@ -362,7 +370,7 @@ public class Card : MonoBehaviour
 
     public void PlayStarsEffect()
     {
-        starsScript.enabled = true;
+        starsScript.Play();
     }
 
     public override string ToString()
