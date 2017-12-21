@@ -38,10 +38,10 @@ public class Card : MonoBehaviour
 
     public string fairySpriteName = "";
     public string goblinSpriteName = "";
-    public string moonSpriteName = "SYMBOL_Moon_Small";
-    public string mushroomSpriteName = "SYMBOL_Mushroom_Small";
-    public string sunSpriteName = "SYMBOL_Sun_Small";
-    public string frogSpriteName = "SYMBOL_Frog_Small";
+    public string moonSpriteName = "SYMBOL_Moon";
+    public string mushroomSpriteName = "SYMBOL_Mushroom";
+    public string sunSpriteName = "SYMBOL_Sun";
+    public string frogSpriteName = "SYMBOL_Frog";
 
     public Transform scaleTransform = null;
     public UISprite shadowSprite;
@@ -224,7 +224,7 @@ public class Card : MonoBehaviour
                 symbolSprite.spriteName = frogSpriteName;
                 break;
         }
-        symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Glow";
+        symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Small_Glow";
     }
 
     public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
