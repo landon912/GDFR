@@ -248,13 +248,13 @@ public class GameSettingUIEvents : MonoBehaviour {
 	void OnDifficultyChanged(int listValue)
 	{
         Toolbox.Instance.gameSettings.difficultyLevel = (GameSettings.Difficulty)listValue;
-        Debug.Log("Difficulty Set to " + Toolbox.Instance.gameSettings.difficultyLevel);
+        //Debug.Log("Difficulty Set to " + Toolbox.Instance.gameSettings.difficultyLevel);
     }
 
     void OnCardVariantChanged(int listValue)
 	{
         Toolbox.Instance.gameSettings.cardVariant = (GameSettings.CardVariant)listValue;
-        Debug.Log("CardVariant Set to " + Toolbox.Instance.gameSettings.cardVariant);
+        //Debug.Log("CardVariant Set to " + Toolbox.Instance.gameSettings.cardVariant);
     }
 
 	void OnRulesVariantChanged(int listValue)
@@ -275,6 +275,6 @@ public class GameSettingUIEvents : MonoBehaviour {
                 Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Classic;
                 break;
         }
-        Debug.Log("RulesVariant Set to " + Toolbox.Instance.gameSettings.rulesVariant);
+        //Debug.Log("RulesVariant Set to " + Toolbox.Instance.gameSettings.rulesVariant);
     }	
 }
