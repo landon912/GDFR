@@ -1577,7 +1577,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>
         }
     }
 
-    internal AudioItem _GetAudioItem( string audioID )
+    public AudioItem _GetAudioItem( string audioID )
     {
         AudioItem sndItem;
 
