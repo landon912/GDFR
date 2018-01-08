@@ -1,0 +1,10 @@
+{
+    "name": "ExternalPluginsEditor",
+    "references": [
+        "ExternalPlugins"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
