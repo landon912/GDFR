@@ -63,6 +63,7 @@ public class GameContoller : RxFx_FSM
 	    AudioController.Instance._GetAudioItem("Game Music").subItems[0].Probability = 100;
     }
 
+    #region INTERACTIONS
     private void NewGame()
     {
         callEvent("StartNewGame");
@@ -114,6 +115,8 @@ public class GameContoller : RxFx_FSM
         callEvent("GameReset");
         GiveUpButtonGameObject.SetActive(false);
     }
+
+    #endregion
 
     void OnEnable()
 	{

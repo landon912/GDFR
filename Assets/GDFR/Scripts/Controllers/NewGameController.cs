@@ -38,6 +38,7 @@ public class NewGameController : MonoBehaviour {
     public void startGame()
     {
         Debug.Log("startGame button");
+        FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
         Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("MainGame");
     }

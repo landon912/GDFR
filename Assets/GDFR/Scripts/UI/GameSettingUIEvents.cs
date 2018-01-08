@@ -22,6 +22,8 @@ public class GameSettingUIEvents : MonoBehaviour {
     public TextAsset AIDataAsset;
 
     private List<AIData> mAIProfiles;
+    private List<PlayerProfile_UI> mPlayerProfiles;
+    private static int AI_PROFILE_INDEX = 11;
 
     void OnEnable()
 	{
@@ -51,6 +53,8 @@ public class GameSettingUIEvents : MonoBehaviour {
 
         // Set the current numberOfPlayers
         playerCountLabel.text = Toolbox.Instance.gameSettings.numberOfPlayers.ToString();
+
+        mPlayerProfiles = new List<PlayerProfile_UI>(4);
 
         // Create all player profiles after the first
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
@@ -143,17 +147,20 @@ public class GameSettingUIEvents : MonoBehaviour {
         // set the player profile index on the UI component, so it can modify this player settings
         PlayerProfile_UI playerUI = newPlayerPanel.GetComponent<PlayerProfile_UI>();
 
+        mPlayerProfiles.Add(playerUI);
+
         playerUI.ProfileIndex = idx;
         playerUI.aiToggle.gameObject.SetActive(canBeAI);
 
         playerUI.PlayToggleSound = false;
-        playerUI.aiToggle.isOn = isAI;
-        playerUI.PlayToggleSound = true;
 
-        if(!isAI)
+        playerUI.aiToggle.isOn = isAI;
+        if (!isAI)
         {
-            Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].name = "Player " + (idx + 1);
+            playerUI.OnHumanToggle(!isAI);
         }
+
+        playerUI.PlayToggleSound = true;
 
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
         newPlayerPanel.name = "player" + (idx + 1);
@@ -161,23 +168,57 @@ public class GameSettingUIEvents : MonoBehaviour {
 
     public void SelectDefaultProfile(PlayerProfile_UI playerUI)
     {
+        //set public name
+        playerUI.nameStatic.text = "A.I. Player";
+
+        //set public avatarID to AI default (Needs to be before internal set)
+        playerUI.avatarDropdown.value = AI_PROFILE_INDEX;
+        playerUI.avatarDropdown.interactable = false;
+    }
+
+    public void SelectRealAIProfiles()
+    {
+        //remove ai profiles that use the same avatar as players
+        foreach (PlayerProfile_UI playerUI in mPlayerProfiles)
+        {
+            if (playerUI.humanToggle.isOn)
+            {
+                for (var i = 0; i < mAIProfiles.Count; i++)
+                {
+                    AIData aiProfile = mAIProfiles[i];
+                    if (playerUI.avatarDropdown.value == aiProfile.avatarID)
+                    {
+                        mAIProfiles.Remove(aiProfile);
+                    }
+                }
+            }
+        }
+
+        foreach (PlayerProfile_UI playerUI in mPlayerProfiles)
+        {
+            if (playerUI.aiToggle.isOn)
+            {
+                SelectRealAIProfile(playerUI);
+            }
+        }
+    }
+
+    private void SelectRealAIProfile(PlayerProfile_UI playerUI)
+    {
         //get random AIProfile
-        int count = mAIProfiles.Count;
-        int index = UnityEngine.Random.Range(0, count);
+        int index = UnityEngine.Random.Range(0, mAIProfiles.Count);
         AIData profileToUse = mAIProfiles[index];
 
-        count = profileToUse.names.Count;
-        playerUI.nameField.text = profileToUse.names[UnityEngine.Random.Range(0, count)];
-        playerUI.NameChangeStringToIgnore = playerUI.nameField.text;
-        playerUI.HasDefaultName = true;
+        playerUI.defaultProfileAssigned = profileToUse;
 
-        playerUI.avatarDropdown.value = profileToUse.avatarID;
+        //set internal name
+        Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].name = profileToUse.names[UnityEngine.Random.Range(0, profileToUse.names.Count)];
+
+        //now, set internal avatarID
+        Toolbox.Instance.playerProfiles[playerUI.ProfileIndex].avatar = profileToUse.avatarID;
 
         //do not have the AI use the same avatar more than once
-        playerUI.defaultProfileAssigned = profileToUse;
         mAIProfiles.Remove(profileToUse);
-
-        playerUI.OnNameChanged(playerUI.nameField.text);
     }
 
     public void AddProfileBackToUnassignedList(AIData profile)
@@ -211,7 +252,12 @@ public class GameSettingUIEvents : MonoBehaviour {
             int delta = Mathf.Abs(count - currentNumber);
             for(int i = delta; i > 0; i--)
             {
-                Destroy(GameObject.Find("player" + (count + i)));
+                GameObject playerUIObj = GameObject.Find("player" + (count + i));
+                PlayerProfile_UI playerProfile = playerUIObj.GetComponent<PlayerProfile_UI>();
+
+                mPlayerProfiles.Remove(playerProfile);
+
+                Destroy(playerUIObj);
                 delta--;
             }
         }

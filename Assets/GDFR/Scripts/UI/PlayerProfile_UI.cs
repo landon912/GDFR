@@ -1,15 +1,13 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerProfile_UI : MonoBehaviour {
 
-    public UnityEngine.UI.InputField nameField = null;
-    public UnityEngine.UI.Toggle humanToggle = null;
-    public UnityEngine.UI.Toggle aiToggle = null;
-    public UnityEngine.UI.Dropdown avatarDropdown = null;
-
-    public bool HasDefaultName = false;
-    public string NameChangeStringToIgnore = String.Empty;
+    public InputField nameField = null;
+    public Text nameStatic = null;
+    public Toggle humanToggle = null;
+    public Toggle aiToggle = null;
+    public Dropdown avatarDropdown = null;
 
     [HideInInspector]
     public AIData defaultProfileAssigned = null;
@@ -75,49 +73,35 @@ public class PlayerProfile_UI : MonoBehaviour {
     // Events
     public void OnNameChanged(string value)
     {
-        if (value == String.Empty)
-        {
-            HasDefaultName = true;
-            Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
-            Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
-
-            return;
-        }
-
         Toolbox.Instance.playerProfiles[ProfileIndex].name = value;
         Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
-
-        //dont reset default name flag b/c we are assigning the default name
-        if (NameChangeStringToIgnore != value)
-        {
-            HasDefaultName = false;
-        }
     }
 
-    public void OnHumanToggle(bool value)
+    public void OnHumanToggle(bool isHuman)
     {
-        if (value)
+        if (isHuman)
         {
+            //enable text field, disable static name
+            nameField.gameObject.SetActive(true);
+            nameStatic.transform.parent.gameObject.SetActive(false);
+
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.Human;
-            if (HasDefaultName)
-            {
-                nameField.text = "";
-                avatarDropdown.value = 0;
+            nameField.text = "Player " + (ProfileIndex + 1);
+            avatarDropdown.value = 0;
+            avatarDropdown.interactable = true;
 
-                FindObjectOfType<GameSettingUIEvents>().AddProfileBackToUnassignedList(defaultProfileAssigned);
-                defaultProfileAssigned = null;
-
-                Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
-                Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
-            }
+            Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
+            Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " +
+                      Toolbox.Instance.playerProfiles[ProfileIndex].name);
         }
         else
         {
+            //enable static name, disable dyanmic field
+            nameStatic.transform.parent.gameObject.SetActive(true);
+            nameField.gameObject.SetActive(false);
+
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.AI;
-            if (nameField.text == string.Empty || nameField.text == "Player " + (ProfileIndex + 1))
-            {
-                FindObjectOfType<GameSettingUIEvents>().SelectDefaultProfile(this);
-            }
+            FindObjectOfType<GameSettingUIEvents>().SelectDefaultProfile(this);
         }
 
         //skip us manually changing the first profile to a player automatically
@@ -133,6 +117,7 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         Toolbox.Instance.playerProfiles[ProfileIndex].avatar = listValue;
 
-        Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[this.ProfileIndex].avatar);
+        Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[ProfileIndex].avatar);
+
     }
 }
