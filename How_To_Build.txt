@@ -1,0 +1,5 @@
+1. Put game files inside this folder under "GDFR_Windows_MAJOR_MINOR" where MAJOR and MINOR are 
+the version numbers
+2. Modify the GDFR_Windows_Builder MAJOR_VERSION and MINOR_VERSION definitions to suit this version inside
+Inno Editor
+3. Happy building!
