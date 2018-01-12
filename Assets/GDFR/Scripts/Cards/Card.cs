@@ -4,11 +4,18 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     private bool _cardSparkle;
-    public int _zDepth;
+    private int _zDepth;
+    private int _zDepthOffset;
+    private bool isFront = true;
+
+    private UITweener[] tweenerList;
+    private int[] widgetDefaultDepth;
+    private UIWidget[] widgetList;
+
+    private Race mCurrentRace;
+    private string mNameSound = "Not Set";
 
     public Deck parentDeck = null;
-
-    private int _zDepthOffset;
     public TweenScale cardBumpTweener = null;
     public TweenRotation cardFlipTweenerA = null;
     public TweenRotation cardFlipTweenerB = null;
@@ -24,17 +31,12 @@ public class Card : MonoBehaviour
     public bool goblinStarBorder = false;
 
     public string goblinText = "Goblin Test";
-    private bool isFront = true;
     public GameObject labelPositionOnFlip;
 
     public Rhyme fairyRhyme;
     public Rhyme goblinRhyme;
     public Symbol fairySymbol;
     public Symbol goblinSymbol;
-
-    private Race mCurrentRace;
-
-    private string mNameSound = "Not Set";
 
     public string fairySpriteName = "";
     public string goblinSpriteName = "";
@@ -52,9 +54,9 @@ public class Card : MonoBehaviour
     public UISprite symbolGlowSprite;
     public UISprite symbolSprite;
     public UILabel text;
-    private UITweener[] tweenerList;
-    private int[] widgetDefaultDepth;
-    private UIWidget[] widgetList;
+
+    public const int NUMBERS_FONT_SIZE = 40;
+    public const int REGULAR_FONT_SIZE = 23;
 
     public bool StarsShowing
     {
@@ -181,12 +183,14 @@ public class Card : MonoBehaviour
             if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
             {
                 text.text = ((int) CurrentRhyme).ToString();
-                text.fontSize = 40;
+                text.fontSize = NUMBERS_FONT_SIZE;
+                fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
             }
             else
             {
                 text.text = goblinText;
-                text.fontSize = 23;
+                text.fontSize = REGULAR_FONT_SIZE;
+                fadingFlipText.fontSize = REGULAR_FONT_SIZE;
             }
             SetSymbol(goblinSymbol);
         }
@@ -246,12 +250,14 @@ public class Card : MonoBehaviour
                 if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
                 {
                     text.text = ((int) CurrentRhyme).ToString();
-                    text.fontSize = 40;
+                    text.fontSize = NUMBERS_FONT_SIZE;
+                    fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
                 }
                 else
                 {
                     text.text = fairyText;
-                    text.fontSize = 23;
+                    text.fontSize = REGULAR_FONT_SIZE;
+                    fadingFlipText.fontSize = REGULAR_FONT_SIZE;
                 }
 
                 //Debug.Log ("HIT  Race Set To Fairy");
@@ -264,12 +270,14 @@ public class Card : MonoBehaviour
                 if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
                 {
                     text.text = ((int) CurrentRhyme).ToString();
-                    text.fontSize = 40;
+                    text.fontSize = NUMBERS_FONT_SIZE;
+                    fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
                 }
                 else
                 {
                     text.text = goblinText;
-                    text.fontSize = 23;
+                    text.fontSize = REGULAR_FONT_SIZE;
+                    fadingFlipText.fontSize = REGULAR_FONT_SIZE;
                 }
 
                 //Debug.Log ("Race Set To goblin");
