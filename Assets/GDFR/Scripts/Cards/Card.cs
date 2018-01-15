@@ -226,7 +226,7 @@ public class Card : MonoBehaviour
                 symbolSprite.spriteName = frogSpriteName;
                 break;
         }
-        symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Small_Glow";
+        symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Glow";
     }
 
     public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
