@@ -105,8 +105,9 @@ public class PlayerProfile_UI : MonoBehaviour {
 
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.Human;
             nameField.text = "Player " + (ProfileIndex + 1);
-            //avatarDropdown.value = 0;
-            //avatarDropdown.interactable = true;
+
+            ChangeAvatar(0);
+            avatarSprite.GetComponent<Button>().interactable = true;
 
             Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
             Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " +
@@ -117,6 +118,8 @@ public class PlayerProfile_UI : MonoBehaviour {
             //enable static name, disable dyanmic field
             nameStatic.transform.parent.gameObject.SetActive(true);
             nameField.gameObject.SetActive(false);
+
+            avatarSprite.GetComponent<Button>().interactable = false;
 
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.AI;
             FindObjectOfType<GameSettingUIEvents>().SelectDefaultProfile(this);

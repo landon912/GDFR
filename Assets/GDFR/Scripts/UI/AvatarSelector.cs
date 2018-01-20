@@ -24,11 +24,14 @@ public class AvatarSelector : UITable
     {
         foreach (AvatarOption avatar in mParent.AvatarOptions)
         {
-            GameObject child = Instantiate(avatarPrefab);
-            child.transform.SetParent(contentParent.transform);
+            if (avatar.id != GameSettingUIEvents.AI_PROFILE_INDEX)
+            {
+                GameObject child = Instantiate(avatarPrefab);
+                child.transform.SetParent(contentParent.transform);
 
-            child.GetComponent<Image>().sprite = avatar.graphic;
-            child.GetComponent<AvatarButton>().id = avatar.id;
+                child.GetComponent<Image>().sprite = avatar.graphic;
+                child.GetComponent<AvatarButton>().id = avatar.id;
+            }
         }
     }
 

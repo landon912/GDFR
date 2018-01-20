@@ -23,7 +23,8 @@ public class GameSettingUIEvents : MonoBehaviour {
 
     private List<AIData> mAIProfiles;
     private List<PlayerProfile_UI> mPlayerProfiles;
-    private static int AI_PROFILE_INDEX = 11;
+
+    public static int AI_PROFILE_INDEX = 11;
 
     void OnEnable()
 	{
