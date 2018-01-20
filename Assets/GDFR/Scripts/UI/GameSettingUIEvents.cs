@@ -172,8 +172,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         playerUI.nameStatic.text = "A.I. Player";
 
         //set public avatarID to AI default (Needs to be before internal set)
-        playerUI.avatarDropdown.value = AI_PROFILE_INDEX;
-        playerUI.avatarDropdown.interactable = false;
+        playerUI.ChangeAvatar(AI_PROFILE_INDEX);
     }
 
     public void SelectRealAIProfiles()
@@ -186,7 +185,7 @@ public class GameSettingUIEvents : MonoBehaviour {
                 for (var i = 0; i < mAIProfiles.Count; i++)
                 {
                     AIData aiProfile = mAIProfiles[i];
-                    if (playerUI.avatarDropdown.value == aiProfile.avatarID)
+                    if (playerUI.CurrentAvatarID == aiProfile.avatarID)
                     {
                         mAIProfiles.Remove(aiProfile);
                     }

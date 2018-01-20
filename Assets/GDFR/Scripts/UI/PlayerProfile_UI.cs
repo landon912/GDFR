@@ -1,5 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
+
+[Serializable]
+public class AvatarOption
+{
+    public int id;
+    public Sprite graphic;
+}
 
 public class PlayerProfile_UI : MonoBehaviour {
 
@@ -7,10 +15,19 @@ public class PlayerProfile_UI : MonoBehaviour {
     public Text nameStatic = null;
     public Toggle humanToggle = null;
     public Toggle aiToggle = null;
-    public Dropdown avatarDropdown = null;
+    public AvatarSelector avatarSelector;
+    public Image avatarSprite = null;
+
+    public AvatarOption[] AvatarOptions;
 
     [HideInInspector]
     public AIData defaultProfileAssigned = null;
+
+
+    public int CurrentAvatarID
+    {
+        get { return Toolbox.Instance.playerProfiles[ProfileIndex].avatar; }
+    }
 
     int _profileIndex = 0;
     public int ProfileIndex
@@ -27,7 +44,7 @@ public class PlayerProfile_UI : MonoBehaviour {
 
             if (Toolbox.Instance.playerProfiles[value].avatar > 0)
             {
-                avatarDropdown.value = Toolbox.Instance.playerProfiles[value].avatar;
+                ChangeAvatar(Toolbox.Instance.playerProfiles[value].avatar);
             }
 
             if (Toolbox.Instance.playerProfiles[value].type == PlayersProfile.Type.Human)
@@ -52,6 +69,7 @@ public class PlayerProfile_UI : MonoBehaviour {
         get { return _profileIndex; }
     }
 
+    [HideInInspector]
     public bool PlayToggleSound = true;
 
     // Registering Events
@@ -59,7 +77,7 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         nameField.onEndEdit.AddListener(OnNameChanged);
         humanToggle.onValueChanged.AddListener(OnHumanToggle);
-        avatarDropdown.onValueChanged.AddListener(OnAvatarChanged);
+        //avatarDropdown.onValueChanged.AddListener(ChangeAvatar);
     }
 
     // De-registering events
@@ -67,7 +85,7 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         nameField.onEndEdit.RemoveAllListeners();
         humanToggle.onValueChanged.RemoveAllListeners();
-        avatarDropdown.onValueChanged.RemoveAllListeners();
+        //avatarDropdown.onValueChanged.RemoveAllListeners();
     }
 
     // Events
@@ -87,8 +105,8 @@ public class PlayerProfile_UI : MonoBehaviour {
 
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.Human;
             nameField.text = "Player " + (ProfileIndex + 1);
-            avatarDropdown.value = 0;
-            avatarDropdown.interactable = true;
+            //avatarDropdown.value = 0;
+            //avatarDropdown.interactable = true;
 
             Toolbox.Instance.playerProfiles[ProfileIndex].name = "Player " + (ProfileIndex + 1);
             Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " +
@@ -113,11 +131,16 @@ public class PlayerProfile_UI : MonoBehaviour {
         Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[ProfileIndex].type);
     }
 
-    void OnAvatarChanged(int listValue)
+    public void ChangeAvatar(int id)
     {
-        Toolbox.Instance.playerProfiles[ProfileIndex].avatar = listValue;
+        Toolbox.Instance.playerProfiles[ProfileIndex].avatar = id;
+        avatarSprite.sprite = AvatarOptions[id].graphic;
 
         Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[ProfileIndex].avatar);
+    }
 
+    public void OpenAvatarSelector()
+    {
+        avatarSelector.Show();
     }
 }
