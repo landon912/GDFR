@@ -116,6 +116,12 @@ public class GameContoller : RxFx_FSM
         GiveUpButtonGameObject.SetActive(false);
     }
 
+    private void SetTurnCounterText(string text)
+    {
+        turnsCounter.text = text;
+        turnsCounter.transform.GetChild(0).GetComponent<UILabel>().text = text;
+    }
+
     #endregion
 
     void OnEnable()
@@ -222,7 +228,6 @@ public class GameContoller : RxFx_FSM
 	{
         // Turns
         mTurnsCount = 0;
-        turnsCounter.enabled = false;
         turnsCounter.gameObject.SetActive(false);
 
         //FSM_Event nextPhase = new FSM_Event("",State_DrawPhase1);	
@@ -551,12 +556,10 @@ public class GameContoller : RxFx_FSM
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
             case GameSettings.RulesVariant.Classic:
-                turnsCounter.enabled = false;
                 turnsCounter.gameObject.SetActive(false);
                 break;
             case GameSettings.RulesVariant.Solitaire:
             case GameSettings.RulesVariant.Ultimate_Solitaire:
-                turnsCounter.enabled = true;
                 turnsCounter.gameObject.SetActive(true);
                 break;
         }
@@ -564,7 +567,7 @@ public class GameContoller : RxFx_FSM
         if (turnsCounter.enabled)
         {
             mTurnsCount++;
-            turnsCounter.text = "Turns: " + mTurnsCount;
+            SetTurnCounterText("Turns: " + mTurnsCount);
         }
 
         // Is it AI ?
