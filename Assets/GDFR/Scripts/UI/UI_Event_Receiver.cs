@@ -10,16 +10,7 @@ public class UI_Event_Receiver : MonoBehaviour
 
     public delegate void CardDraggedEventHandler(Vector2 pos);
     public static event CardDraggedEventHandler CardDragged;
-
- //   public delegate void BackgroundDoubleClickedHandler(Vector2 pos);
- //   public static event BackgroundDoubleClickedHandler BackgroundDoubleClicked;
-
- //   public delegate void BackgroundDraggedHandler(Vector2 pos);
-	//public static event BackgroundDraggedHandler BackgroundDragged;
-
- //   public delegate void BackgroundDroppedHandler();
- //   public static event BackgroundDroppedHandler BackgroundDropped;
-
+    
     public delegate void UIScrollHandler(float delta);
     public static event UIScrollHandler UIScroll;
 

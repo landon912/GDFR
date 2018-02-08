@@ -233,17 +233,18 @@ public class GameContoller : RxFx_FSM
         //FSM_Event nextPhase = new FSM_Event("",State_DrawPhase1);	
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: GameReset");
 
-		mainDeck.DeckUiEnabled(false);
 
 	    foreach (int index in mPlayersPosition)
 	    {
 	        avatars[index].avatarGlowSprite.gameObject.SetActive(false);
 	    }
 
-        //return all cards to main deck
+		mainDeck.DeckUiEnabled(false);
+        //return all cards to main deck and disable their UIs
         for (int p=0;p<playerDecks.Length;p++)
 		{
 			playerDecks[p].ReturnAllCards(mainDeck);
+            playerDecks[p].DeckUiEnabled(false);
 		}
 		fairyRingDeck.ReturnAllCards(mainDeck);
 		swapDeck.ReturnAllCards(mainDeck);
