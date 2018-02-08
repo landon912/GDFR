@@ -10,17 +10,15 @@ public class AvatarSelector : UITable
 
     private PlayerProfile_UI mPlayerProfile;
     private GameObject mBlocker;
+    private bool hasBuilt = false;
 
-    void Start()
+    void Populate()
     {
-        //grab random profile to use to populate
-        mPlayerProfile = FindObjectOfType<PlayerProfile_UI>();
-
         CreateChildren();
 
         BuildGrid(contentParent.transform);
 
-        mPlayerProfile = null;
+        hasBuilt = true;
     }
 
     void CreateChildren()
@@ -48,6 +46,11 @@ public class AvatarSelector : UITable
     {
         mPlayerProfile = playerProfile;
         mBlocker = CreateBlocker(transform.parent.GetComponentInParent<Canvas>(), GetComponent<Canvas>());
+
+        if(hasBuilt == false)
+        {
+            Populate();
+        }
         
         contentParent.SetActive(true);
         background.SetActive(true);
