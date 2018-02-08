@@ -4,8 +4,6 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     private bool _cardSparkle;
-    private int _zDepth;
-    private int _zDepthOffset;
     private bool isFront = true;
 
     private UITweener[] tweenerList;
@@ -96,24 +94,29 @@ public class Card : MonoBehaviour
 
     public string NameSound { get { return mNameSound; } }
 
-    public int zDepth
+    private int _depth;
+    public int Depth
     {
         set
         {
-            _zDepth = value;
-            SetZDepth(_zDepth);
+            _depth = value;
+            UpdateDepth();
         }
-        get { return _zDepth; }
+        get
+        {
+            return _depth;
+        }
     }
 
-    public int zDepthOffset
+    private int _depthOffset;
+    public int DeckDepthOffset
     {
         set
         {
-            _zDepthOffset = value;
-            SetZDepth(_zDepth);
+            _depthOffset = value;
+            UpdateDepth();
         }
-        get { return _zDepthOffset; }
+        get{ return _depthOffset; }
     }
 
     public bool cardSparkle
@@ -349,12 +352,10 @@ public class Card : MonoBehaviour
         cardBumpTweener.PlayForward();
     }
 
-    private void SetZDepth(int z)
+    private void UpdateDepth()
     {
-        z += _zDepthOffset;
-
         for (var w = 0; w < widgetList.Length; w++)
-            widgetList[w].depth = widgetDefaultDepth[w] + z;
+             widgetList[w].depth = widgetDefaultDepth[w] + Depth + DeckDepthOffset;
     }
 
     public void SymbolMatchEffect()

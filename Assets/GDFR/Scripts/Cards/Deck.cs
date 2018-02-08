@@ -35,7 +35,7 @@ public class Deck : MonoBehaviour
 		set
 		{
 			_zDepth = value;
-			SetZDepthOffset(_zDepth);
+			ChangeDeckDepth(_zDepth);
 		}
 		get{return _zDepth;}
 	}
@@ -188,8 +188,7 @@ public class Deck : MonoBehaviour
         EventReceiver.TriggerCardMovedEvent(card);
 
 		Refresh();
-		SetZDepthOffset(_zDepth);
-	    card.zDepth = _zDepth + 100;
+		card.DeckDepthOffset = zDepth;
 
 		if(playSparklesOnDraw)
 		    card.CardSparkleOverTime(0.4f);
@@ -209,8 +208,7 @@ public class Deck : MonoBehaviour
         mCards.Add(card);
 
         card.transform.localPosition = Vector3.zero;
-		SetZDepthOffset(_zDepth);
-	    card.zDepth = _zDepth + 100;
+		card.DeckDepthOffset = zDepth;
 
 		return card;
 	}
@@ -232,11 +230,12 @@ public class Deck : MonoBehaviour
 		Debug.Log("Card Removed");
 	}
 
-	public void SetZDepthOffset(int z)
+	private void ChangeDeckDepth(int newDepth)
 	{
-	    Card[] cards = GetCardList();
-		foreach(Card card in cards)
-			card.zDepthOffset = z;
+		for(int i = 0; i < mCards.Count; i++)
+		{
+			mCards[i].DeckDepthOffset = newDepth;
+		}
 	}
 
 	public void LoadDeckData (Object xmlDataFile)

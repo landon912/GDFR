@@ -79,9 +79,11 @@ public class UI_DeckGrid : UIWidgetContainer
 
             //sets card's depth in comparison with the others
             if (hJustify==HorizontalJustify.Right)
-                card.zDepth = (int)getYindex(c) + c * OFFSET_PER_CARD;
+			{
+				card.Depth = (int)getYindex(c) + c * OFFSET_PER_CARD;
+			}
 			else
-		        card.zDepth = (int)getYindex(c) + c * -OFFSET_PER_CARD;
+		        card.Depth = (int)getYindex(c) + c * -OFFSET_PER_CARD;
 		}
 
 		if(positionTweener==null)
