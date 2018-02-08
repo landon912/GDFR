@@ -54,7 +54,9 @@ public class Card : MonoBehaviour
     public UILabel text;
 
     public const int NUMBERS_FONT_SIZE = 40;
+    public const int NUMBERS_END_LABEL_X_POSITION = 56;
     public const int REGULAR_FONT_SIZE = 23;
+    public const int REGULAR_END_LABEL_X_POSITION = 84;    
 
     public bool StarsShowing
     {
@@ -300,11 +302,13 @@ public class Card : MonoBehaviour
             text.alignment = NGUIText.Alignment.Right;
             fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
             fadingFlipText.alignment = NGUIText.Alignment.Right;
+            labelPositionOnFlip.transform.localPosition = new Vector3(NUMBERS_END_LABEL_X_POSITION,labelPositionOnFlip.transform.localPosition.y,labelPositionOnFlip.transform.localPosition.z);
         }
         else
         {
             text.fontSize = REGULAR_FONT_SIZE;
             fadingFlipText.fontSize = REGULAR_FONT_SIZE;
+            labelPositionOnFlip.transform.localPosition = new Vector3(REGULAR_END_LABEL_X_POSITION,labelPositionOnFlip.transform.localPosition.y,labelPositionOnFlip.transform.localPosition.z);            
         }
     }
 
