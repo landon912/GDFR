@@ -8,21 +8,24 @@ public class AvatarSelector : UITable
     public GameObject contentParent;
     public GameObject background;
 
-    private PlayerProfile_UI mParent;
+    private PlayerProfile_UI mPlayerProfile;
     private GameObject mBlocker;
 
     void Start()
     {
-        mParent = GetComponentInParent<PlayerProfile_UI>();
+        //grab random profile to use to populate
+        mPlayerProfile = FindObjectOfType<PlayerProfile_UI>();
 
         CreateChildren();
 
         BuildGrid(contentParent.transform);
+
+        mPlayerProfile = null;
     }
 
     void CreateChildren()
     {
-        foreach (AvatarOption avatar in mParent.AvatarOptions)
+        foreach (AvatarOption avatar in mPlayerProfile.AvatarOptions)
         {
             if (avatar.id != GameSettingUIEvents.AI_PROFILE_INDEX)
             {
@@ -37,13 +40,15 @@ public class AvatarSelector : UITable
 
     public void AvatarSelected(int id)
     {
-        mParent.ChangeAvatar(id);
+        mPlayerProfile.ChangeAvatar(id);
         Hide();
     }
 
-    public void Show()
+    public void Show(PlayerProfile_UI playerProfile)
     {
+        mPlayerProfile = playerProfile;
         mBlocker = CreateBlocker(transform.parent.GetComponentInParent<Canvas>(), GetComponent<Canvas>());
+        
         contentParent.SetActive(true);
         background.SetActive(true);
     }

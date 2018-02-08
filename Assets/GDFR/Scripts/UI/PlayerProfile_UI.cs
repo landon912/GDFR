@@ -15,7 +15,7 @@ public class PlayerProfile_UI : MonoBehaviour {
     public Text nameStatic = null;
     public Toggle humanToggle = null;
     public Toggle aiToggle = null;
-    public AvatarSelector avatarSelector;
+    // public AvatarSelector avatarSelector;
     public Image avatarSprite = null;
 
     public AvatarOption[] AvatarOptions;
@@ -77,7 +77,6 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         nameField.onEndEdit.AddListener(OnNameChanged);
         humanToggle.onValueChanged.AddListener(OnHumanToggle);
-        //avatarDropdown.onValueChanged.AddListener(ChangeAvatar);
     }
 
     // De-registering events
@@ -85,7 +84,6 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         nameField.onEndEdit.RemoveAllListeners();
         humanToggle.onValueChanged.RemoveAllListeners();
-        //avatarDropdown.onValueChanged.RemoveAllListeners();
     }
 
     // Events
@@ -144,6 +142,6 @@ public class PlayerProfile_UI : MonoBehaviour {
 
     public void OpenAvatarSelector()
     {
-        avatarSelector.Show();
+        FindObjectOfType<AvatarSelector>().Show(this);
     }
 }

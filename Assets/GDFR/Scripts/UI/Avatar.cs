@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Avatar : MonoBehaviour {
-
+public class Avatar : MonoBehaviour 
+{
 	public UISprite avatarSprite = null;
 	public UISprite avatarGlowSprite = null;
 	public UILabel avatarLabel = null;
@@ -29,14 +29,9 @@ public class Avatar : MonoBehaviour {
 		get{return _spriteName;}
 	}
 
-	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 		Name = _name;
 		spriteName = _spriteName;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }
