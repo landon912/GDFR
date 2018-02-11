@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 public class FSM_Event{
 	public delegate IEnumerator FSMEventFuntion(params object[] data);
@@ -47,9 +47,10 @@ public class FSM_Event{
 	}	
 }
 
-public class RxFx_FSM : MonoBehaviour {
-	
-	public FSM_Event startEvent;
+public class RxFx_FSM : NetworkBehaviour
+{
+
+    public FSM_Event startEvent;
 	public static Dictionary<string,FSM_Event> GlobalEventList = new Dictionary<string,FSM_Event>();
 
 	public void callEvent(FSM_Event _event,params object[] data)

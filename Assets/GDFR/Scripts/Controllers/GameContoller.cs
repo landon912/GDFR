@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -35,27 +36,27 @@ public class GameContoller : RxFx_FSM
 
     protected float lastVolume;
 
-	void Awake()
-	{
-        new FSM_Event("StartEvent",State_LoadData);
+    void Awake()
+    {
+        new FSM_Event("StartEvent", State_LoadData);
         new FSM_Event("SettingUpRules", State_SettingUpRules);
-        new FSM_Event("GameReset",State_GameReset);
-		new FSM_Event("DrawPhase1",State_DrawPhase1);	
-		new FSM_Event("DrawPhase2",State_DrawPhase2);
-		new FSM_Event("DrawPhase3",State_DrawPhase3);
-		new FSM_Event("Initiative",State_Initiative);
-		new FSM_Event("PlayerSelect",State_PlayerSelect);	
-		new FSM_Event("PlayerPickCard",State_PlayerPickCard);
-		new FSM_Event("CardPicked",State_PlayerMove);
-		new FSM_Event("AIMove",State_AIMove);
-		new FSM_Event("CheckVictoryConditions",State_CheckVictoryConditions);			
-		new FSM_Event("ChangePlayer",State_ChangePlayer);
-		new FSM_Event("DeclareWinner",State_DeclareWinner);
-		new FSM_Event("PlayResolve",State_PlayResolve);
-	    new FSM_Event("StartNewGame", State_StartNewGame);
+        new FSM_Event("GameReset", State_GameReset);
+        new FSM_Event("DrawPhase1", State_DrawPhase1);
+        new FSM_Event("DrawPhase2", State_DrawPhase2);
+        new FSM_Event("DrawPhase3", State_DrawPhase3);
+        new FSM_Event("Initiative", State_Initiative);
+        new FSM_Event("PlayerSelect", State_PlayerSelect);
+        new FSM_Event("PlayerPickCard", State_PlayerPickCard);
+        new FSM_Event("CardPicked", State_PlayerMove);
+        new FSM_Event("AIMove", State_AIMove);
+        new FSM_Event("CheckVictoryConditions", State_CheckVictoryConditions);
+        new FSM_Event("ChangePlayer", State_ChangePlayer);
+        new FSM_Event("DeclareWinner", State_DeclareWinner);
+        new FSM_Event("PlayResolve", State_PlayResolve);
+        new FSM_Event("StartNewGame", State_StartNewGame);
 
         callEvent("StartEvent");
-	}
+    }
 
     void Start()
     {
