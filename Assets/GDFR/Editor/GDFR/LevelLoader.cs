@@ -20,6 +20,13 @@ public class LevelLoader : ScriptableObject
         EditorSceneManager.OpenScene("Assets/GDFR/Scenes/MainMenu.unity");
     }
 
+    [MenuItem("GDFR/Lobby")]
+    static void LoadLobby()
+    {
+        SaveDirtyScenesIfWanted();
+        EditorSceneManager.OpenScene("Assets/GDFR/Scenes/Lobby.unity");
+    }
+
     [MenuItem("GDFR/Setup")]
     static void LoadSetup()
     {

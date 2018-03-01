@@ -49,7 +49,6 @@ public class FSM_Event{
 
 public class RxFx_FSM : NetworkBehaviour
 {
-
     public FSM_Event startEvent;
 	public static Dictionary<string,FSM_Event> GlobalEventList = new Dictionary<string,FSM_Event>();
 

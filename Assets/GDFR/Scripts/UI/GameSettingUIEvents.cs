@@ -60,7 +60,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         // Create all player profiles after the first
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
         {
-            createNewPlayerProfile(idx, true, idx != 0);
+            CreateNewPlayerProfile(idx, true, idx != 0);
         }
 
         ValidateAddAndRemoveButtons();
@@ -138,7 +138,7 @@ public class GameSettingUIEvents : MonoBehaviour {
         }
     }
 
-    void createNewPlayerProfile(int idx, bool canBeAI = true, bool isAI = false)
+    void CreateNewPlayerProfile(int idx, bool canBeAI = true, bool isAI = false)
     {
         // add a new player panel
         GameObject newPlayerPanel = Instantiate(playerItemControl, Vector3.zero, Quaternion.identity);
@@ -243,7 +243,7 @@ public class GameSettingUIEvents : MonoBehaviour {
             int delta = Mathf.Abs(count - currentNumber);
             for (int i = delta; i > 0; i--)
             {
-                createNewPlayerProfile(count - delta, true, true);
+                CreateNewPlayerProfile(count - delta, true, true);
                 delta--;
             }
         }

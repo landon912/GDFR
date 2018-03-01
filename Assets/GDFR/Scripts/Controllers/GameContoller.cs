@@ -38,6 +38,8 @@ public class GameContoller : RxFx_FSM
 
     void Awake()
     {
+
+
         new FSM_Event("StartEvent", State_LoadData);
         new FSM_Event("SettingUpRules", State_SettingUpRules);
         new FSM_Event("GameReset", State_GameReset);

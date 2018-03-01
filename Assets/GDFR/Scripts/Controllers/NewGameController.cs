@@ -1,29 +1,46 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
-public class NewGameController : MonoBehaviour {
+public class NewGameController : NetworkBehaviour {
 
     Animator anim = null;
 
     public GameObject MenuAudioController;
 
-    public void Awake()
+    public void Start()
     {
+        Debug.Log(NetworkServer.active);
+
+        if (Network.connections.Length == 0)
+        {
+            Debug.Log("There is no networking in this game, but we are still running a server to simulate");
+        }
+        else
+        {
+            Debug.Log("We are connected to " + Network.connections.Length + " peers!");
+        }
+
         if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
         {
             Instantiate(MenuAudioController);
         }
-    }
 
-    public void Start()
-    {
         anim = GetComponent<Animator>();
     }
 
     public void backScene()
     {
         Debug.Log("back button");
-        SceneManager.LoadScene("MainMenu");
+        if (isServer)
+        {
+            NetworkManager.singleton.ServerChangeScene("Lobby");
+        }
+        else
+        {
+            NetworkManager.singleton.StopClient();
+            SceneManager.LoadScene("Lobby");
+        }
     }
     
     public void animateButon()
@@ -38,8 +55,12 @@ public class NewGameController : MonoBehaviour {
     public void startGame()
     {
         Debug.Log("startGame button");
-        FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
-        Destroy(AudioController.Instance.gameObject);
-        SceneManager.LoadScene("MainGame");
+
+        if (isServer)
+        {
+            FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
+            Destroy(AudioController.Instance.gameObject);
+            NetworkManager.singleton.ServerChangeScene("MainGame");
+        }
     }
 }
