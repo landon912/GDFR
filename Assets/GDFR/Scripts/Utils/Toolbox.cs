@@ -1,17 +1,38 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class Toolbox : Singleton
+[RequireComponent(typeof(GameSettings))]
+public class Toolbox : NetworkBehaviour
 {
-    protected Toolbox() { } // guarantee this will be always a singleton only - can't use the constructor!
-
     public const int MAX_NUMBER_PLAYERS = 4;
+    public GameSettings gameSettings;
 
-    [SyncVar] public GameSettings gameSettings;
+    private static Toolbox mInstance;
+
+    public static Toolbox Instance
+    {
+        get
+        {
+            if (mInstance == null)
+            {
+                mInstance = FindObjectOfType<Toolbox>();
+                if (mInstance == null)
+                {
+                    Debug.LogError("No Toolbox spawned at time of request");
+                }
+                return mInstance;
+            }
+            else
+            {
+                return mInstance;
+            }
+        }
+    }
 
     //defaults
     public void LoadDefaultGameSettings()
     {
+        gameSettings = gameObject.AddComponent<GameSettings>();
         gameSettings.numberOfPlayers = 4;
         gameSettings.difficultyLevel = GameSettings.Difficulty.Hard;
         gameSettings.cardVariant = GameSettings.CardVariant.Rhymes;
@@ -23,6 +44,7 @@ public class Toolbox : Singleton
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         LoadDefaultGameSettings();
 
         // Your initialization code here
@@ -32,24 +54,11 @@ public class Toolbox : Singleton
         }
     }
 
-    // (optional) allow runtime registration of global objects
-    public static T RegisterComponent<T>() where T : Component
-    {
-        return Instance.GetOrAddComponent<T>();
-    }
-}
-
-[System.Serializable]
-public struct GameSettings
-{
-    public enum Difficulty { Easy = 0, Medium = 1, Hard = 2, Very_Hard = 3 }
-    public enum CardVariant { Rhymes = 0, Numbers = 1 }
-    public enum RulesVariant { Classic = 0, Solitaire = 1, Ultimate_Solitaire = 2, Goblins_Rule = 4 }
-
-    public int numberOfPlayers;
-    public Difficulty difficultyLevel;
-    public CardVariant cardVariant;
-    public RulesVariant rulesVariant;
+    //// (optional) allow runtime registration of global objects
+    //public static T RegisterComponent<T>() where T : Component
+    //{
+    //    return GetOrAddComponent<T>();
+    //}
 }
 
 [System.Serializable]

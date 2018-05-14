@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using UnityEngine.Networking;
 
 public class AIData
 {
@@ -9,7 +10,7 @@ public class AIData
     public int avatarID;
 }
 
-public class GameSettingUIEvents : MonoBehaviour {
+public class GameSettingUIEvents : NetworkBehaviour {
 
 	public UnityEngine.UI.Text playerCountLabel = null;
     public UnityEngine.UI.Button numberOfPlayersAdd = null;
@@ -322,5 +323,10 @@ public class GameSettingUIEvents : MonoBehaviour {
                 break;
         }
         //Debug.Log("RulesVariant Set to " + Toolbox.Instance.gameSettings.rulesVariant);
-    }	
+    }
+
+    void Update()
+    {
+        Debug.Log(Toolbox.Instance.gameSettings.numberOfPlayers);
+    }
 }

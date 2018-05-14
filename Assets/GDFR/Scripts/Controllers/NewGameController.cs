@@ -6,27 +6,31 @@ public class NewGameController : NetworkBehaviour {
 
     Animator anim = null;
 
+    public GameObject toolboxPrefab;
     public GameObject MenuAudioController;
+
+    public override void OnStartServer()
+    {
+        //create toolbox
+        SpawnToolbox();
+        base.OnStartServer();
+    }
 
     public void Start()
     {
-        Debug.Log(NetworkServer.active);
-
-        if (Network.connections.Length == 0)
-        {
-            Debug.Log("There is no networking in this game, but we are still running a server to simulate");
-        }
-        else
-        {
-            Debug.Log("We are connected to " + Network.connections.Length + " peers!");
-        }
-
         if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
         {
             Instantiate(MenuAudioController);
         }
 
         anim = GetComponent<Animator>();
+    }
+
+    [Server]
+    private void SpawnToolbox()
+    {
+        GameObject obj = Instantiate(toolboxPrefab);
+        NetworkServer.Spawn(obj);
     }
 
     public void backScene()
