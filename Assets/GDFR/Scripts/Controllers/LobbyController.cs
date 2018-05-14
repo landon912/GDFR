@@ -11,8 +11,10 @@ public class LobbyController : NetworkBehaviour
     {
         NetworkManager.singleton.StartHost();
 
-        Debug.Log(NetworkManager.singleton.client.serverIp);
-        Debug.Log(NetworkManager.singleton.client.serverPort);
+        Debug.Log(Network.player.externalIP);
+        Debug.Log(Network.player.externalPort);
+        Debug.Log(Network.player.ipAddress);
+        Debug.Log(Network.player.port);
     }
 
     public void NewGame()
@@ -25,9 +27,9 @@ public class LobbyController : NetworkBehaviour
 
     public void JoinGame()
     {
-        NetworkManager.singleton.networkAddress = "localhost";
-        NetworkManager.singleton.networkPort = 0;
         NetworkManager.singleton.StartClient();
+        //NetworkConnectionError error = Network.Connect("localhost", 4444);
+        //Debug.Log(error);
     }
 
     public void BackToMainMenu()
