@@ -1,17 +1,30 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
-public class Toolbox : Singleton<Toolbox>
+public class Toolbox : Singleton
 {
     protected Toolbox() { } // guarantee this will be always a singleton only - can't use the constructor!
 
     public const int MAX_NUMBER_PLAYERS = 4;
 
-    public GameSettings gameSettings = new GameSettings();
+    [SyncVar] public GameSettings gameSettings;
+
+    //defaults
+    public void LoadDefaultGameSettings()
+    {
+        gameSettings.numberOfPlayers = 4;
+        gameSettings.difficultyLevel = GameSettings.Difficulty.Hard;
+        gameSettings.cardVariant = GameSettings.CardVariant.Rhymes;
+        gameSettings.rulesVariant = GameSettings.RulesVariant.Classic;
+    }
+
     public PlayersProfile[] playerProfiles = new PlayersProfile[MAX_NUMBER_PLAYERS];
     //public int currentPlayerNumber = 1;
 
     void Awake()
     {
+        LoadDefaultGameSettings();
+
         // Your initialization code here
         for (int i = 0; i < MAX_NUMBER_PLAYERS; i++)
         {
@@ -27,16 +40,16 @@ public class Toolbox : Singleton<Toolbox>
 }
 
 [System.Serializable]
-public class GameSettings
+public struct GameSettings
 {
     public enum Difficulty { Easy = 0, Medium = 1, Hard = 2, Very_Hard = 3 }
     public enum CardVariant { Rhymes = 0, Numbers = 1 }
     public enum RulesVariant { Classic = 0, Solitaire = 1, Ultimate_Solitaire = 2, Goblins_Rule = 4 }
 
-    public int numberOfPlayers = 4;
-    public Difficulty difficultyLevel = Difficulty.Hard;
-    public CardVariant cardVariant = CardVariant.Rhymes;
-    public RulesVariant rulesVariant = RulesVariant.Solitaire;
+    public int numberOfPlayers;
+    public Difficulty difficultyLevel;
+    public CardVariant cardVariant;
+    public RulesVariant rulesVariant;
 }
 
 [System.Serializable]

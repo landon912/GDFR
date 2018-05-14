@@ -5,6 +5,15 @@ using UnityEngine.SceneManagement;
 public class LobbyController : NetworkBehaviour
 {
     public TweenAlpha mainAlphaTweener;
+    public UILabel playerCountLabel;
+
+    public void StartServer()
+    {
+        NetworkManager.singleton.StartHost();
+
+        Debug.Log(NetworkManager.singleton.client.serverIp);
+        Debug.Log(NetworkManager.singleton.client.serverPort);
+    }
 
     public void NewGame()
     {
@@ -12,6 +21,13 @@ public class LobbyController : NetworkBehaviour
         {
             NetworkManager.singleton.ServerChangeScene("NewGame");
         }
+    }
+
+    public void JoinGame()
+    {
+        NetworkManager.singleton.networkAddress = "localhost";
+        NetworkManager.singleton.networkPort = 0;
+        NetworkManager.singleton.StartClient();
     }
 
     public void BackToMainMenu()
@@ -28,4 +44,35 @@ public class LobbyController : NetworkBehaviour
             SceneManager.LoadScene("MainMenu");
         }
     }
+
+    void Update()
+    {
+        playerCountLabel.text = "# of other Players: " + Network.connections.Length;
+
+        if (isServer)
+        {
+            if (Network.connections.Length == 0 && NetworkServer.localConnections.Count == 0)
+            {
+                Debug.Log("There is no networking in this game, but we are still running a server to simulate");
+            }
+            else
+            {
+                Debug.Log("We have " + (Network.connections.Length + NetworkServer.localConnections.Count) + " connections (including ourselves)!");
+            }
+        }
+        else
+        {
+            if (NetworkManager.singleton.client.isConnected)
+            {
+                Debug.Log("We are connected to " + Network.connections.Length + " peers!");
+            }
+        }
+        
+    }
+
+    void OnConnectedToServer()
+    {
+        Debug.Log("Connected to server");
+    }
+
 }

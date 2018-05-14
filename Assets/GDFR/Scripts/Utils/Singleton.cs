@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Be aware this will not prevent a non singleton constructor
@@ -7,19 +8,19 @@
 /// 
 /// As a note, this is made as MonoBehaviour because we need Coroutines.
 /// </summary>
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+public class Singleton : NetworkBehaviour
 {
-    private static T _instance;
+    private static Toolbox _instance;
 
     private static object _lock = new object();
 
-    public static T Instance
+    public static Toolbox Instance
     {
         get
         {
             if (applicationIsQuitting)
             {
-                Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
+                Debug.LogWarning("[Singleton] Instance '" + typeof(Toolbox) +
                     "' already destroyed on application quit." +
                     " Won't create again - returning null.");
                 return null;
@@ -29,9 +30,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             {
                 if (_instance == null)
                 {
-                    _instance = (T)FindObjectOfType(typeof(T));
+                    _instance = (Toolbox) FindObjectOfType<Toolbox>();
 
-                    if (FindObjectsOfType(typeof(T)).Length > 1)
+                    if (FindObjectsOfType(typeof(Toolbox)).Length > 1)
                     {
                         Debug.LogError("[Singleton] Something went really wrong " +
                             " - there should never be more than 1 singleton!" +
@@ -42,12 +43,12 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                     if (_instance == null)
                     {
                         GameObject singleton = new GameObject();
-                        _instance = singleton.AddComponent<T>();
-                        singleton.name = "(singleton) " + typeof(T).ToString();
+                        _instance = singleton.AddComponent<Toolbox>();
+                        singleton.name = "(singleton) " + typeof(Toolbox).ToString();
 
                         DontDestroyOnLoad(singleton);
 
-                        Debug.Log("[Singleton] An instance of " + typeof(T) +
+                        Debug.Log("[Singleton] An instance of " + typeof(Toolbox) +
                             " is needed in the scene, so '" + singleton +
                             "' was created with DontDestroyOnLoad.");
                     }
