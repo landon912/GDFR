@@ -260,7 +260,7 @@ public class GameContoller : RxFx_FSM
         {
             case GameSettings.RulesVariant.Solitaire:
                 rulesMessage = "Get rid of all your Goblins, in as few turns as possible!"; break;
-            case GameSettings.RulesVariant.Ultimate_Solitaire:
+            case GameSettings.RulesVariant.UltimateSolitaire:
                 rulesMessage = "Get rid of all Goblins in your hand, and in the fairy ring!"; break;
             case GameSettings.RulesVariant.Classic:
                 switch(Toolbox.Instance.gameSettings.numberOfPlayers)
@@ -274,7 +274,7 @@ public class GameContoller : RxFx_FSM
                         Debug.LogError("You Should Not Be Here - Invalid Number of Players in this Rule Variant"); break;
                 }
                 break;
-            case GameSettings.RulesVariant.Goblins_Rule:
+            case GameSettings.RulesVariant.GoblinsRule:
                 switch (Toolbox.Instance.gameSettings.numberOfPlayers)
                 {
                     case 2:
@@ -301,7 +301,7 @@ public class GameContoller : RxFx_FSM
 	        case GameSettings.Difficulty.Hard:
                 mAIModule = new HardAIModule();
 	            break;
-	        case GameSettings.Difficulty.Very_Hard:
+	        case GameSettings.Difficulty.VeryHard:
                 mAIModule = new VeryHardAIModule();
 	            break;
 	        default:
@@ -318,7 +318,7 @@ public class GameContoller : RxFx_FSM
 	    switch(Toolbox.Instance.gameSettings.rulesVariant)
 	    {
             case GameSettings.RulesVariant.Solitaire:
-            case GameSettings.RulesVariant.Ultimate_Solitaire:
+            case GameSettings.RulesVariant.UltimateSolitaire:
                 GiveUpButtonGameObject.SetActive(true);
             break;
 	    }
@@ -336,7 +336,7 @@ public class GameContoller : RxFx_FSM
 	    Card[] cards = mainDeck.GetCardList();
 		foreach(Card c in cards)
 		{
-		    if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule)
+		    if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.GoblinsRule)
 		    {
 			    c.CurrentRace = Race.Fairy;
 		        if (c.fairyStarBorder)
@@ -382,7 +382,7 @@ public class GameContoller : RxFx_FSM
 	    switch (rulesVariant)
 	    {
 	        case GameSettings.RulesVariant.Solitaire:
-	        case GameSettings.RulesVariant.Ultimate_Solitaire:
+	        case GameSettings.RulesVariant.UltimateSolitaire:
 	            switch (Toolbox.Instance.gameSettings.difficultyLevel)
 	            {
 	                default:
@@ -395,7 +395,7 @@ public class GameContoller : RxFx_FSM
 	                case GameSettings.Difficulty.Hard:
 	                    numberOfCards = 6;
 	                    break;
-	                case GameSettings.Difficulty.Very_Hard:
+	                case GameSettings.Difficulty.VeryHard:
 	                    numberOfCards = 7;
 	                    break;
 	            }
@@ -426,14 +426,14 @@ public class GameContoller : RxFx_FSM
             if (pDeck.enabled)
             {
                 Card secondCard = mainDeck.DrawRandomCardOfSymbolGroup(pDeck.GetCardList()[0].CurrentSymbolGroup == SymbolGroup.FrogMushroom ? SymbolGroup.SunMoon : SymbolGroup.FrogMushroom);
-                secondCard.ChangeRace(rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? Race.Fairy : Race.Goblin);
+                secondCard.ChangeRace(rulesVariant == GameSettings.RulesVariant.GoblinsRule ? Race.Fairy : Race.Goblin);
                 yield return StartCoroutine(secondCard.AnimateDrawCard(pDeck, dealSpeed));
 
                 //deal the rest of the cards
                 for (int c = 1; c < numberOfCards; c++)
                 {
                     Card card = mainDeck.DrawRandomCard();
-                    card.ChangeRace(rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? Race.Fairy : Race.Goblin);
+                    card.ChangeRace(rulesVariant == GameSettings.RulesVariant.GoblinsRule ? Race.Fairy : Race.Goblin);
                     yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
                 }
 
@@ -455,7 +455,7 @@ public class GameContoller : RxFx_FSM
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
             case GameSettings.RulesVariant.Solitaire:
-            case GameSettings.RulesVariant.Ultimate_Solitaire:
+            case GameSettings.RulesVariant.UltimateSolitaire:
                 switch (Toolbox.Instance.gameSettings.difficultyLevel)
                 {
                     default:
@@ -468,7 +468,7 @@ public class GameContoller : RxFx_FSM
                     case GameSettings.Difficulty.Hard:
                         numberOfCards = 7;
                         break;
-                    case GameSettings.Difficulty.Very_Hard:
+                    case GameSettings.Difficulty.VeryHard:
                         numberOfCards = 8;
                         break;
                 }
@@ -503,7 +503,7 @@ public class GameContoller : RxFx_FSM
         for (int d=0; d < numberOfCards; d++)
 		{
 			Card card = mainDeck.DrawRandomCard();
-			card.CurrentRace = Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule ? Race.Goblin : Race.Fairy;
+			card.CurrentRace = Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.GoblinsRule ? Race.Goblin : Race.Fairy;
             yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck,dealSpeed));
 		}
 		fairyRingDeck.Refresh();
@@ -563,7 +563,7 @@ public class GameContoller : RxFx_FSM
                 turnsCounter.gameObject.SetActive(false);
                 break;
             case GameSettings.RulesVariant.Solitaire:
-            case GameSettings.RulesVariant.Ultimate_Solitaire:
+            case GameSettings.RulesVariant.UltimateSolitaire:
                 turnsCounter.gameObject.SetActive(true);
                 break;
         }
@@ -726,7 +726,7 @@ public class GameContoller : RxFx_FSM
         switch (Toolbox.Instance.gameSettings.rulesVariant)
         {
             case GameSettings.RulesVariant.Classic:
-            case GameSettings.RulesVariant.Goblins_Rule:
+            case GameSettings.RulesVariant.GoblinsRule:
                 playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = false;
                 yield return new WaitForSeconds(0.5f);
                 break;
@@ -746,7 +746,7 @@ public class GameContoller : RxFx_FSM
         cardList.AddRange(playerDecks[mPlayersPosition[currentPlayer]].GetCardList());
 
         // If ultimate, counts my deck and fairy ring deck
-        if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Ultimate_Solitaire)
+        if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.UltimateSolitaire)
         {
             cardList.AddRange(fairyRingDeck.GetCardList());
         }
@@ -787,7 +787,7 @@ public class GameContoller : RxFx_FSM
                         break;
                 }
                 break;
-            case GameSettings.RulesVariant.Goblins_Rule:
+            case GameSettings.RulesVariant.GoblinsRule:
                 switch (Toolbox.Instance.gameSettings.numberOfPlayers)
                 {
                     case 2:
@@ -810,7 +810,7 @@ public class GameContoller : RxFx_FSM
                         break;
                 }
                 break;
-            case GameSettings.RulesVariant.Ultimate_Solitaire:
+            case GameSettings.RulesVariant.UltimateSolitaire:
             case GameSettings.RulesVariant.Solitaire:
                 if (goblinCount == 0)
                 {

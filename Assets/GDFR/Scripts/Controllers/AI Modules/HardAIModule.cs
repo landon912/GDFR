@@ -4,7 +4,7 @@ public class HardAIModule : AIModule
 {
     public override int GetPlayValue(Card pCard, Deck toDeck, List<Deck> playerControlledDecks = null)
     {
-        if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.Goblins_Rule)
+        if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.GoblinsRule)
         {
             return GoblinsRuleGetPlayValue(pCard, toDeck);
         }

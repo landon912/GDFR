@@ -28,7 +28,12 @@ public class GameSettingUIEvents : NetworkBehaviour {
     public static int AI_PROFILE_INDEX = 11;
 
     void OnEnable()
-	{
+    {
+        GameSettings.NumberOfPlayersChangedEvent += OnPlayerCountChanged;
+        GameSettings.DifficultyLevelChangedEvent += OnDifficultyChanged;
+        GameSettings.CardVariantChangedEvent += OnCardVariantChanged;
+        GameSettings.RulesVariantChangedEvent += OnRulesVariantChanged;
+
         difficultyDropDown.onValueChanged.AddListener(OnDifficultyChanged);
         cardVariantDropDown.onValueChanged.AddListener(OnCardVariantChanged);
         rulesVariantDropDown.onValueChanged.AddListener(OnRulesVariantChanged);
@@ -39,6 +44,10 @@ public class GameSettingUIEvents : NetworkBehaviour {
 
 	void OnDisable()
 	{
+	    GameSettings.NumberOfPlayersChangedEvent -= OnPlayerCountChanged;
+	    GameSettings.DifficultyLevelChangedEvent -= OnDifficultyChanged;
+	    GameSettings.CardVariantChangedEvent -= OnCardVariantChanged;
+	    GameSettings.RulesVariantChangedEvent -= OnRulesVariantChanged;
 
         difficultyDropDown.onValueChanged.RemoveAllListeners();
         cardVariantDropDown.onValueChanged.RemoveAllListeners();
@@ -73,8 +82,8 @@ public class GameSettingUIEvents : NetworkBehaviour {
             case GameSettings.RulesVariant.Classic:
                 rulesVariantDropDown.value = 0;
                 break;
-            case GameSettings.RulesVariant.Goblins_Rule:
-            case GameSettings.RulesVariant.Ultimate_Solitaire:
+            case GameSettings.RulesVariant.GoblinsRule:
+            case GameSettings.RulesVariant.UltimateSolitaire:
                 rulesVariantDropDown.value = 1;
                 break;
         }
@@ -86,7 +95,6 @@ public class GameSettingUIEvents : NetworkBehaviour {
         cardVariantDropDown.value = (int)Toolbox.Instance.gameSettings.cardVariant;
         cardVariantDropDown.RefreshShownValue();
 
-        //OnPlayerCountChanged(Toolbox.Instance.gameSettings.numberOfPlayers);
     }
 
     void LoadXMLData()
@@ -237,36 +245,38 @@ public class GameSettingUIEvents : NetworkBehaviour {
 	void OnPlayerCountChanged(int count)
 	{
         int currentNumber = Int32.Parse(playerCountLabel.text);
+	    playerCountLabel.text = count.ToString();
 
-        // adding and < MAX
-        if ((currentNumber < count) && (count <= Toolbox.MAX_NUMBER_PLAYERS))
-        {
-            int delta = Mathf.Abs(count - currentNumber);
-            for (int i = delta; i > 0; i--)
-            {
-                CreateNewPlayerProfile(count - delta, true, true);
-                delta--;
-            }
+        if (isServer)
+	    {
+	        // adding and < MAX
+	        if ((currentNumber < count) && (count <= Toolbox.MAX_NUMBER_PLAYERS))
+	        {
+	            int delta = Mathf.Abs(count - currentNumber);
+	            for (int i = delta; i > 0; i--)
+	            {
+	                CreateNewPlayerProfile(count - delta, true, true);
+	                delta--;
+	            }
+	        }
+	        else if (currentNumber > count && count > 0) // removing and > 0
+	        {
+	            int delta = Mathf.Abs(count - currentNumber);
+	            for (int i = delta; i > 0; i--)
+	            {
+	                GameObject playerUIObj = GameObject.Find("player" + (count + i));
+	                PlayerProfile_UI playerProfile = playerUIObj.GetComponent<PlayerProfile_UI>();
+
+	                mPlayerProfiles.Remove(playerProfile);
+
+	                Destroy(playerUIObj);
+	                delta--;
+	            }
+	        }
+
+	        ValidateAddAndRemoveButtons();
+	        ValidateCombos();
         }
-        else if (currentNumber > count && count > 0) // removing and > 0
-        {
-            int delta = Mathf.Abs(count - currentNumber);
-            for(int i = delta; i > 0; i--)
-            {
-                GameObject playerUIObj = GameObject.Find("player" + (count + i));
-                PlayerProfile_UI playerProfile = playerUIObj.GetComponent<PlayerProfile_UI>();
-
-                mPlayerProfiles.Remove(playerProfile);
-
-                Destroy(playerUIObj);
-                delta--;
-            }
-        }
-
-        ValidateAddAndRemoveButtons();
-        ValidateCombos();
-
-        playerCountLabel.text = count.ToString();
     }
 
     void ValidateCombos()
@@ -309,13 +319,13 @@ public class GameSettingUIEvents : NetworkBehaviour {
         switch(rulesVariantDropDown.captionText.text.ToLower())
         {
             case "ultimate solitaire":
-                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Ultimate_Solitaire;
+                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.UltimateSolitaire;
                 break;
             case "solitaire":
                 Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Solitaire;
                 break;
             case "goblins rule!":
-                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Goblins_Rule;
+                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.GoblinsRule;
                 break;
             default:
             case "classic":

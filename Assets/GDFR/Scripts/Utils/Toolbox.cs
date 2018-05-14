@@ -32,7 +32,6 @@ public class Toolbox : NetworkBehaviour
     //defaults
     public void LoadDefaultGameSettings()
     {
-        gameSettings = gameObject.AddComponent<GameSettings>();
         gameSettings.numberOfPlayers = 4;
         gameSettings.difficultyLevel = GameSettings.Difficulty.Hard;
         gameSettings.cardVariant = GameSettings.CardVariant.Rhymes;
@@ -53,12 +52,6 @@ public class Toolbox : NetworkBehaviour
             playerProfiles[i] = new PlayersProfile();
         }
     }
-
-    //// (optional) allow runtime registration of global objects
-    //public static T RegisterComponent<T>() where T : Component
-    //{
-    //    return GetOrAddComponent<T>();
-    //}
 }
 
 [System.Serializable]
