@@ -2,37 +2,57 @@
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class DisableButtonOnClients : NetworkBehaviour
+public class DisableButtonOnClients : MonoBehaviour
 {
+    private bool mCurrentState = true;
+
     void Update()
     {
-        if (!isServer)
+        if (NetworkServer.active == false)
         {
-            Button unityButton = GetComponent<Button>();
-            if (unityButton == null)
+            if(mCurrentState)
+                ToggleMedia(false);
+        }
+        else if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient) == false)
+        {
+            if (mCurrentState)
+                ToggleMedia(false);
+        }
+        else
+        {
+            if (!mCurrentState)
+                ToggleMedia(true);
+        }
+    }
+
+    private void ToggleMedia(bool state)
+    {
+        Button unityButton = GetComponent<Button>();
+        if (unityButton == null)
+        {
+            UIButton NguiButton = GetComponent<UIButton>();
+            if (NguiButton == null)
             {
-                UIButton NguiButton = GetComponent<UIButton>();
-                if (NguiButton == null)
+                Dropdown uiDropdown = GetComponent<Dropdown>();
+                if (uiDropdown == null)
                 {
-                    Dropdown uiDropdown = GetComponent<Dropdown>();
-                    if (uiDropdown == null)
-                    {
-                        Debug.LogError("There is no button to disable on this object");
-                    }
-                    else
-                    {
-                        uiDropdown.interactable = false;
-                    }
+                    Debug.LogError("There is no button to disable on this object");
                 }
                 else
                 {
-                    NguiButton.isEnabled = false;
+                    uiDropdown.interactable = state;
                 }
             }
             else
             {
-                unityButton.interactable = false;
+                NguiButton.isEnabled = state;
             }
         }
+        else
+        {
+            unityButton.interactable = state;
+        }
+
+        mCurrentState = state;
     }
 }
