@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 
 public class AIData
 {
@@ -10,7 +11,8 @@ public class AIData
     public int avatarID;
 }
 
-public class GameSettingUIEvents : NetworkBehaviour {
+public class GameSettingUIEvents : MonoBehaviour
+{
 
 	public UnityEngine.UI.Text playerCountLabel = null;
     public UnityEngine.UI.Button numberOfPlayersAdd = null;
@@ -29,11 +31,6 @@ public class GameSettingUIEvents : NetworkBehaviour {
 
     void OnEnable()
     {
-        GameSettings.NumberOfPlayersChangedEvent += OnPlayerCountChanged;
-        GameSettings.DifficultyLevelChangedEvent += OnDifficultyChanged;
-        GameSettings.CardVariantChangedEvent += OnCardVariantChanged;
-        GameSettings.RulesVariantChangedEvent += OnRulesVariantChanged;
-
         difficultyDropDown.onValueChanged.AddListener(OnDifficultyChanged);
         cardVariantDropDown.onValueChanged.AddListener(OnCardVariantChanged);
         rulesVariantDropDown.onValueChanged.AddListener(OnRulesVariantChanged);
@@ -44,11 +41,6 @@ public class GameSettingUIEvents : NetworkBehaviour {
 
 	void OnDisable()
 	{
-	    GameSettings.NumberOfPlayersChangedEvent -= OnPlayerCountChanged;
-	    GameSettings.DifficultyLevelChangedEvent -= OnDifficultyChanged;
-	    GameSettings.CardVariantChangedEvent -= OnCardVariantChanged;
-	    GameSettings.RulesVariantChangedEvent -= OnRulesVariantChanged;
-
         difficultyDropDown.onValueChanged.RemoveAllListeners();
         cardVariantDropDown.onValueChanged.RemoveAllListeners();
         rulesVariantDropDown.onValueChanged.RemoveAllListeners();
@@ -62,7 +54,12 @@ public class GameSettingUIEvents : NetworkBehaviour {
     {
         LoadXMLData();
 
-        // Set the current numberOfPlayers
+        if (NetworkServer.active || NetworkClient.active)
+        {
+            RegisterNetworkEvents();
+        }
+
+        // Set the current NumberOfPlayers
         playerCountLabel.text = Toolbox.Instance.gameSettings.numberOfPlayers.ToString();
 
         mPlayerProfiles = new List<PlayerProfile_UI>(4);
@@ -76,25 +73,32 @@ public class GameSettingUIEvents : NetworkBehaviour {
         ValidateAddAndRemoveButtons();
         ValidateCombos();
 
-        switch(Toolbox.Instance.gameSettings.rulesVariant)
+        switch(Toolbox.Instance.gameSettings.RulesVariant)
         {
-            case GameSettings.RulesVariant.Solitaire:
-            case GameSettings.RulesVariant.Classic:
+            case GameSettings.RulesVariantType.Solitaire:
+            case GameSettings.RulesVariantType.Classic:
                 rulesVariantDropDown.value = 0;
                 break;
-            case GameSettings.RulesVariant.GoblinsRule:
-            case GameSettings.RulesVariant.UltimateSolitaire:
+            case GameSettings.RulesVariantType.GoblinsRule:
+            case GameSettings.RulesVariantType.UltimateSolitaire:
                 rulesVariantDropDown.value = 1;
                 break;
         }
         rulesVariantDropDown.RefreshShownValue();
 
-        difficultyDropDown.value = (int)Toolbox.Instance.gameSettings.difficultyLevel;
+        difficultyDropDown.value = (int)Toolbox.Instance.gameSettings.DifficultyLevel;
         difficultyDropDown.RefreshShownValue();
 
-        cardVariantDropDown.value = (int)Toolbox.Instance.gameSettings.cardVariant;
+        cardVariantDropDown.value = (int)Toolbox.Instance.gameSettings.CardVariant;
         cardVariantDropDown.RefreshShownValue();
+    }
 
+    private void RegisterNetworkEvents()
+    {
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupPlayerCountChanged, NetOnPlayerCountChanged);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupDifficultyChanged, NetOnDifficultyChanged);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupCardVariantChanged, NetOnCardVariantChanged);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupRulesVariantChanged, NetOnRulesVariantChanged);
     }
 
     void LoadXMLData()
@@ -131,8 +135,7 @@ public class GameSettingUIEvents : NetworkBehaviour {
     {
         if (Toolbox.Instance.gameSettings.numberOfPlayers < Toolbox.MAX_NUMBER_PLAYERS)
         {
-            Toolbox.Instance.gameSettings.numberOfPlayers++;
-            OnPlayerCountChanged(Toolbox.Instance.gameSettings.numberOfPlayers);
+            ChangePlayerCount(Toolbox.Instance.gameSettings.numberOfPlayers + 1);
             Debug.Log("Player Number Set to " + Toolbox.Instance.gameSettings.numberOfPlayers);
         }
     }
@@ -141,8 +144,7 @@ public class GameSettingUIEvents : NetworkBehaviour {
     {
         if (Toolbox.Instance.gameSettings.numberOfPlayers > 1)
         {
-            Toolbox.Instance.gameSettings.numberOfPlayers--;
-            OnPlayerCountChanged(Toolbox.Instance.gameSettings.numberOfPlayers);
+            ChangePlayerCount(Toolbox.Instance.gameSettings.numberOfPlayers-1);
             Debug.Log("Player Number Set to " + Toolbox.Instance.gameSettings.numberOfPlayers);
         }
     }
@@ -242,40 +244,54 @@ public class GameSettingUIEvents : NetworkBehaviour {
         numberOfPlayersRemove.interactable = Toolbox.Instance.gameSettings.numberOfPlayers != 1;
     }
 
-	void OnPlayerCountChanged(int count)
-	{
+    void ChangePlayerCount(int count)
+    {
+        Toolbox.Instance.gameSettings.numberOfPlayers = count;
+
+        GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupPlayerCountChanged, new IntegerMessage(count));
+
         int currentNumber = Int32.Parse(playerCountLabel.text);
-	    playerCountLabel.text = count.ToString();
+        playerCountLabel.text = count.ToString();
 
-        if (isServer)
-	    {
-	        // adding and < MAX
-	        if ((currentNumber < count) && (count <= Toolbox.MAX_NUMBER_PLAYERS))
-	        {
-	            int delta = Mathf.Abs(count - currentNumber);
-	            for (int i = delta; i > 0; i--)
-	            {
-	                CreateNewPlayerProfile(count - delta, true, true);
-	                delta--;
-	            }
-	        }
-	        else if (currentNumber > count && count > 0) // removing and > 0
-	        {
-	            int delta = Mathf.Abs(count - currentNumber);
-	            for (int i = delta; i > 0; i--)
-	            {
-	                GameObject playerUIObj = GameObject.Find("player" + (count + i));
-	                PlayerProfile_UI playerProfile = playerUIObj.GetComponent<PlayerProfile_UI>();
+        // adding and < MAX
+        if ((currentNumber < count) && (count <= Toolbox.MAX_NUMBER_PLAYERS))
+        {
+            int delta = Mathf.Abs(count - currentNumber);
+            for (int i = delta; i > 0; i--)
+            {
+                CreateNewPlayerProfile(count - delta, true, true);
+                delta--;
+            }
+        }
+        else if (currentNumber > count && count > 0) // removing and > 0
+        {
+            int delta = Mathf.Abs(count - currentNumber);
+            for (int i = delta; i > 0; i--)
+            {
+                GameObject playerUIObj = GameObject.Find("player" + (count + i));
+                PlayerProfile_UI playerProfile = playerUIObj.GetComponent<PlayerProfile_UI>();
 
-	                mPlayerProfiles.Remove(playerProfile);
+                mPlayerProfiles.Remove(playerProfile);
 
-	                Destroy(playerUIObj);
-	                delta--;
-	            }
-	        }
+                Destroy(playerUIObj);
+                delta--;
+            }
+        }
 
-	        ValidateAddAndRemoveButtons();
-	        ValidateCombos();
+        if ((NetworkServer.active && GDFRNetworkManager.Instance.IsLocalClientTheHost()) || (!NetworkServer.active && !NetworkClient.active))
+        {
+            ValidateAddAndRemoveButtons();
+        }
+        ValidateCombos();
+    }
+
+    private void NetOnPlayerCountChanged(NetworkMessage message)
+    {
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            int count = message.ReadMessage<IntegerMessage>().value;
+            ChangePlayerCount(count);
         }
     }
 
@@ -289,7 +305,10 @@ public class GameSettingUIEvents : NetworkBehaviour {
             rulesVariantDropDown.options.Add(new UnityEngine.UI.Dropdown.OptionData("Ultimate Solitaire"));
             rulesVariantDropDown.RefreshShownValue();
 
-            Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Solitaire;
+            Toolbox.Instance.gameSettings.RulesVariant = GameSettings.RulesVariantType.Solitaire;
+
+            //default to first option
+            rulesVariantDropDown.value = 0;
         }
         else if ((Toolbox.Instance.gameSettings.numberOfPlayers > 1) && (rulesVariantDropDown.options[0].text.ToLower() == "solitaire"))
         {
@@ -298,45 +317,73 @@ public class GameSettingUIEvents : NetworkBehaviour {
             rulesVariantDropDown.options.Add(new UnityEngine.UI.Dropdown.OptionData("Goblins Rule!"));
             rulesVariantDropDown.RefreshShownValue();
 
-            Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Classic;
+            Toolbox.Instance.gameSettings.RulesVariant = GameSettings.RulesVariantType.Classic;
+
+            //default to first option
+            rulesVariantDropDown.value = 0;
         }
     }
 
 	void OnDifficultyChanged(int listValue)
 	{
-        Toolbox.Instance.gameSettings.difficultyLevel = (GameSettings.Difficulty)listValue;
-        //Debug.Log("Difficulty Set to " + Toolbox.Instance.gameSettings.difficultyLevel);
+        Toolbox.Instance.gameSettings.DifficultyLevel = (GameSettings.Difficulty)listValue;
+
+        GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupDifficultyChanged, new IntegerMessage(listValue));
+    }
+
+    private void NetOnDifficultyChanged(NetworkMessage message)
+    {
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            difficultyDropDown.value = message.ReadMessage<IntegerMessage>().value;
+        }
     }
 
     void OnCardVariantChanged(int listValue)
 	{
-        Toolbox.Instance.gameSettings.cardVariant = (GameSettings.CardVariant)listValue;
-        //Debug.Log("CardVariant Set to " + Toolbox.Instance.gameSettings.cardVariant);
+        Toolbox.Instance.gameSettings.CardVariant = (GameSettings.CardVariantType)listValue;
+
+	    GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupCardVariantChanged, new IntegerMessage(listValue));
     }
 
-	void OnRulesVariantChanged(int listValue)
+    private void NetOnCardVariantChanged(NetworkMessage message)
+    {
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            cardVariantDropDown.value = message.ReadMessage<IntegerMessage>().value;
+        }
+    }
+
+    void OnRulesVariantChanged(int listValue)
 	{
         switch(rulesVariantDropDown.captionText.text.ToLower())
         {
             case "ultimate solitaire":
-                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.UltimateSolitaire;
+                Toolbox.Instance.gameSettings.RulesVariant = GameSettings.RulesVariantType.UltimateSolitaire;
                 break;
             case "solitaire":
-                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Solitaire;
+                Toolbox.Instance.gameSettings.RulesVariant = GameSettings.RulesVariantType.Solitaire;
                 break;
             case "goblins rule!":
-                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.GoblinsRule;
+                Toolbox.Instance.gameSettings.RulesVariant = GameSettings.RulesVariantType.GoblinsRule;
                 break;
             default:
             case "classic":
-                Toolbox.Instance.gameSettings.rulesVariant = GameSettings.RulesVariant.Classic;
+                Toolbox.Instance.gameSettings.RulesVariant = GameSettings.RulesVariantType.Classic;
                 break;
         }
-        //Debug.Log("RulesVariant Set to " + Toolbox.Instance.gameSettings.rulesVariant);
+
+	    GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupRulesVariantChanged, new IntegerMessage(listValue));
     }
 
-    void Update()
+    private void NetOnRulesVariantChanged(NetworkMessage message)
     {
-        Debug.Log(Toolbox.Instance.gameSettings.numberOfPlayers);
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            rulesVariantDropDown.value = message.ReadMessage<IntegerMessage>().value;
+        }
     }
 }

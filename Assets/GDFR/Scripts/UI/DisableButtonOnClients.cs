@@ -13,7 +13,7 @@ public class DisableButtonOnClients : MonoBehaviour
             if(mCurrentState)
                 ToggleMedia(false);
         }
-        else if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient) == false)
+        else if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
         {
             if (mCurrentState)
                 ToggleMedia(false);

@@ -29,7 +29,7 @@ public abstract class AIModule
     //TODO: REMOVING GOBLINS SHOULD NOT BE A PLUS WHEN THE CARD CREATED THE GOBLIN IN THE FIRST PLACE(Rhyme or star card)
     public int CalculateAidToPlayers(List<Deck> playerDecks, Card cardBeingPlayed, Deck centerDeck)
     {
-        if (Toolbox.Instance.gameSettings.rulesVariant == GameSettings.RulesVariant.GoblinsRule)
+        if (Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule)
         {
             return GoblinsRuleCalculateAidToPlayers(playerDecks, cardBeingPlayed, centerDeck);
         }

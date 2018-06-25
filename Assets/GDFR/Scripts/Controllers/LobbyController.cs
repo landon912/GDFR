@@ -1,18 +1,48 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 
 public class LobbyController : MonoBehaviour
 {
     public TweenAlpha mainAlphaTweener;
     public UILabel playerCountLabel;
 
+    private int mCurrentPlayerCount = -1;
+
     public void StartServer()
     {
         GDFRNetworkManager.Instance.SetupHost();
+        StartTrackingPlayerCount();
     }
 
     public void JoinGame()
     {
         GDFRNetworkManager.Instance.SetupClient();
+        StartTrackingPlayerCount();
+    }
+
+    private void StartTrackingPlayerCount()
+    {
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.LobbyNumConnectionsChanged, OnNumConnectionChanged);
+    }
+
+    private void OnNumConnectionChanged(NetworkMessage message)
+    {
+        int count = message.ReadMessage<IntegerMessage>().value;
+
+        playerCountLabel.text = "# of Players: " + count;
+    }
+
+    void Update()
+    {
+        if (!NetworkServer.active) return;
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost())
+        {
+            if (mCurrentPlayerCount != NetworkServer.connections.Count)
+            {
+                GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.LobbyNumConnectionsChanged, new IntegerMessage(NetworkServer.connections.Count));
+            }
+        }
     }
 
     public void NewGame()
@@ -23,46 +53,8 @@ public class LobbyController : MonoBehaviour
         }
     }
 
-    //public void BackToMainMenu()
-    //{
-    //    if (isServer)
-    //    {
-    //        NetworkManager.singleton.ServerChangeScene("MainMenu");
-    //        NetworkServer.DisconnectAll();
-    //        NetworkManager.singleton.StopHost();
-    //    }
-    //    else
-    //    {
-    //        NetworkManager.singleton.StopClient();
-    //        SceneManager.LoadScene("MainMenu");
-    //    }
-    //}
-
-    //void Update()
-    //{
-    //    playerCountLabel.text = "# of other Players: " + Network.connections.Length;
-
-    //    if (isServer)
-    //    {
-    //        if (Network.connections.Length == 0 && NetworkServer.localConnections.Count == 0)
-    //        {
-    //            Debug.Log("There is no networking in this game, but we are still running a server to simulate");
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("We have " + (Network.connections.Length + NetworkServer.localConnections.Count) + " connections (including ourselves)!");
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (NetworkManager.singleton.client.isConnected)
-    //        {
-    //            Debug.Log("We are connected to " + Network.connections.Length + " peers!");
-    //        }
-    //    }
-
-    //}
-
-
-
+    public void BackToMainMenu()
+    {
+        GDFRNetworkManager.Instance.ShutdownAndLoadScene("MainMenu");
+    }
 }

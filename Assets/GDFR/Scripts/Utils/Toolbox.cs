@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 
 [RequireComponent(typeof(GameSettings))]
-public class Toolbox : NetworkBehaviour
+public class Toolbox : MonoBehaviour
 {
     public const int MAX_NUMBER_PLAYERS = 4;
     public GameSettings gameSettings;
@@ -33,9 +32,9 @@ public class Toolbox : NetworkBehaviour
     public void LoadDefaultGameSettings()
     {
         gameSettings.numberOfPlayers = 4;
-        gameSettings.difficultyLevel = GameSettings.Difficulty.Hard;
-        gameSettings.cardVariant = GameSettings.CardVariant.Rhymes;
-        gameSettings.rulesVariant = GameSettings.RulesVariant.Classic;
+        gameSettings.DifficultyLevel = GameSettings.Difficulty.Hard;
+        gameSettings.CardVariant = GameSettings.CardVariantType.Rhymes;
+        gameSettings.RulesVariant = GameSettings.RulesVariantType.Classic;
     }
 
     public PlayersProfile[] playerProfiles = new PlayersProfile[MAX_NUMBER_PLAYERS];

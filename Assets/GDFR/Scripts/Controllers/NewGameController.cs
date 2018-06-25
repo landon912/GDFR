@@ -2,19 +2,13 @@
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
-public class NewGameController : NetworkBehaviour {
+public class NewGameController : MonoBehaviour
+{
 
     Animator anim = null;
 
     public GameObject toolboxPrefab;
     public GameObject MenuAudioController;
-
-    public override void OnStartServer()
-    {
-        //create toolbox
-        SpawnToolbox();
-        base.OnStartServer();
-    }
 
     public void Start()
     {
@@ -26,19 +20,12 @@ public class NewGameController : NetworkBehaviour {
         anim = GetComponent<Animator>();
     }
 
-    [Server]
-    private void SpawnToolbox()
-    {
-        GameObject obj = Instantiate(toolboxPrefab);
-        NetworkServer.Spawn(obj);
-    }
-
     public void backScene()
     {
         Debug.Log("back button");
-        if (isServer)
+        if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
         {
-            NetworkManager.singleton.ServerChangeScene("Lobby");
+            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("Lobby");
         }
         else
         {
@@ -60,11 +47,11 @@ public class NewGameController : NetworkBehaviour {
     {
         Debug.Log("startGame button");
 
-        if (isServer)
+        if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
         {
             FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
             Destroy(AudioController.Instance.gameObject);
-            NetworkManager.singleton.ServerChangeScene("MainGame");
+            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("MainGame");
         }
     }
 }

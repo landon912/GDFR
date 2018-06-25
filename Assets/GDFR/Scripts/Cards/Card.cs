@@ -185,7 +185,7 @@ public class Card : MonoBehaviour
         if (mCurrentRace == Race.Fairy)
         {
             CurrentRace = Race.Goblin;
-            if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
+            if (Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers)
             {
                 text.text = ((int) CurrentRhyme).ToString();
                 SetTextSettings(true);
@@ -200,7 +200,7 @@ public class Card : MonoBehaviour
         else
         {
             CurrentRace = Race.Fairy;
-            text.text = Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers
+            text.text = Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers
                 ? ((int) CurrentRhyme).ToString()
                 : fairyText;
             SetSymbol(fairySymbol);
@@ -250,7 +250,7 @@ public class Card : MonoBehaviour
                 mCurrentRace = Race.Fairy;
                 CurrentRhyme = fairyRhyme;
                 CurrentSymbol = fairySymbol;
-                if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
+                if (Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers)
                 {
                     text.text = ((int) CurrentRhyme).ToString();
                     SetTextSettings(true);
@@ -268,7 +268,7 @@ public class Card : MonoBehaviour
                 mCurrentRace = Race.Goblin;
                 CurrentRhyme = goblinRhyme;
                 CurrentSymbol = goblinSymbol;
-                if (Toolbox.Instance.gameSettings.cardVariant == GameSettings.CardVariant.Numbers)
+                if (Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers)
                 {
                     text.text = ((int) CurrentRhyme).ToString();
                     SetTextSettings(true);
