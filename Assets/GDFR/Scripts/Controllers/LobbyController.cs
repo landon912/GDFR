@@ -33,18 +33,6 @@ public class LobbyController : MonoBehaviour
         playerCountLabel.text = "# of Players: " + count;
     }
 
-    void Update()
-    {
-        if (!NetworkServer.active) return;
-        if (GDFRNetworkManager.Instance.IsLocalClientTheHost())
-        {
-            if (mCurrentPlayerCount != NetworkServer.connections.Count)
-            {
-                GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.LobbyNumConnectionsChanged, new IntegerMessage(NetworkServer.connections.Count));
-            }
-        }
-    }
-
     public void NewGame()
     {
         if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))

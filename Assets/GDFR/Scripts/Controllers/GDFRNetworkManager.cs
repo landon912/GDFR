@@ -7,9 +7,11 @@ using UnityEngine.SceneManagement;
 public class MsgIndexes
 {
     public const short ServerStarted = 50;
-    public const short SceneChangeRequested = 51;
-    public const short SelfDestructSceneChangeRequested = 52;
-    public const short SceneChangeCompleted = 53;
+    public const short ServerRequestSceneChange = 51;
+    public const short ClientCompletedSceneChange = 52;
+    public const short ServerLeaving = 53;
+    public const short ClientRequestToLeave = 54;
+    public const short ServerFlagForDestruction = 55;
 
     public const short LobbyNumConnectionsChanged = 60;
     public const short SetupPlayerCountChanged = 61;
@@ -37,6 +39,17 @@ public class GDFRNetworkManager : MonoBehaviour
 
     public int serverId = -1;
     public NetworkClient localClient;
+
+    private int mNumPlayers = 0;
+    public int NumPlayers
+    {
+        get { return mNumPlayers; }
+        private set
+        {
+            mNumPlayers = value;
+            TriggerEventIfHost(MsgIndexes.LobbyNumConnectionsChanged, new IntegerMessage(value));
+        }
+    }
 
     void Awake()
     {
@@ -71,6 +84,8 @@ public class GDFRNetworkManager : MonoBehaviour
         ClientScene.Ready(localClient.connection);
         SetupBaseMessageHandlers();
         SetupServerMessageHandlers();
+
+        NumPlayers++;
     }
 
     public void SetupClient()
@@ -83,14 +98,18 @@ public class GDFRNetworkManager : MonoBehaviour
     public void SetupBaseMessageHandlers()
     {
         localClient.RegisterHandler(MsgType.Connect, OnConnected);
-        localClient.RegisterHandler(MsgIndexes.SceneChangeRequested, OnSceneChangeRequested);
-        localClient.RegisterHandler(MsgIndexes.SelfDestructSceneChangeRequested, OnSelfDestructSceneChangeRequested);
+        localClient.RegisterHandler(MsgIndexes.ServerRequestSceneChange, OnServerRequestSceneChange);
+        localClient.RegisterHandler(MsgIndexes.ServerLeaving, OnServerFlagForDestruction);
+        localClient.RegisterHandler(MsgIndexes.ServerFlagForDestruction, OnServerFlagForDestruction);
     }
 
     public void SetupServerMessageHandlers()
     {
         NetworkServer.RegisterHandler(MsgType.Ready, OnClientReady);
-        NetworkServer.RegisterHandler(MsgIndexes.SceneChangeCompleted, OnClientSceneChangeCompleted);
+        NetworkServer.RegisterHandler(MsgType.Connect, OnClientConnect);
+        NetworkServer.RegisterHandler(MsgType.Disconnect, OnClientDisconnect);
+        NetworkServer.RegisterHandler(MsgIndexes.ClientCompletedSceneChange, OnClientCompletedSceneChange);
+        NetworkServer.RegisterHandler(MsgIndexes.ClientRequestToLeave, OnClientRequestToLeave);
     }
 
     public void TriggerEventIfHost(short msgID, MessageBase message)
@@ -104,30 +123,25 @@ public class GDFRNetworkManager : MonoBehaviour
         }
     }
 
-    public void ShutdownAndLoadScene(string newScene)
+    public NetworkClient FindNetworkClientFromId(int connectionId)
     {
-        SelfDestructChangesSceneOnAllClients(newScene);
+        if (IsLocalClientTheHost())
+        {
+            for (int i = 0; i < NetworkClient.allClients.Count; i++)
+            {
+                if (NetworkClient.allClients[i].connection.connectionId == connectionId)
+                {
+                    return NetworkClient.allClients[i];
+                }
+            }
+
+            Debug.LogError("Client not found");
+            return null;
+        }
+
+        Debug.LogError("This is a server only method!");
+        return null;
     }
-
-    //public NetworkClient FindNetworkClientFromId(int connectionId)
-    //{
-    //    if (IsLocalClientTheHost(localClient))
-    //    {
-    //        for (int i = 0; i < NetworkClient.allClients.Count; i++)
-    //        {
-    //            if (NetworkClient.allClients[i].connection.connectionId == connectionId)
-    //            {
-    //                return NetworkClient.allClients[i];
-    //            }
-    //        }
-
-    //        Debug.LogError("Client not found");
-    //        return null;
-    //    }
-
-    //    Debug.LogError("This is a server only method!");
-    //    return null;
-    //}
 
     IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false)
     {
@@ -144,29 +158,24 @@ public class GDFRNetworkManager : MonoBehaviour
                 message = SceneManager.GetActiveScene().name
             };
             ClientScene.Ready(localClient.connection);
-            localClient.Send(MsgIndexes.SceneChangeCompleted, message);
+            localClient.Send(MsgIndexes.ClientCompletedSceneChange, message);
         }
     }
 
-    private void ChangeScene(string sceneName, bool selfDestructOnLoad = false)
+    public void ShutdownAndLoadScene(string newScene)
     {
-        SceneManager.LoadScene(sceneName);
-
-        if (!IsClientTheHost(localClient) && !selfDestructOnLoad)
+        if (NetworkServer.active)
         {
-            Debug.Log("sending my info to be set ready");
-            ClientInfoMessage message = new ClientInfoMessage
-            {
-                clientId = localClient.connection.connectionId,
-                message = SceneManager.GetActiveScene().name
-            };
-            ClientScene.Ready(localClient.connection);
-            localClient.Send(MsgIndexes.SceneChangeCompleted, message);
+            NetworkServer.SendToAll(MsgIndexes.ServerLeaving, new EmptyMessage());
+            ChangeSceneOnAllClients(newScene);
+        }
+        else if (NetworkClient.active)
+        {
+            localClient.Send(MsgIndexes.ClientRequestToLeave, new IntegerMessage(localClient.connection.connectionId));
         }
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-
+    private void CheckSelfDestruct()
     {
         if (mSelfDestructOnSceneLoad)
         {
@@ -187,35 +196,61 @@ public class GDFRNetworkManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    //////////Callbacks////////////////////////////////////////////////////////////////////////////////
-    private void OnSceneChangeRequested(NetworkMessage message)
+    
+    /////////Client Callbacks////////////////////////////////////////////////////////////////////////////
+    private void OnServerRequestSceneChange(NetworkMessage message)
     {
         StartCoroutine(ChangeSceneAsync(message.ReadMessage<StringMessage>().value));
-    }
-
-    private void OnSelfDestructSceneChangeRequested(NetworkMessage message)
-    {
-        mSelfDestructOnSceneLoad = true;
-        ChangeScene(message.ReadMessage<StringMessage>().value, true);
     }
 
     private void OnConnected(NetworkMessage message)
     {
         Debug.Log("Connected to server with message type " + MsgType.MsgTypeToString(message.msgType));
     }
+
+    private void OnServerFlagForDestruction(NetworkMessage message)
+    {
+        mSelfDestructOnSceneLoad = true;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CheckSelfDestruct();
+    }
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     //////////Server Callbacks////////////////////////////////////////////////////////////////////////
-    private void OnClientSceneChangeCompleted(NetworkMessage message)
+    private void OnClientConnect(NetworkMessage message)
     {
-        ClientInfoMessage mess = message.ReadMessage<ClientInfoMessage>();
-        Debug.Log("Client with connectionId " + mess.clientId + " has successfully loaded the scene and is now ready.");
+        NumPlayers++;
+        Debug.Log("A client has successfully connected");
+    }
+
+    private void OnClientDisconnect(NetworkMessage message)
+    {
+        NumPlayers--;
+        Debug.Log("A client has successfully left a game");
     }
 
     private void OnClientReady(NetworkMessage message)
     {
         Debug.Log("A client has signaled that it is now ready");
+    }
+
+    private void OnClientCompletedSceneChange(NetworkMessage message)
+    {
+        ClientInfoMessage mess = message.ReadMessage<ClientInfoMessage>();
+        Debug.Log("Client with connectionId " + mess.clientId + " has successfully loaded the scene and is now ready.");
+    }
+
+    private void OnClientRequestToLeave(NetworkMessage message)
+    {
+        int clientConnId = message.ReadMessage<IntegerMessage>().value;
+
+        Debug.Log("A client has requested to leave. Preparing client id " + clientConnId + " for departure.");
+
+        NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerFlagForDestruction, new EmptyMessage());
+        NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerRequestSceneChange, new StringMessage("MainMenu"));
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -224,14 +259,6 @@ public class GDFRNetworkManager : MonoBehaviour
         Debug.Log("ServerChangeScene to " + newSceneName);
 
         NetworkServer.SetAllClientsNotReady();
-        NetworkServer.SendToAll(MsgIndexes.SceneChangeRequested, new StringMessage(newSceneName));
-    }
-
-    public void SelfDestructChangesSceneOnAllClients(string newSceneName)
-    {
-        Debug.Log("BlindServerChangeScene to " + newSceneName);
-
-        NetworkServer.SetAllClientsNotReady();
-        NetworkServer.SendToAll(MsgIndexes.SelfDestructSceneChangeRequested, new StringMessage(newSceneName));
+        NetworkServer.SendToAll(MsgIndexes.ServerRequestSceneChange, new StringMessage(newSceneName));
     }
 }
