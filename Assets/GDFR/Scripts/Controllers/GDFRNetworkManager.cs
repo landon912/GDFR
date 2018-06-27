@@ -6,14 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class MsgIndexes
 {
-    public const short ServerStarted = MsgType.Highest + 1;
-    public const short SceneChangeRequested = MsgType.Highest + 2;
-    public const short SceneChangeCompleted = MsgType.Highest + 3;
-    public const short LobbyNumConnectionsChanged = MsgType.Highest + 4;
-    public const short SetupPlayerCountChanged = MsgType.Highest + 5;
-    public const short SetupDifficultyChanged = MsgType.Highest + 6;
-    public const short SetupCardVariantChanged = MsgType.Highest + 7;
-    public const short SetupRulesVariantChanged = MsgType.Highest + 8;
+    public const short ServerStarted = 50;
+    public const short SceneChangeRequested = 51;
+    public const short SelfDestructSceneChangeRequested = 52;
+    public const short SceneChangeCompleted = 53;
+
+    public const short LobbyNumConnectionsChanged = 60;
+    public const short SetupPlayerCountChanged = 61;
+    public const short SetupDifficultyChanged = 62;
+    public const short SetupCardVariantChanged = 63;
+    public const short SetupRulesVariantChanged = 64;
 }
 
 public class GDFRNetworkManager : MonoBehaviour
@@ -31,12 +33,24 @@ public class GDFRNetworkManager : MonoBehaviour
         }
     }
 
+    private bool mSelfDestructOnSceneLoad = false;
+
     public int serverId = -1;
     public NetworkClient localClient;
 
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public bool IsLocalClientTheHost()
@@ -70,6 +84,7 @@ public class GDFRNetworkManager : MonoBehaviour
     {
         localClient.RegisterHandler(MsgType.Connect, OnConnected);
         localClient.RegisterHandler(MsgIndexes.SceneChangeRequested, OnSceneChangeRequested);
+        localClient.RegisterHandler(MsgIndexes.SelfDestructSceneChangeRequested, OnSelfDestructSceneChangeRequested);
     }
 
     public void SetupServerMessageHandlers()
@@ -91,25 +106,7 @@ public class GDFRNetworkManager : MonoBehaviour
 
     public void ShutdownAndLoadScene(string newScene)
     {
-        if (NetworkServer.active)
-        {
-            ChangeSceneOnAllClients(newScene);
-            NetworkServer.DisconnectAll();
-            NetworkServer.Shutdown();
-            Destroy
-        }
-        else if (NetworkClient.active)
-        {
-            localClient.Disconnect();
-            localClient.Shutdown();
-            SceneManager.LoadScene(newScene);
-            Destroy(gameObject);
-        }
-        else
-        {
-            SceneManager.LoadScene(newScene);
-            Destroy(gameObject);
-        }
+        SelfDestructChangesSceneOnAllClients(newScene);
     }
 
     //public NetworkClient FindNetworkClientFromId(int connectionId)
@@ -132,14 +129,13 @@ public class GDFRNetworkManager : MonoBehaviour
     //    return null;
     //}
 
-    IEnumerator ChangeSceneAsync(string sceneName)
+    IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false)
     {
         AsyncOperation sceneLoadingOperation = SceneManager.LoadSceneAsync(sceneName);
 
         yield return new WaitUntil(() => sceneLoadingOperation.isDone);
 
-
-        if (!IsClientTheHost(localClient))
+        if (!IsClientTheHost(localClient) && !selfDestructOnLoad)
         {
             Debug.Log("sending my info to be set ready");
             ClientInfoMessage message = new ClientInfoMessage
@@ -152,10 +148,56 @@ public class GDFRNetworkManager : MonoBehaviour
         }
     }
 
+    private void ChangeScene(string sceneName, bool selfDestructOnLoad = false)
+    {
+        SceneManager.LoadScene(sceneName);
+
+        if (!IsClientTheHost(localClient) && !selfDestructOnLoad)
+        {
+            Debug.Log("sending my info to be set ready");
+            ClientInfoMessage message = new ClientInfoMessage
+            {
+                clientId = localClient.connection.connectionId,
+                message = SceneManager.GetActiveScene().name
+            };
+            ClientScene.Ready(localClient.connection);
+            localClient.Send(MsgIndexes.SceneChangeCompleted, message);
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+
+    {
+        if (mSelfDestructOnSceneLoad)
+        {
+            if (NetworkServer.active)
+            {
+                NetworkServer.DisconnectAll();
+                NetworkServer.Shutdown();
+
+                localClient.Disconnect();
+                localClient.Shutdown();
+            }
+            else if (NetworkClient.active)
+            {
+                localClient.Disconnect();
+                localClient.Shutdown();
+            }
+
+            Destroy(gameObject);
+        }
+    }
+
     //////////Callbacks////////////////////////////////////////////////////////////////////////////////
     private void OnSceneChangeRequested(NetworkMessage message)
     {
         StartCoroutine(ChangeSceneAsync(message.ReadMessage<StringMessage>().value));
+    }
+
+    private void OnSelfDestructSceneChangeRequested(NetworkMessage message)
+    {
+        mSelfDestructOnSceneLoad = true;
+        ChangeScene(message.ReadMessage<StringMessage>().value, true);
     }
 
     private void OnConnected(NetworkMessage message)
@@ -183,5 +225,13 @@ public class GDFRNetworkManager : MonoBehaviour
 
         NetworkServer.SetAllClientsNotReady();
         NetworkServer.SendToAll(MsgIndexes.SceneChangeRequested, new StringMessage(newSceneName));
+    }
+
+    public void SelfDestructChangesSceneOnAllClients(string newSceneName)
+    {
+        Debug.Log("BlindServerChangeScene to " + newSceneName);
+
+        NetworkServer.SetAllClientsNotReady();
+        NetworkServer.SendToAll(MsgIndexes.SelfDestructSceneChangeRequested, new StringMessage(newSceneName));
     }
 }

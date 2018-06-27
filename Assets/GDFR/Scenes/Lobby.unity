@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2652fdb3db3521489cec28336f57179, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainAlphaTweener: {fileID: 462142623}
+  mainAlphaTweener: {fileID: 64663040}
   playerCountLabel: {fileID: 2020967028}
 --- !u!4 &48666354
 Transform:
