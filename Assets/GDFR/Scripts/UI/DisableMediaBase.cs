@@ -1,31 +1,11 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class DisableButtonOnClients : MonoBehaviour
+public class DisableMediaBase : MonoBehaviour
 {
-    private bool mCurrentState = true;
+    protected bool mCurrentState = true;
 
-    void Update()
-    {
-        if (NetworkServer.active == false)
-        {
-            if(mCurrentState)
-                ToggleMedia(false);
-        }
-        else if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
-        {
-            if (mCurrentState)
-                ToggleMedia(false);
-        }
-        else
-        {
-            if (!mCurrentState)
-                ToggleMedia(true);
-        }
-    }
-
-    private void ToggleMedia(bool state)
+    protected void ToggleMedia(bool state)
     {
         Button unityButton = GetComponent<Button>();
         if (unityButton == null)

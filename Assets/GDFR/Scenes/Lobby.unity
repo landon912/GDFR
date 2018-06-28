@@ -1853,7 +1853,7 @@ GameObject:
   - component: {fileID: 1643339810}
   - component: {fileID: 1643339809}
   - component: {fileID: 1643339808}
-  - component: {fileID: 1643339814}
+  - component: {fileID: 1643339813}
   m_Layer: 9
   m_Name: 3_Button_Start_Game
   m_TagString: Untagged
@@ -2061,7 +2061,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 222, y: 96, z: 0}
   m_Center: {x: 0, y: -0.0000038146973, z: 0}
---- !u!114 &1643339814
+--- !u!114 &1643339813
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -2069,7 +2069,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1643339806}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75953290a8e0c604ba4b996ddeac10f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1692777880
@@ -2085,6 +2085,7 @@ GameObject:
   - component: {fileID: 1692777887}
   - component: {fileID: 1692777885}
   - component: {fileID: 1692777883}
+  - component: {fileID: 1692777882}
   m_Layer: 9
   m_Name: 1_Button_Start_Server
   m_TagString: Untagged
@@ -2107,6 +2108,17 @@ Transform:
   m_Father: {fileID: 217503749}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1692777882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1692777880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3065b7b4748b6c46870d68985356e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1692777883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2538,6 +2550,7 @@ GameObject:
   - component: {fileID: 1980093723}
   - component: {fileID: 1980093722}
   - component: {fileID: 1980093721}
+  - component: {fileID: 1980093719}
   m_Layer: 9
   m_Name: 2_Button_Join_Game
   m_TagString: Untagged
@@ -2560,6 +2573,17 @@ Transform:
   m_Father: {fileID: 217503749}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1980093719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1980093717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3065b7b4748b6c46870d68985356e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1980093721
 MonoBehaviour:
   m_ObjectHideFlags: 0
