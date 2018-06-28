@@ -26,9 +26,20 @@ public class LobbyController : MonoBehaviour
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.LobbyNumConnectionsChanged, OnNumConnectionChanged);
     }
 
+    private void OnDestroy()
+    {
+        GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.LobbyNumConnectionsChanged);
+    }
+
     private void OnNumConnectionChanged(NetworkMessage message)
     {
         int count = message.ReadMessage<IntegerMessage>().value;
+
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            GDFRNetworkManager.Instance.NumPlayers = count;
+        }
 
         playerCountLabel.text = "# of Players: " + count;
     }

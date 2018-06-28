@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 
 [Serializable]
@@ -15,7 +17,7 @@ public class PlayerProfile_UI : MonoBehaviour {
     public Text nameStatic = null;
     public Toggle humanToggle = null;
     public Toggle aiToggle = null;
-    // public AvatarSelector avatarSelector;
+    public bool isNetworkPlayer = false;
     public Image avatarSprite = null;
 
     public AvatarOption[] AvatarOptions;
@@ -90,6 +92,9 @@ public class PlayerProfile_UI : MonoBehaviour {
     public void OnNameChanged(string value)
     {
         Toolbox.Instance.playerProfiles[ProfileIndex].name = value;
+
+        GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupNameChanged, new PlayerNameMessage(ProfileIndex, value));
+
         Debug.Log("Player [ " + ProfileIndex + " ] NAME set to " + Toolbox.Instance.playerProfiles[ProfileIndex].name);
     }
 
@@ -129,6 +134,8 @@ public class PlayerProfile_UI : MonoBehaviour {
             EventReceiver.TriggerButtonPressedEvent();
         }
 
+        GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupHumanToggleChanged, new PlayerToggleMessage(ProfileIndex, isHuman));
+
         Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[ProfileIndex].type);
     }
 
@@ -136,6 +143,8 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         Toolbox.Instance.playerProfiles[ProfileIndex].avatar = id;
         avatarSprite.sprite = AvatarOptions[id].graphic;
+
+        GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupAvatarChanged, new PlayerAvatarMessage(ProfileIndex, id));
 
         Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[ProfileIndex].avatar);
     }

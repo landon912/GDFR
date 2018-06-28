@@ -1169,8 +1169,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d9b17c90c00474691fed1cb91c9dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toolboxPrefab: {fileID: 1825650707623358, guid: b6d1d341c9ebdf74fb778f181d2869c5,
-    type: 2}
   MenuAudioController: {fileID: 1680785755025378, guid: b2005e2aeb279cd4cb93d97b8644020e,
     type: 2}
 --- !u!4 &810852282
@@ -1722,7 +1720,6 @@ GameObject:
   - component: {fileID: 1039723210}
   - component: {fileID: 1039723209}
   - component: {fileID: 1039723208}
-  - component: {fileID: 1039723211}
   m_Layer: 5
   m_Name: btnBack
   m_TagString: Untagged
@@ -1844,17 +1841,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1039723206}
---- !u!114 &1039723211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1039723206}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1076063836
 GameObject:
   m_ObjectHideFlags: 0

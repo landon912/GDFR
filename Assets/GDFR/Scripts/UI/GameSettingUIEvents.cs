@@ -57,6 +57,7 @@ public class GameSettingUIEvents : MonoBehaviour
         if (NetworkServer.active || NetworkClient.active)
         {
             RegisterNetworkEvents();
+            Toolbox.Instance.gameSettings.numberOfPlayers = GDFRNetworkManager.Instance.NumPlayers;
         }
 
         // Set the current NumberOfPlayers
@@ -67,7 +68,8 @@ public class GameSettingUIEvents : MonoBehaviour
         // Create all player profiles after the first
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
         {
-            CreateNewPlayerProfile(idx, true, idx != 0);
+            //CreateNewPlayerProfile(idx, true, idx != 0);
+            CreateNewPlayerProfile(idx, false);
         }
 
         ValidateAddAndRemoveButtons();
@@ -99,6 +101,57 @@ public class GameSettingUIEvents : MonoBehaviour
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupDifficultyChanged, NetOnDifficultyChanged);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupCardVariantChanged, NetOnCardVariantChanged);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupRulesVariantChanged, NetOnRulesVariantChanged);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupHumanToggleChanged, OnServerChangeHumanToggle);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupAvatarChanged, OnServerChangeAvatar);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupNameChanged, OnServerChangeName);
+    }
+
+    private void OnDestroy()
+    {
+        if (GDFRNetworkManager.Instance)
+        {
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupPlayerCountChanged);
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupDifficultyChanged);
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupCardVariantChanged);
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupRulesVariantChanged);
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupHumanToggleChanged);
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupAvatarChanged);
+            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupNameChanged);
+        }
+    }
+
+    private void OnServerChangeHumanToggle(NetworkMessage message)
+    {
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            PlayerToggleMessage toggleMess = message.ReadMessage<PlayerToggleMessage>();
+
+            mPlayerProfiles[toggleMess.idx].humanToggle.isOn = toggleMess.isHuman;
+            mPlayerProfiles[toggleMess.idx].aiToggle.isOn = !toggleMess.isHuman;
+        }
+    }
+
+    private void OnServerChangeAvatar(NetworkMessage message)
+    {
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            PlayerAvatarMessage avatarMess = message.ReadMessage<PlayerAvatarMessage>();
+
+            mPlayerProfiles[avatarMess.idx].ChangeAvatar(avatarMess.avatarId);
+        }
+    }
+
+    private void OnServerChangeName(NetworkMessage message)
+    {
+        //only update if not host
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        {
+            PlayerNameMessage nameMess = message.ReadMessage<PlayerNameMessage>();
+
+            mPlayerProfiles[nameMess.idx].nameField.text = nameMess.playerName;
+        }
     }
 
     void LoadXMLData()
@@ -241,7 +294,7 @@ public class GameSettingUIEvents : MonoBehaviour
     {
         numberOfPlayersAdd.interactable = Toolbox.Instance.gameSettings.numberOfPlayers != Toolbox.MAX_NUMBER_PLAYERS;
 
-        numberOfPlayersRemove.interactable = Toolbox.Instance.gameSettings.numberOfPlayers != 1;
+        numberOfPlayersRemove.interactable = Toolbox.Instance.gameSettings.numberOfPlayers != 1 && Toolbox.Instance.gameSettings.numberOfPlayers != GDFRNetworkManager.Instance.NumPlayers;
     }
 
     void ChangePlayerCount(int count)

@@ -16,7 +16,15 @@ public class DisableMediaBase : MonoBehaviour
                 Dropdown uiDropdown = GetComponent<Dropdown>();
                 if (uiDropdown == null)
                 {
-                    Debug.LogError("There is no button to disable on this object");
+                    Toggle toggle = GetComponent<Toggle>();
+                    if (toggle == null)
+                    {
+                        Debug.LogError("There is no media to disable on this object");
+                    }
+                    else
+                    {
+                        toggle.interactable = state;
+                    }
                 }
                 else
                 {

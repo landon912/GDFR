@@ -18,6 +18,9 @@ public class MsgIndexes
     public const short SetupDifficultyChanged = 62;
     public const short SetupCardVariantChanged = 63;
     public const short SetupRulesVariantChanged = 64;
+    public const short SetupHumanToggleChanged = 65;
+    public const short SetupAvatarChanged = 66;
+    public const short SetupNameChanged = 67;
 }
 
 public class GDFRNetworkManager : MonoBehaviour
@@ -44,7 +47,7 @@ public class GDFRNetworkManager : MonoBehaviour
     public int NumPlayers
     {
         get { return mNumPlayers; }
-        private set
+        set
         {
             mNumPlayers = value;
             TriggerEventIfHost(MsgIndexes.LobbyNumConnectionsChanged, new IntegerMessage(value));
@@ -110,6 +113,23 @@ public class GDFRNetworkManager : MonoBehaviour
         NetworkServer.RegisterHandler(MsgType.Disconnect, OnClientDisconnect);
         NetworkServer.RegisterHandler(MsgIndexes.ClientCompletedSceneChange, OnClientCompletedSceneChange);
         NetworkServer.RegisterHandler(MsgIndexes.ClientRequestToLeave, OnClientRequestToLeave);
+    }
+
+    private void OnDestroy()
+    {
+        if (localClient != null)  
+        {
+            localClient.UnregisterHandler(MsgType.Connect);
+            localClient.UnregisterHandler(MsgIndexes.ServerRequestSceneChange);
+            localClient.UnregisterHandler(MsgIndexes.ServerLeaving);
+            localClient.UnregisterHandler(MsgIndexes.ServerFlagForDestruction);
+        }
+
+        NetworkServer.UnregisterHandler(MsgType.Ready);
+        NetworkServer.UnregisterHandler(MsgType.Connect);
+        NetworkServer.UnregisterHandler(MsgType.Disconnect);
+        NetworkServer.UnregisterHandler(MsgIndexes.ClientCompletedSceneChange);
+        NetworkServer.UnregisterHandler(MsgIndexes.ClientRequestToLeave);
     }
 
     public void TriggerEventIfHost(short msgID, MessageBase message)
