@@ -1,13 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 
 public class NewGameController : MonoBehaviour
 {
-
     Animator anim = null;
 
-    public GameObject toolboxPrefab;
     public GameObject MenuAudioController;
 
     public void Start()
@@ -23,15 +19,8 @@ public class NewGameController : MonoBehaviour
     public void backScene()
     {
         Debug.Log("back button");
-        if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
-        {
-            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("Lobby");
-        }
-        else
-        {
-            NetworkManager.singleton.StopClient();
-            SceneManager.LoadScene("Lobby");
-        }
+        Toolbox.Instance.gameObject.RemoveFromDontDestroyOnLoad();
+        GDFRNetworkManager.Instance.ShutdownAndLoadScene("MainMenu");
     }
     
     public void animateButon()

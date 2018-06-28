@@ -77,6 +77,7 @@ public class GameContoller : RxFx_FSM
         StopAllCoroutines();
         GlobalEventList.Clear();
 
+        Toolbox.Instance.gameObject.RemoveFromDontDestroyOnLoad();
         Destroy(AudioController.Instance.gameObject);
         SceneManager.LoadScene("NewGame");
     }

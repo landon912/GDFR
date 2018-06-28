@@ -19,12 +19,8 @@ public class Toolbox : MonoBehaviour
                 {
                     Debug.LogError("No Toolbox spawned at time of request");
                 }
-                return mInstance;
             }
-            else
-            {
-                return mInstance;
-            }
+            return mInstance;
         }
     }
 
@@ -38,7 +34,6 @@ public class Toolbox : MonoBehaviour
     }
 
     public PlayersProfile[] playerProfiles = new PlayersProfile[MAX_NUMBER_PLAYERS];
-    //public int currentPlayerNumber = 1;
 
     void Awake()
     {
