@@ -1,7 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 
 [Serializable]
@@ -11,7 +9,9 @@ public class AvatarOption
     public Sprite graphic;
 }
 
-public class PlayerProfile_UI : MonoBehaviour {
+public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
+{
+    private int mClientId = -1;
 
     public InputField nameField = null;
     public Text nameStatic = null;
@@ -153,4 +153,22 @@ public class PlayerProfile_UI : MonoBehaviour {
     {
         FindObjectOfType<AvatarSelector>().Show(this);
     }
+
+
+    /// IRepresentClient implementations
+    public bool IsRepresentingClientId(int clientId)
+    {
+        return mClientId == clientId;
+    }
+
+    public void SetAsRepresentingClientId(int clientId)
+    {
+        mClientId = clientId;
+    }
+
+    public bool IsAI()
+    {
+        return aiToggle.isOn;
+    }
+    /// End IRepresentClient implementations
 }

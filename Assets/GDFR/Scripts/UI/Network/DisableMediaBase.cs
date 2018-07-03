@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class DisableMediaBase : MonoBehaviour
 {
-    protected bool mCurrentState = true;
+    public bool mCurrentState = true;
 
     protected void ToggleMedia(bool state)
     {

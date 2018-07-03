@@ -138,7 +138,7 @@ public class GameContoller : RxFx_FSM
 	    UI_Event_Receiver.SetupButtonPressed += ReturnToSetupMenu;
 	}
 
-	void OnDestroy()
+	void OnDisable()
 	{
 		UI_Event_Receiver.CardSelected -= OnCardSelected;
 	    UI_Event_Receiver.MuteButtonPressed -= MuteSound;

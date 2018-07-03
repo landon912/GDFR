@@ -13,7 +13,6 @@ public class AIData
 
 public class GameSettingUIEvents : MonoBehaviour
 {
-
 	public UnityEngine.UI.Text playerCountLabel = null;
     public UnityEngine.UI.Button numberOfPlayersAdd = null;
     public UnityEngine.UI.Button numberOfPlayersRemove = null;
@@ -39,16 +38,6 @@ public class GameSettingUIEvents : MonoBehaviour
         numberOfPlayersRemove.onClick.AddListener(OnClickRemovePlayer);
     }
 
-	void OnDisable()
-	{
-        difficultyDropDown.onValueChanged.RemoveAllListeners();
-        cardVariantDropDown.onValueChanged.RemoveAllListeners();
-        rulesVariantDropDown.onValueChanged.RemoveAllListeners();
-
-        numberOfPlayersAdd.onClick.RemoveAllListeners();
-        numberOfPlayersRemove.onClick.RemoveAllListeners();
-    }
-
     // Use this for initialization
     void Start()
     {
@@ -60,6 +49,11 @@ public class GameSettingUIEvents : MonoBehaviour
             Toolbox.Instance.gameSettings.numberOfPlayers = GDFRNetworkManager.Instance.NumPlayers;
         }
 
+        Setup();
+    }
+
+    private void Setup()
+    {
         // Set the current NumberOfPlayers
         playerCountLabel.text = Toolbox.Instance.gameSettings.numberOfPlayers.ToString();
 
@@ -69,13 +63,13 @@ public class GameSettingUIEvents : MonoBehaviour
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
         {
             //CreateNewPlayerProfile(idx, true, idx != 0);
-            CreateNewPlayerProfile(idx, false);
+            CreateNewPlayerProfile(idx, false).SetAsRepresentingClientId(idx);
         }
 
         ValidateAddAndRemoveButtons();
         ValidateCombos();
 
-        switch(Toolbox.Instance.gameSettings.RulesVariant)
+        switch (Toolbox.Instance.gameSettings.RulesVariant)
         {
             case GameSettings.RulesVariantType.Solitaire:
             case GameSettings.RulesVariantType.Classic:
@@ -106,18 +100,22 @@ public class GameSettingUIEvents : MonoBehaviour
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupNameChanged, OnServerChangeName);
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        if (GDFRNetworkManager.Instance)
-        {
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupPlayerCountChanged);
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupDifficultyChanged);
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupCardVariantChanged);
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupRulesVariantChanged);
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupHumanToggleChanged);
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupAvatarChanged);
-            GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.SetupNameChanged);
-        }
+        difficultyDropDown.onValueChanged.RemoveAllListeners();
+        cardVariantDropDown.onValueChanged.RemoveAllListeners();
+        rulesVariantDropDown.onValueChanged.RemoveAllListeners();
+
+        numberOfPlayersAdd.onClick.RemoveAllListeners();
+        numberOfPlayersRemove.onClick.RemoveAllListeners();
+
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupPlayerCountChanged);
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupDifficultyChanged);
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupCardVariantChanged);
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupRulesVariantChanged);
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupHumanToggleChanged);
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupAvatarChanged);
+        GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupNameChanged);
     }
 
     private void OnServerChangeHumanToggle(NetworkMessage message)
@@ -184,6 +182,7 @@ public class GameSettingUIEvents : MonoBehaviour
         }
     }
 
+    //called from button callbacks
     void OnClickAddPlayer()
     {
         if (Toolbox.Instance.gameSettings.numberOfPlayers < Toolbox.MAX_NUMBER_PLAYERS)
@@ -193,6 +192,7 @@ public class GameSettingUIEvents : MonoBehaviour
         }
     }
 
+    //called from button callbacks
     void OnClickRemovePlayer()
     {
         if (Toolbox.Instance.gameSettings.numberOfPlayers > 1)
@@ -202,7 +202,7 @@ public class GameSettingUIEvents : MonoBehaviour
         }
     }
 
-    void CreateNewPlayerProfile(int idx, bool canBeAI = true, bool isAI = false)
+    PlayerProfile_UI CreateNewPlayerProfile(int idx, bool canBeAI = true, bool isAI = false)
     {
         // add a new player panel
         GameObject newPlayerPanel = Instantiate(playerItemControl, Vector3.zero, Quaternion.identity);
@@ -229,6 +229,8 @@ public class GameSettingUIEvents : MonoBehaviour
 
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
         newPlayerPanel.name = "player" + (idx + 1);
+
+        return playerUI;
     }
 
     public void SelectDefaultProfile(PlayerProfile_UI playerUI)
@@ -377,6 +379,7 @@ public class GameSettingUIEvents : MonoBehaviour
         }
     }
 
+    //called from button callbacks
 	void OnDifficultyChanged(int listValue)
 	{
         Toolbox.Instance.gameSettings.DifficultyLevel = (GameSettings.Difficulty)listValue;

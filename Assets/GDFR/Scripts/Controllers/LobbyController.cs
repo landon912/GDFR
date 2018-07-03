@@ -26,9 +26,9 @@ public class LobbyController : MonoBehaviour
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.LobbyNumConnectionsChanged, OnNumConnectionChanged);
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        GDFRNetworkManager.Instance.localClient.UnregisterHandler(MsgIndexes.LobbyNumConnectionsChanged);
+        GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.LobbyNumConnectionsChanged);
     }
 
     private void OnNumConnectionChanged(NetworkMessage message)

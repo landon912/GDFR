@@ -32,10 +32,13 @@ public class GDFRNetworkManager : MonoBehaviour
         {
             if (mInstance == null)
                 mInstance = FindObjectOfType<GDFRNetworkManager>();
-                //mInstance = new GameObject("Network Manager").AddComponent<GDFRNetworkManager>();
-
             return mInstance;
         }
+    }
+
+    public int LocalConnectionId
+    {
+        get { return localClient.connection.connectionId; }
     }
 
     private bool mSelfDestructOnSceneLoad = false;
@@ -57,16 +60,6 @@ public class GDFRNetworkManager : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
-    }
-
-    void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public bool IsLocalClientTheHost()
@@ -115,15 +108,19 @@ public class GDFRNetworkManager : MonoBehaviour
         NetworkServer.RegisterHandler(MsgIndexes.ClientRequestToLeave, OnClientRequestToLeave);
     }
 
-    private void OnDestroy()
+    private void OnEnable()
     {
-        if (localClient != null)  
-        {
-            localClient.UnregisterHandler(MsgType.Connect);
-            localClient.UnregisterHandler(MsgIndexes.ServerRequestSceneChange);
-            localClient.UnregisterHandler(MsgIndexes.ServerLeaving);
-            localClient.UnregisterHandler(MsgIndexes.ServerFlagForDestruction);
-        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        localClient?.UnregisterHandler(MsgType.Connect);
+        localClient?.UnregisterHandler(MsgIndexes.ServerRequestSceneChange);
+        localClient?.UnregisterHandler(MsgIndexes.ServerLeaving);
+        localClient?.UnregisterHandler(MsgIndexes.ServerFlagForDestruction);
 
         NetworkServer.UnregisterHandler(MsgType.Ready);
         NetworkServer.UnregisterHandler(MsgType.Connect);
