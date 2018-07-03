@@ -6,6 +6,18 @@ public class ClientInfoMessage : MessageBase
     public string message;
 }
 
+public class PlayerConnectInfoMessage : MessageBase
+{
+    public int clientId;
+    public NetworkProfile profile;
+}
+
+public class ClientCommandMessage : MessageBase
+{
+    public short commandId;
+    public byte[] message;
+}
+
 public class BooleanMessage : MessageBase
 {
     public bool value;

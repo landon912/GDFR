@@ -381,6 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCurrentState: 1
 --- !u!1 &330146324
 GameObject:
   m_ObjectHideFlags: 0
@@ -1068,6 +1069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCurrentState: 1
 --- !u!1 &739466632
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,6 +1393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCurrentState: 1
 --- !u!1 &926573238
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,6 +1614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCurrentState: 1
 --- !u!114 &1005651363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1964,6 +1968,7 @@ MonoBehaviour:
   playerControl: {fileID: 1433914441}
   playerItemControl: {fileID: 128368, guid: 180d8c09e0c45ec44be79a909a36699a, type: 2}
   AIDataAsset: {fileID: 4900000, guid: ea5ec36a199264d4090ada3387cd1ef7, type: 3}
+  playerProfiles: []
 --- !u!1 &1112100441
 GameObject:
   m_ObjectHideFlags: 0
@@ -2131,6 +2136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCurrentState: 1
 --- !u!1 &1250822795
 GameObject:
   m_ObjectHideFlags: 0
@@ -3044,11 +3050,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11431992, guid: d28cac82ab41bf048a87b662131c02c4, type: 2}
       propertyPath: m_Options.m_Options.Array.data[0].m_Text
-      value: Solitaire
+      value: Do not set
       objectReference: {fileID: 0}
     - target: {fileID: 11431992, guid: d28cac82ab41bf048a87b662131c02c4, type: 2}
       propertyPath: m_Options.m_Options.Array.data[1].m_Text
-      value: Ultimate Solitaire
+      value: Do not set
       objectReference: {fileID: 0}
     - target: {fileID: 11431992, guid: d28cac82ab41bf048a87b662131c02c4, type: 2}
       propertyPath: m_Options.m_Options.Array.data[2].m_Text
@@ -3171,6 +3177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb0a57ffb16b544c92a3ec68bd3d7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCurrentState: 1
 --- !u!1 &1964973284
 GameObject:
   m_ObjectHideFlags: 0

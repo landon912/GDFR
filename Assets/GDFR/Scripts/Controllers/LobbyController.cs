@@ -12,16 +12,16 @@ public class LobbyController : MonoBehaviour
     public void StartServer()
     {
         GDFRNetworkManager.Instance.SetupHost();
-        StartTrackingPlayerCount();
+        StartNetworkHandlers();
     }
 
     public void JoinGame()
     {
         GDFRNetworkManager.Instance.SetupClient();
-        StartTrackingPlayerCount();
+        StartNetworkHandlers();
     }
 
-    private void StartTrackingPlayerCount()
+    private void StartNetworkHandlers()
     {
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.LobbyNumConnectionsChanged, OnNumConnectionChanged);
     }

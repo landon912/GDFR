@@ -24,7 +24,7 @@ public class GameSettingUIEvents : MonoBehaviour
     public TextAsset AIDataAsset;
 
     private List<AIData> mAIProfiles;
-    private List<PlayerProfile_UI> mPlayerProfiles;
+    public List<PlayerProfile_UI> playerProfiles;
 
     public static int AI_PROFILE_INDEX = 11;
 
@@ -57,7 +57,7 @@ public class GameSettingUIEvents : MonoBehaviour
         // Set the current NumberOfPlayers
         playerCountLabel.text = Toolbox.Instance.gameSettings.numberOfPlayers.ToString();
 
-        mPlayerProfiles = new List<PlayerProfile_UI>(4);
+        playerProfiles = new List<PlayerProfile_UI>(4);
 
         // Create all player profiles after the first
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
@@ -67,7 +67,7 @@ public class GameSettingUIEvents : MonoBehaviour
         }
 
         ValidateAddAndRemoveButtons();
-        ValidateCombos();
+        ValidateCombos(true);
 
         switch (Toolbox.Instance.gameSettings.RulesVariant)
         {
@@ -125,8 +125,8 @@ public class GameSettingUIEvents : MonoBehaviour
         {
             PlayerToggleMessage toggleMess = message.ReadMessage<PlayerToggleMessage>();
 
-            mPlayerProfiles[toggleMess.idx].humanToggle.isOn = toggleMess.isHuman;
-            mPlayerProfiles[toggleMess.idx].aiToggle.isOn = !toggleMess.isHuman;
+            playerProfiles[toggleMess.idx].humanToggle.isOn = toggleMess.isHuman;
+            playerProfiles[toggleMess.idx].aiToggle.isOn = !toggleMess.isHuman;
         }
     }
 
@@ -137,7 +137,7 @@ public class GameSettingUIEvents : MonoBehaviour
         {
             PlayerAvatarMessage avatarMess = message.ReadMessage<PlayerAvatarMessage>();
 
-            mPlayerProfiles[avatarMess.idx].ChangeAvatar(avatarMess.avatarId);
+            playerProfiles[avatarMess.idx].ChangeAvatar(avatarMess.avatarId);
         }
     }
 
@@ -148,7 +148,7 @@ public class GameSettingUIEvents : MonoBehaviour
         {
             PlayerNameMessage nameMess = message.ReadMessage<PlayerNameMessage>();
 
-            mPlayerProfiles[nameMess.idx].nameField.text = nameMess.playerName;
+            playerProfiles[nameMess.idx].nameField.text = nameMess.playerName;
         }
     }
 
@@ -212,7 +212,7 @@ public class GameSettingUIEvents : MonoBehaviour
         // set the player profile index on the UI component, so it can modify this player settings
         PlayerProfile_UI playerUI = newPlayerPanel.GetComponent<PlayerProfile_UI>();
 
-        mPlayerProfiles.Add(playerUI);
+        playerProfiles.Add(playerUI);
 
         playerUI.ProfileIndex = idx;
         playerUI.aiToggle.gameObject.SetActive(canBeAI);
@@ -230,6 +230,11 @@ public class GameSettingUIEvents : MonoBehaviour
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
         newPlayerPanel.name = "player" + (idx + 1);
 
+        if ((NetworkServer.active || NetworkClient.active) && idx < GDFRNetworkManager.Instance.NumPlayers)
+        {
+            playerUI.SetAsRepresentingClientId(idx);
+        }
+
         return playerUI;
     }
 
@@ -245,7 +250,7 @@ public class GameSettingUIEvents : MonoBehaviour
     public void SelectRealAIProfiles()
     {
         //remove ai profiles that use the same avatar as players
-        foreach (PlayerProfile_UI playerUI in mPlayerProfiles)
+        foreach (PlayerProfile_UI playerUI in playerProfiles)
         {
             if (playerUI.humanToggle.isOn)
             {
@@ -260,7 +265,7 @@ public class GameSettingUIEvents : MonoBehaviour
             }
         }
 
-        foreach (PlayerProfile_UI playerUI in mPlayerProfiles)
+        foreach (PlayerProfile_UI playerUI in playerProfiles)
         {
             if (playerUI.aiToggle.isOn)
             {
@@ -326,7 +331,7 @@ public class GameSettingUIEvents : MonoBehaviour
                 GameObject playerUIObj = GameObject.Find("player" + (count + i));
                 PlayerProfile_UI playerProfile = playerUIObj.GetComponent<PlayerProfile_UI>();
 
-                mPlayerProfiles.Remove(playerProfile);
+                playerProfiles.Remove(playerProfile);
 
                 Destroy(playerUIObj);
                 delta--;
@@ -350,10 +355,10 @@ public class GameSettingUIEvents : MonoBehaviour
         }
     }
 
-    void ValidateCombos()
+    void ValidateCombos(bool setup = false)
     {
         // Only 1 player, disable classic mode and open just the solitaire and ultimate solitaire
-        if ((Toolbox.Instance.gameSettings.numberOfPlayers == 1) && (rulesVariantDropDown.options[0].text.ToLower() == "classic"))
+        if ((Toolbox.Instance.gameSettings.numberOfPlayers == 1) && (setup || rulesVariantDropDown.options[0].text.ToLower() == "classic"))
         {
             rulesVariantDropDown.options.Clear();
             rulesVariantDropDown.options.Add(new UnityEngine.UI.Dropdown.OptionData("Solitaire"));
@@ -365,7 +370,7 @@ public class GameSettingUIEvents : MonoBehaviour
             //default to first option
             rulesVariantDropDown.value = 0;
         }
-        else if ((Toolbox.Instance.gameSettings.numberOfPlayers > 1) && (rulesVariantDropDown.options[0].text.ToLower() == "solitaire"))
+        else if ((Toolbox.Instance.gameSettings.numberOfPlayers > 1) && (setup || rulesVariantDropDown.options[0].text.ToLower() == "solitaire"))
         {
             rulesVariantDropDown.options.Clear();
             rulesVariantDropDown.options.Add(new UnityEngine.UI.Dropdown.OptionData("Classic"));
