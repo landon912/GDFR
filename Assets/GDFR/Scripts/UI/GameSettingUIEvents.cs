@@ -63,7 +63,7 @@ public class GameSettingUIEvents : MonoBehaviour
         for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
         {
             //CreateNewPlayerProfile(idx, true, idx != 0);
-            CreateNewPlayerProfile(idx, false).SetAsRepresentingClientId(idx);
+            CreateNewPlayerProfile(idx, false);
         }
 
         ValidateAddAndRemoveButtons();
@@ -132,13 +132,10 @@ public class GameSettingUIEvents : MonoBehaviour
 
     private void OnServerChangeAvatar(NetworkMessage message)
     {
-        //only update if not host
-        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
-        {
-            PlayerAvatarMessage avatarMess = message.ReadMessage<PlayerAvatarMessage>();
+        //can be set from a client
+        PlayerAvatarMessage avatarMess = message.ReadMessage<PlayerAvatarMessage>();
 
-            playerProfiles[avatarMess.idx].ChangeAvatar(avatarMess.avatarId);
-        }
+        playerProfiles[avatarMess.idx].ChangeAvatar(avatarMess.avatarId);
     }
 
     private void OnServerChangeName(NetworkMessage message)

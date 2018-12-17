@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -14,6 +15,7 @@ public class MsgIndexes
     public const short ClientRequestToLeave = 54;
     public const short ServerFlagForDestruction = 55;
     public const short ClientCommand = 56;
+    public const short ServerSendLobbyData = 58;
 
     public const short LobbyNumConnectionsChanged = 60;
     public const short LobbyClientConnected = 61;
@@ -100,6 +102,7 @@ public class GDFRNetworkManager : MonoBehaviour
         localClient.RegisterHandler(MsgIndexes.ServerRequestSceneChange, OnServerRequestSceneChange);
         localClient.RegisterHandler(MsgIndexes.ServerLeaving, OnServerFlagForDestruction);
         localClient.RegisterHandler(MsgIndexes.ServerFlagForDestruction, OnServerFlagForDestruction);
+        localClient.RegisterHandler(MsgIndexes.ServerSendLobbyData, OnGetLobbyData);
     }
 
     public void SetupServerMessageHandlers()
@@ -125,12 +128,14 @@ public class GDFRNetworkManager : MonoBehaviour
         localClient?.UnregisterHandler(MsgIndexes.ServerRequestSceneChange);
         localClient?.UnregisterHandler(MsgIndexes.ServerLeaving);
         localClient?.UnregisterHandler(MsgIndexes.ServerFlagForDestruction);
+        localClient?.UnregisterHandler(MsgIndexes.ServerSendLobbyData);
 
         NetworkServer.UnregisterHandler(MsgType.Ready);
         NetworkServer.UnregisterHandler(MsgIndexes.LobbyClientConnected);
         NetworkServer.UnregisterHandler(MsgType.Disconnect);
         NetworkServer.UnregisterHandler(MsgIndexes.ClientCompletedSceneChange);
         NetworkServer.UnregisterHandler(MsgIndexes.ClientRequestToLeave);
+        NetworkServer.UnregisterHandler(MsgIndexes.ClientCommand);
     }
 
     public bool TriggerEventIfHost(short msgId, MessageBase message)
@@ -149,12 +154,12 @@ public class GDFRNetworkManager : MonoBehaviour
 
     public bool TriggerEventIfClient(short msgId, MessageBase message)
     {
-        if (NetworkServer.active)
+        if (NetworkClient.active)
         {
             ClientCommandMessage mess = new ClientCommandMessage()
             {
                 commandId = msgId,
-                message = ByteConverter.ObjectToByteArray(message)
+                message = NetworkMessageHelper.NetworkMessageToByteArray(message),
             };
 
             localClient.Send(MsgIndexes.ClientCommand, mess);
@@ -175,9 +180,18 @@ public class GDFRNetworkManager : MonoBehaviour
     {
         ClientCommandMessage mess = message.ReadMessage<ClientCommandMessage>();
 
-        MessageBase commandMessage = (MessageBase) ByteConverter.ByteArrayToObject(mess.message);
+        if(mess.commandId == MsgIndexes.SetupAvatarChanged)
+        {
+            MessageBase commandMessage = NetworkMessageHelper.BytesToNetworkMessage<PlayerAvatarMessage>(mess.message);
 
-        NetworkServer.SendToAll(mess.commandId, commandMessage);
+            Debug.Log("Sending command to change avatar");
+
+            NetworkServer.SendToAll(mess.commandId, commandMessage);
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public NetworkClient FindNetworkClientFromId(int connectionId)
@@ -264,13 +278,30 @@ public class GDFRNetworkManager : MonoBehaviour
     {
         Debug.Log("Connected to server with message type " + MsgType.MsgTypeToString(message.msgType));
 
-        PlayerConnectInfoMessage mess = new PlayerConnectInfoMessage()
+        PlayerConnectInfoMessage outgoingMess = new PlayerConnectInfoMessage
         {
             clientId = localClient.connection.connectionId,
-            profile = new NetworkProfile("NetworkPlayer " + NumPlayers)
+            profile = new NetworkProfile(localClient.connection.connectionId, "NetworkPlayer " + localClient.connection.connectionId)
         };
 
-        localClient.Send(MsgIndexes.LobbyClientConnected, mess);
+        localClient.Send(MsgIndexes.LobbyClientConnected, outgoingMess);
+    }
+
+    private void OnGetLobbyData(NetworkMessage message)
+    {
+        if (!IsLocalClientTheHost())
+        {
+            NumPlayers = 0;
+            networkProfiles.Clear();
+
+            LobbyDataMessage mess = message.ReadMessage<LobbyDataMessage>();
+
+            foreach (NetworkProfile profile in mess.players)
+            {
+                NumPlayers++;
+                networkProfiles.Add(profile);
+            }
+        }
     }
 
     private void OnServerFlagForDestruction(NetworkMessage message)
@@ -285,6 +316,7 @@ public class GDFRNetworkManager : MonoBehaviour
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     //////////Server Callbacks////////////////////////////////////////////////////////////////////////
+
     private void OnClientConnect(NetworkMessage message)
     {
         NumPlayers++;
@@ -293,7 +325,12 @@ public class GDFRNetworkManager : MonoBehaviour
 
         networkProfiles.Add(mess.profile);
 
-        //FindObjectOfType<GameSettingUIEvents>().playerProfiles[mess.clientId].SetAsRepresentingClientId(mess.clientId);
+        LobbyDataMessage outgoing = new LobbyDataMessage
+        {
+            players = networkProfiles.ToArray(),
+        };
+
+        NetworkServer.SendToAll(MsgIndexes.ServerSendLobbyData, outgoing);
 
         Debug.Log(mess.profile.networkName + " has successfully connected with connection Id " + mess.clientId);
     }

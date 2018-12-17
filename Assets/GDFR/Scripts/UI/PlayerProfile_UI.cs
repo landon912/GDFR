@@ -103,11 +103,10 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
         if (isHuman)
         {
             //enable text field, disable static name
-            nameField.gameObject.SetActive(true);
-            nameStatic.transform.parent.gameObject.SetActive(false);
+            SetStaticLabelStatus(false);
+            nameField.text = "Player " + (ProfileIndex + 1);
 
             Toolbox.Instance.playerProfiles[ProfileIndex].type = PlayersProfile.Type.Human;
-            nameField.text = "Player " + (ProfileIndex + 1);
 
             ChangeAvatar(0);
             avatarSprite.GetComponent<Button>().interactable = true;
@@ -119,8 +118,10 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
         else
         {
             //enable static name, disable dyanmic field
-            nameStatic.transform.parent.gameObject.SetActive(true);
-            nameField.gameObject.SetActive(false);
+            SetStaticLabelStatus(true);
+
+            nameField.text = "AI Player " + (ProfileIndex + 1);
+            nameStatic.text = "AI Player " + (ProfileIndex + 1);
 
             avatarSprite.GetComponent<Button>().interactable = false;
 
@@ -139,12 +140,26 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
         Debug.Log("Player [ " + ProfileIndex + " ] TYPE set to " + Toolbox.Instance.playerProfiles[ProfileIndex].type);
     }
 
+    private void SetStaticLabelStatus(bool isStatic, bool disableToggle = false)
+    {
+        nameField.gameObject.SetActive(!isStatic);
+        nameStatic.transform.parent.gameObject.SetActive(isStatic);
+        humanToggle.interactable = !disableToggle;
+    }
+
     public void ChangeAvatar(int id)
     {
         Toolbox.Instance.playerProfiles[ProfileIndex].avatar = id;
         avatarSprite.sprite = AvatarOptions[id].graphic;
 
-        GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupAvatarChanged, new PlayerAvatarMessage(ProfileIndex, id));
+        if(IsRepresentingLocalClient())
+        {
+            GDFRNetworkManager.Instance.TriggerEventIfClient(MsgIndexes.SetupAvatarChanged, new PlayerAvatarMessage(ProfileIndex, id));
+        }
+        else if(IsAI())
+        {
+            GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.SetupAvatarChanged, new PlayerAvatarMessage(ProfileIndex, id));
+        }
 
         Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[ProfileIndex].avatar);
     }
@@ -161,9 +176,19 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
         return mClientId == clientId;
     }
 
+    private bool IsRepresentingLocalClient()
+    {
+        return GDFRNetworkManager.Instance.LocalConnectionId == mClientId;
+    }
+
     public void SetAsRepresentingClientId(int clientId)
     {
         mClientId = clientId;
+
+        SetStaticLabelStatus(true, true);
+
+        nameStatic.text = GDFRNetworkManager.Instance.networkProfiles[clientId].networkName;
+        OnNameChanged(GDFRNetworkManager.Instance.networkProfiles[clientId].networkName);
     }
 
     public bool IsAI()
