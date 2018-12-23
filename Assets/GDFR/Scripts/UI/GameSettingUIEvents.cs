@@ -95,9 +95,9 @@ public class GameSettingUIEvents : MonoBehaviour
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupDifficultyChanged, NetOnDifficultyChanged);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupCardVariantChanged, NetOnCardVariantChanged);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupRulesVariantChanged, NetOnRulesVariantChanged);
-        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupHumanToggleChanged, OnServerChangeHumanToggle);
-        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupAvatarChanged, OnServerChangeAvatar);
-        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupNameChanged, OnServerChangeName);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupHumanToggleChanged, NetOnChangeHumanToggle);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupAvatarChanged, NetOnChangeAvatar);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.SetupNameChanged, NetOnChangeName);
     }
 
     private void OnDisable()
@@ -118,7 +118,7 @@ public class GameSettingUIEvents : MonoBehaviour
         GDFRNetworkManager.Instance?.localClient.UnregisterHandler(MsgIndexes.SetupNameChanged);
     }
 
-    private void OnServerChangeHumanToggle(NetworkMessage message)
+    private void NetOnChangeHumanToggle(NetworkMessage message)
     {
         //only update if not host
         if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
@@ -130,15 +130,15 @@ public class GameSettingUIEvents : MonoBehaviour
         }
     }
 
-    private void OnServerChangeAvatar(NetworkMessage message)
+    private void NetOnChangeAvatar(NetworkMessage message)
     {
-        //can be set from a client
         PlayerAvatarMessage avatarMess = message.ReadMessage<PlayerAvatarMessage>();
 
-        playerProfiles[avatarMess.idx].ChangeAvatar(avatarMess.avatarId);
+        //can be set from a client
+        playerProfiles[avatarMess.idx].OnAvatarChanged(avatarMess.avatarId);
     }
 
-    private void OnServerChangeName(NetworkMessage message)
+    private void NetOnChangeName(NetworkMessage message)
     {
         //only update if not host
         if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
@@ -227,10 +227,18 @@ public class GameSettingUIEvents : MonoBehaviour
         newPlayerPanel.transform.SetParent(playerControl.transform, false);
         newPlayerPanel.name = "player" + (idx + 1);
 
-        if ((NetworkServer.active || NetworkClient.active) && idx < GDFRNetworkManager.Instance.NumPlayers)
+        if ((NetworkServer.active || NetworkClient.active))
         {
-            playerUI.SetAsRepresentingClientId(idx);
+            if(idx < GDFRNetworkManager.Instance.NumPlayers)
+            {
+                playerUI.SetAsRepresentingClientId(idx);
+            }
+            else
+            {
+                playerUI.SetAsAIOnly();
+            }
         }
+        
 
         return playerUI;
     }

@@ -49,7 +49,8 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
                 ChangeAvatar(Toolbox.Instance.playerProfiles[value].avatar);
             }
 
-            if (Toolbox.Instance.playerProfiles[value].type == PlayersProfile.Type.Human)
+            //local player
+            if (Toolbox.Instance.playerProfiles[value].type == PlayersProfile.Type.Human && !IsRepresentingNetworkClient())
             {
                 PlayToggleSound = false;
 
@@ -58,12 +59,23 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
 
                 PlayToggleSound = true;
             }
-            else
+            //ai
+            else if(!IsRepresentingNetworkClient())
             {
                 PlayToggleSound = false;
 
                 humanToggle.isOn = false;
                 aiToggle.isOn = true;
+
+                PlayToggleSound = true;
+            }
+            //network player
+            else
+            {
+                PlayToggleSound = false;
+
+                humanToggle.isOn = false;
+                aiToggle.isOn = false;
 
                 PlayToggleSound = true;
             }
@@ -149,8 +161,7 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
 
     public void ChangeAvatar(int id)
     {
-        Toolbox.Instance.playerProfiles[ProfileIndex].avatar = id;
-        avatarSprite.sprite = AvatarOptions[id].graphic;
+        OnAvatarChanged(id);
 
         if(IsRepresentingLocalClient())
         {
@@ -164,11 +175,24 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
         Debug.Log("Player [ " + ProfileIndex + " ] AVATAR set to " + Toolbox.Instance.playerProfiles[ProfileIndex].avatar);
     }
 
+    public void OnAvatarChanged(int id)
+    {
+        Toolbox.Instance.playerProfiles[ProfileIndex].avatar = id;
+        avatarSprite.sprite = AvatarOptions[id].graphic;
+    }
+
     public void OpenAvatarSelector()
     {
         FindObjectOfType<AvatarSelector>().Show(this);
     }
 
+    public void SetAsAIOnly()
+    {
+        humanToggle.isOn = false;
+        humanToggle.gameObject.SetActive(false);
+        aiToggle.isOn = true;
+        aiToggle.interactable = false;
+    }
 
     /// IRepresentClient implementations
     public bool IsRepresentingClientId(int clientId)
@@ -187,6 +211,8 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
 
         SetStaticLabelStatus(true, true);
 
+        aiToggle.isOn = false;
+
         nameStatic.text = GDFRNetworkManager.Instance.networkProfiles[clientId].networkName;
         OnNameChanged(GDFRNetworkManager.Instance.networkProfiles[clientId].networkName);
     }
@@ -194,6 +220,11 @@ public class PlayerProfile_UI : MonoBehaviour, IRepresentClient
     public bool IsAI()
     {
         return aiToggle.isOn;
+    }
+
+    public bool IsRepresentingNetworkClient()
+    {
+        return mClientId != -1;
     }
     /// End IRepresentClient implementations
 }

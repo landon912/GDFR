@@ -98,21 +98,21 @@ public class GDFRNetworkManager : MonoBehaviour
 
     public void SetupBaseMessageHandlers()
     {
-        localClient.RegisterHandler(MsgType.Connect, OnConnected);
-        localClient.RegisterHandler(MsgIndexes.ServerRequestSceneChange, OnServerRequestSceneChange);
-        localClient.RegisterHandler(MsgIndexes.ServerLeaving, OnServerFlagForDestruction);
-        localClient.RegisterHandler(MsgIndexes.ServerFlagForDestruction, OnServerFlagForDestruction);
-        localClient.RegisterHandler(MsgIndexes.ServerSendLobbyData, OnGetLobbyData);
+        localClient.RegisterHandler(MsgType.Connect, NetOnConnected);
+        localClient.RegisterHandler(MsgIndexes.ServerRequestSceneChange, NetOnServerRequestSceneChange);
+        localClient.RegisterHandler(MsgIndexes.ServerLeaving, NetOnServerFlagForDestruction);
+        localClient.RegisterHandler(MsgIndexes.ServerFlagForDestruction, NetOnServerFlagForDestruction);
+        localClient.RegisterHandler(MsgIndexes.ServerSendLobbyData, NetOnGetLobbyData);
     }
 
     public void SetupServerMessageHandlers()
     {
-        NetworkServer.RegisterHandler(MsgType.Ready, OnClientReady);
-        NetworkServer.RegisterHandler(MsgIndexes.LobbyClientConnected, OnClientConnect);
-        NetworkServer.RegisterHandler(MsgType.Disconnect, OnClientDisconnect);
-        NetworkServer.RegisterHandler(MsgIndexes.ClientCompletedSceneChange, OnClientCompletedSceneChange);
-        NetworkServer.RegisterHandler(MsgIndexes.ClientRequestToLeave, OnClientRequestToLeave);
-        NetworkServer.RegisterHandler(MsgIndexes.ClientCommand, OnClientCommand);
+        NetworkServer.RegisterHandler(MsgType.Ready, NetOnClientReady);
+        NetworkServer.RegisterHandler(MsgIndexes.LobbyClientConnected, NetOnClientConnect);
+        NetworkServer.RegisterHandler(MsgType.Disconnect, NetOnClientDisconnect);
+        NetworkServer.RegisterHandler(MsgIndexes.ClientCompletedSceneChange, NetOnClientCompletedSceneChange);
+        NetworkServer.RegisterHandler(MsgIndexes.ClientRequestToLeave, NetOnClientRequestToLeave);
+        NetworkServer.RegisterHandler(MsgIndexes.ClientCommand, NetOnClientCommand);
     }
 
     private void OnEnable()
@@ -174,24 +174,6 @@ public class GDFRNetworkManager : MonoBehaviour
         if (TriggerEventIfHost(msgId, message))
             return true;
         return TriggerEventIfClient(msgId, message);
-    }
-
-    private void OnClientCommand(NetworkMessage message)
-    {
-        ClientCommandMessage mess = message.ReadMessage<ClientCommandMessage>();
-
-        if(mess.commandId == MsgIndexes.SetupAvatarChanged)
-        {
-            MessageBase commandMessage = NetworkMessageHelper.BytesToNetworkMessage<PlayerAvatarMessage>(mess.message);
-
-            Debug.Log("Sending command to change avatar");
-
-            NetworkServer.SendToAll(mess.commandId, commandMessage);
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public NetworkClient FindNetworkClientFromId(int connectionId)
@@ -268,13 +250,9 @@ public class GDFRNetworkManager : MonoBehaviour
         }
     }
     
-    /////////Client Callbacks////////////////////////////////////////////////////////////////////////////
-    private void OnServerRequestSceneChange(NetworkMessage message)
-    {
-        StartCoroutine(ChangeSceneAsync(message.ReadMessage<StringMessage>().value));
-    }
+    /////////Client Callbacks///////////////////////////////////////////////////////////////////////////
 
-    private void OnConnected(NetworkMessage message)
+    private void NetOnConnected(NetworkMessage message)
     {
         Debug.Log("Connected to server with message type " + MsgType.MsgTypeToString(message.msgType));
 
@@ -287,7 +265,12 @@ public class GDFRNetworkManager : MonoBehaviour
         localClient.Send(MsgIndexes.LobbyClientConnected, outgoingMess);
     }
 
-    private void OnGetLobbyData(NetworkMessage message)
+    private void NetOnServerRequestSceneChange(NetworkMessage message)
+    {
+        StartCoroutine(ChangeSceneAsync(message.ReadMessage<StringMessage>().value));
+    }
+
+    private void NetOnGetLobbyData(NetworkMessage message)
     {
         if (!IsLocalClientTheHost())
         {
@@ -304,7 +287,7 @@ public class GDFRNetworkManager : MonoBehaviour
         }
     }
     
-    private void OnServerFlagForDestruction(NetworkMessage message)
+    private void NetOnServerFlagForDestruction(NetworkMessage message)
     {
         mSelfDestructOnSceneLoad = true;
     }
@@ -317,7 +300,25 @@ public class GDFRNetworkManager : MonoBehaviour
 
     //////////Server Callbacks////////////////////////////////////////////////////////////////////////
 
-    private void OnClientConnect(NetworkMessage message)
+    private void NetOnClientCommand(NetworkMessage message)
+    {
+        ClientCommandMessage mess = message.ReadMessage<ClientCommandMessage>();
+
+        if(mess.commandId == MsgIndexes.SetupAvatarChanged)
+        {
+            MessageBase commandMessage = NetworkMessageHelper.BytesToNetworkMessage<PlayerAvatarMessage>(mess.message);
+
+            Debug.Log("Replicating command to all clients");
+
+            NetworkServer.SendToAll(mess.commandId, commandMessage);
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private void NetOnClientConnect(NetworkMessage message)
     {
         NumPlayers++;
 
@@ -335,24 +336,24 @@ public class GDFRNetworkManager : MonoBehaviour
         Debug.Log(mess.profile.networkName + " has successfully connected with connection Id " + mess.clientId);
     }
 
-    private void OnClientDisconnect(NetworkMessage message)
+    private void NetOnClientDisconnect(NetworkMessage message)
     {
         NumPlayers--;
         Debug.Log("A client has successfully left a game");
     }
 
-    private void OnClientReady(NetworkMessage message)
+    private void NetOnClientReady(NetworkMessage message)
     {
         Debug.Log("A client has signaled that it is now ready");
     }
 
-    private void OnClientCompletedSceneChange(NetworkMessage message)
+    private void NetOnClientCompletedSceneChange(NetworkMessage message)
     {
         ClientInfoMessage mess = message.ReadMessage<ClientInfoMessage>();
         Debug.Log("Client with connectionId " + mess.clientId + " has successfully loaded the scene and is now ready.");
     }
 
-    private void OnClientRequestToLeave(NetworkMessage message)
+    private void NetOnClientRequestToLeave(NetworkMessage message)
     {
         int clientConnId = message.ReadMessage<IntegerMessage>().value;
 
