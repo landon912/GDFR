@@ -303,7 +303,7 @@ public class GDFRNetworkManager : MonoBehaviour
             }
         }
     }
-
+    
     private void OnServerFlagForDestruction(NetworkMessage message)
     {
         mSelfDestructOnSceneLoad = true;
