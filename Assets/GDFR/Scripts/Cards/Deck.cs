@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 
 public class Deck : MonoBehaviour
 {
+	public int Id { get; set; }
+
     private readonly List<Card> mCards = new List<Card>();
 
     public Transform deckTransform;
@@ -145,6 +147,20 @@ public class Deck : MonoBehaviour
         return null;
     }
 
+	public Card DrawExactCard(int id)
+	{
+		foreach(Card c in mCards)
+		{
+			if(c.Id == id)
+			{
+				return c;
+			}
+		}
+
+		Debug.LogError("Card not found in deck " + id);
+		return null;
+	}
+
     public Card[] GetCardList()
     {
         return mCards.ToArray();
@@ -240,6 +256,8 @@ public class Deck : MonoBehaviour
 
 	public void LoadDeckData (Object xmlDataFile)
 	{
+		int index = -1;
+
         //Load
         TextAsset textXML = (TextAsset)Resources.Load(xmlDataFile.name, typeof(TextAsset));
         XmlDocument xml = new XmlDocument();
@@ -251,10 +269,14 @@ public class Deck : MonoBehaviour
         {
 			if(node.Name=="card")
 			{
+				index++;
 				//new card
 				GameObject newCard = Instantiate(cardPrefab);
 				Card cardScript = newCard.GetComponent<Card>();
 				AddCardInstant(cardScript);
+
+				cardScript.Id = index;
+
 				foreach(XmlNode cNode in node.ChildNodes)
 				{
 	                if(cNode.Name=="GoblinSpriteName")

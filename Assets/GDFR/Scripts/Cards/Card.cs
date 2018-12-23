@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    public int Id = -1;
+
     private bool _cardSparkle;
     private bool isFront = true;
 

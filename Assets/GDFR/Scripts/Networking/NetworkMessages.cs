@@ -238,3 +238,34 @@ public class LobbyDataMessage : MessageBase
 
     public NetworkProfile[] players;
 }
+
+public class DrawCardMessage : MessageBase
+{
+    public int fromDeckId;
+    public int cardId;
+    public int toDeckId;
+
+    public DrawCardMessage(Deck fromDeck, Card card, Deck toDeck)
+    {
+        this.fromDeckId = fromDeck.Id;
+        this.cardId = card.Id;
+        this.toDeckId = toDeck.Id;
+    }
+
+    public DrawCardMessage() { }
+}
+
+public class ChangeSceneMessage : MessageBase
+{
+    public bool setReadyOnLoad = false;
+
+    public string sceneName = "";
+
+    public ChangeSceneMessage(string sceneName, bool setReadyOnLoad = false)
+    {
+        this.sceneName = sceneName;
+        this.setReadyOnLoad = setReadyOnLoad;
+    }
+
+    public ChangeSceneMessage() {}
+}

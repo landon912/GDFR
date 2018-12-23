@@ -26,6 +26,7 @@ public class MsgIndexes
     public const short SetupHumanToggleChanged = 66;
     public const short SetupAvatarChanged = 67;
     public const short SetupNameChanged = 68;
+    public const short DrawCard = 69;
 }
 
 public class GDFRNetworkManager : MonoBehaviour
@@ -176,6 +177,11 @@ public class GDFRNetworkManager : MonoBehaviour
         return TriggerEventIfClient(msgId, message);
     }
 
+    public bool IsNetworkGame()
+    {
+        return NetworkServer.active || NetworkClient.active;
+    }
+
     public NetworkClient FindNetworkClientFromId(int connectionId)
     {
         if (IsLocalClientTheHost())
@@ -196,7 +202,7 @@ public class GDFRNetworkManager : MonoBehaviour
         return null;
     }
 
-    IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false)
+    IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false, bool readyOnLoad = false)
     {
         AsyncOperation sceneLoadingOperation = SceneManager.LoadSceneAsync(sceneName);
 
@@ -204,13 +210,17 @@ public class GDFRNetworkManager : MonoBehaviour
 
         if (!IsClientTheHost(localClient) && !selfDestructOnLoad)
         {
-            Debug.Log("sending my info to be set ready");
+            Debug.Log("sending scene change info");
             ClientInfoMessage message = new ClientInfoMessage
             {
                 clientId = localClient.connection.connectionId,
                 message = SceneManager.GetActiveScene().name
             };
-            ClientScene.Ready(localClient.connection);
+
+            if(readyOnLoad)
+            {
+                ClientScene.Ready(localClient.connection);
+            }
             localClient.Send(MsgIndexes.ClientCompletedSceneChange, message);
         }
     }
@@ -267,7 +277,9 @@ public class GDFRNetworkManager : MonoBehaviour
 
     private void NetOnServerRequestSceneChange(NetworkMessage message)
     {
-        StartCoroutine(ChangeSceneAsync(message.ReadMessage<StringMessage>().value));
+        ChangeSceneMessage mess = message.ReadMessage<ChangeSceneMessage>();
+
+        StartCoroutine(ChangeSceneAsync(mess.sceneName, mess.setReadyOnLoad));
     }
 
     private void NetOnGetLobbyData(NetworkMessage message)
@@ -360,15 +372,15 @@ public class GDFRNetworkManager : MonoBehaviour
         Debug.Log("A client has requested to leave. Preparing client id " + clientConnId + " for departure.");
 
         NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerFlagForDestruction, new EmptyMessage());
-        NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerRequestSceneChange, new StringMessage("MainMenu"));
+        NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerRequestSceneChange, new ChangeSceneMessage("MainMenu"));
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void ChangeSceneOnAllClients(string newSceneName)
+    public void ChangeSceneOnAllClients(string newSceneName, bool setReadyOnLoad = false)
     {
         Debug.Log("ServerChangeScene to " + newSceneName);
 
         NetworkServer.SetAllClientsNotReady();
-        NetworkServer.SendToAll(MsgIndexes.ServerRequestSceneChange, new StringMessage(newSceneName));
+        NetworkServer.SendToAll(MsgIndexes.ServerRequestSceneChange, new ChangeSceneMessage(newSceneName, setReadyOnLoad));
     }
 }

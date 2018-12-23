@@ -48,7 +48,7 @@ public class LobbyController : MonoBehaviour
     {
         if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
         {
-            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("NewGame");
+            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("NewGame", true);
         }
     }
 
