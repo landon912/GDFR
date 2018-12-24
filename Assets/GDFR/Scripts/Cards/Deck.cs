@@ -149,8 +149,11 @@ public class Deck : MonoBehaviour
 
 	public Card DrawExactCard(int id)
 	{
+		Debug.Log("Looking for ID: " + id);
+
 		foreach(Card c in mCards)
 		{
+			Debug.Log("This deck has card with ID " + c.Id);
 			if(c.Id == id)
 			{
 				return c;

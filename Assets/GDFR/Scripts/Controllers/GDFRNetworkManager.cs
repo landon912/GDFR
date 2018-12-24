@@ -27,6 +27,7 @@ public class MsgIndexes
     public const short SetupAvatarChanged = 67;
     public const short SetupNameChanged = 68;
     public const short DrawCard = 69;
+    public const short Phase1Draw = 70;
 }
 
 public class GDFRNetworkManager : MonoBehaviour
@@ -202,25 +203,22 @@ public class GDFRNetworkManager : MonoBehaviour
         return null;
     }
 
-    IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false, bool readyOnLoad = false)
+    IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false)
     {
         AsyncOperation sceneLoadingOperation = SceneManager.LoadSceneAsync(sceneName);
 
         yield return new WaitUntil(() => sceneLoadingOperation.isDone);
 
-        if (!IsClientTheHost(localClient) && !selfDestructOnLoad)
+        if (/*!IsClientTheHost(localClient) && */!selfDestructOnLoad)
         {
-            Debug.Log("sending scene change info");
+            // Debug.Log("sending scene change info");  
             ClientInfoMessage message = new ClientInfoMessage
             {
                 clientId = localClient.connection.connectionId,
                 message = SceneManager.GetActiveScene().name
             };
 
-            if(readyOnLoad)
-            {
-                ClientScene.Ready(localClient.connection);
-            }
+            //ClientScene.Ready(localClient.connection);
             localClient.Send(MsgIndexes.ClientCompletedSceneChange, message);
         }
     }
@@ -259,6 +257,14 @@ public class GDFRNetworkManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void ChangeSceneOnAllClients(string newSceneName)
+    {
+        Debug.Log("ServerChangeScene to " + newSceneName);
+
+        NetworkServer.SetAllClientsNotReady();
+        NetworkServer.SendToAll(MsgIndexes.ServerRequestSceneChange, new ChangeSceneMessage(newSceneName));
+    }
     
     /////////Client Callbacks///////////////////////////////////////////////////////////////////////////
 
@@ -279,7 +285,14 @@ public class GDFRNetworkManager : MonoBehaviour
     {
         ChangeSceneMessage mess = message.ReadMessage<ChangeSceneMessage>();
 
-        StartCoroutine(ChangeSceneAsync(mess.sceneName, mess.setReadyOnLoad));
+        //moving from NewGame to MainGame, destroy old audio manager
+        if(AudioController.Instance && mess.sceneName == "MainGame")
+        {
+            Debug.Log("Destroying main audio controller before scene change");
+            Destroy(GameObject.FindWithTag("MenuAudioController").gameObject);
+        }
+
+        StartCoroutine(ChangeSceneAsync(mess.sceneName));
     }
 
     private void NetOnGetLobbyData(NetworkMessage message)
@@ -362,6 +375,9 @@ public class GDFRNetworkManager : MonoBehaviour
     private void NetOnClientCompletedSceneChange(NetworkMessage message)
     {
         ClientInfoMessage mess = message.ReadMessage<ClientInfoMessage>();
+
+        NetworkServer.SetClientReady(FindNetworkClientFromId(mess.clientId).connection);
+
         Debug.Log("Client with connectionId " + mess.clientId + " has successfully loaded the scene and is now ready.");
     }
 
@@ -371,16 +387,10 @@ public class GDFRNetworkManager : MonoBehaviour
 
         Debug.Log("A client has requested to leave. Preparing client id " + clientConnId + " for departure.");
 
+        NetworkServer.SetClientNotReady(FindNetworkClientFromId(clientConnId).connection);
+
         NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerFlagForDestruction, new EmptyMessage());
         NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerRequestSceneChange, new ChangeSceneMessage("MainMenu"));
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void ChangeSceneOnAllClients(string newSceneName, bool setReadyOnLoad = false)
-    {
-        Debug.Log("ServerChangeScene to " + newSceneName);
-
-        NetworkServer.SetAllClientsNotReady();
-        NetworkServer.SendToAll(MsgIndexes.ServerRequestSceneChange, new ChangeSceneMessage(newSceneName, setReadyOnLoad));
-    }
 }

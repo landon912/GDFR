@@ -39,7 +39,6 @@ public class NewGameController : MonoBehaviour
         if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
         {
             FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
-            Destroy(AudioController.Instance.gameObject);
             GDFRNetworkManager.Instance.ChangeSceneOnAllClients("MainGame");
         }
     }

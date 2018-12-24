@@ -67,7 +67,7 @@ public class GameContoller : RxFx_FSM
     void Start()
     {
         //The main menu's track's probability is 0 at the beginning to keep it from being selected; since at this point, another track has been selected we can renable it's probability
-        AudioController.Instance._GetAudioItem("Game Music").subItems[0].Probability = 100;
+        GameObject.FindWithTag("GlobalMusicController").GetComponent<AudioController>()._GetAudioItem("Game Music").subItems[0].Probability = 100;
 
         mainDeck.Id = 0;
         mDeckDict.Add(mainDeck.Id, mainDeck);

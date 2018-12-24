@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 
 public static class NetworkMessageHelper
@@ -255,16 +256,29 @@ public class DrawCardMessage : MessageBase
     public DrawCardMessage() { }
 }
 
+public class Phase1DrawMessage : MessageBase
+{
+    public int fromDeck;
+    public int[] cardIds;
+    public int[] toDeckIds;
+
+    public Phase1DrawMessage(int fromDeck, List<int> cards, List<int> toDecks)
+    {
+        this.fromDeck = fromDeck;
+        cardIds = cards.ToArray();
+        toDeckIds = toDecks.ToArray();
+    }
+
+    public Phase1DrawMessage () {}
+}
+
 public class ChangeSceneMessage : MessageBase
 {
-    public bool setReadyOnLoad = false;
-
     public string sceneName = "";
 
-    public ChangeSceneMessage(string sceneName, bool setReadyOnLoad = false)
+    public ChangeSceneMessage(string sceneName)
     {
         this.sceneName = sceneName;
-        this.setReadyOnLoad = setReadyOnLoad;
     }
 
     public ChangeSceneMessage() {}
