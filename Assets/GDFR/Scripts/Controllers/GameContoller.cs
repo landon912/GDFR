@@ -367,6 +367,8 @@ public class GameContoller : RxFx_FSM
     {
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase1");
 
+        CreateStarDeck();
+
         if (GDFRNetworkManager.Instance.IsNetworkGame())
         {
             yield return StartCoroutine(GDFRNetworkGameManager.Instance.State_Network_DrawPhase1());
@@ -374,6 +376,22 @@ public class GameContoller : RxFx_FSM
         else
         {
             yield return StartCoroutine(State_Offline_DrawPhase1());
+        }
+
+        callEvent("DrawPhase2");
+    }
+
+    public IEnumerator State_Offline_DrawPhase1()
+    {
+        // Give 1 star card for each player
+        foreach (Deck pDeck in playerDecks)
+        {
+            // Enabled player ?
+            if (pDeck.enabled)
+            {
+                Card card = starDeck.DrawRandomCard();
+                yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
+            }
         }
     }
 
@@ -402,36 +420,62 @@ public class GameContoller : RxFx_FSM
         }
     }
 
-    public IEnumerator State_Offline_DrawPhase1()
-    {
-        CreateStarDeck();
-
-        // Give 1 star card for each player
-        foreach (Deck pDeck in playerDecks)
-        {
-            // Enabled player ?
-            if (pDeck.enabled)
-            {
-                Card card = starDeck.DrawRandomCard();
-                yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
-            }
-        }
-
-        callEvent("DrawPhase2");
-    }
-
     //Draw Player Cards
     IEnumerator State_DrawPhase2(params object[] data)
     {
         //FSM_Event nextPhase = new FSM_Event("",State_DrawPhase3);	
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase2");
 
+        if (GDFRNetworkManager.Instance.IsNetworkGame())
+        {
+            yield return StartCoroutine(GDFRNetworkGameManager.Instance.State_Network_DrawPhase2());
+        }
+        else
+        {
+            yield return StartCoroutine(State_Offline_DrawPhase2());
+        }
+
+        Debug.Log("Will now call phase 3");
+        //callEvent("DrawPhase3");
+    }
+
+    private IEnumerator State_Offline_DrawPhase2()
+    {
         GameSettings.RulesVariantType rulesVariantType = Toolbox.Instance.gameSettings.RulesVariant;
 
+        int numberOfCards = DetermineCardCount();
+
+        //For balance reasons, select a random card from the symbol combo OPPOSITE of the dealt star card's symbol combo
+        // Ex. If you get a Sun/Moon, your next card should be a random Frog/Mushroom card
+        //Then, draw random goblins
+        foreach (Deck pDeck in playerDecks)
+        {
+            // Enabled player ?
+            if (pDeck.enabled)
+            {
+                Card secondCard = mainDeck.DrawRandomCardOfSymbolGroup(pDeck.GetCardList()[0].CurrentSymbolGroup == SymbolGroup.FrogMushroom ? SymbolGroup.SunMoon : SymbolGroup.FrogMushroom);
+                secondCard.ChangeRace(rulesVariantType == GameSettings.RulesVariantType.GoblinsRule ? Race.Fairy : Race.Goblin);
+                yield return StartCoroutine(secondCard.AnimateDrawCard(pDeck, dealSpeed));
+
+                //deal the rest of the cards
+                for (int c = 1; c < numberOfCards; c++)
+                {
+                    Card card = mainDeck.DrawRandomCard();
+                    card.ChangeRace(rulesVariantType == GameSettings.RulesVariantType.GoblinsRule ? Race.Fairy : Race.Goblin);
+                    yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
+                }
+
+                pDeck.Refresh();
+            }
+        }
+    }
+
+    public int DetermineCardCount()
+    {
         int numberOfCards; // classic mode
 
         // Solitaire modes?
-        switch (rulesVariantType)
+        switch (Toolbox.Instance.gameSettings.RulesVariant)
         {
             case GameSettings.RulesVariantType.Solitaire:
             case GameSettings.RulesVariantType.UltimateSolitaire:
@@ -469,31 +513,7 @@ public class GameContoller : RxFx_FSM
                 break;
         }
 
-        //For balance reasons, select a random card from the symbol combo OPPOSITE of the dealt star card's symbol combo
-        // Ex. If you get a Sun/Moon, your next card should be a random Frog/Mushroom card
-        //Then, draw random goblins
-        foreach (Deck pDeck in playerDecks)
-        {
-            // Enabled player ?
-            if (pDeck.enabled)
-            {
-                Card secondCard = mainDeck.DrawRandomCardOfSymbolGroup(pDeck.GetCardList()[0].CurrentSymbolGroup == SymbolGroup.FrogMushroom ? SymbolGroup.SunMoon : SymbolGroup.FrogMushroom);
-                secondCard.ChangeRace(rulesVariantType == GameSettings.RulesVariantType.GoblinsRule ? Race.Fairy : Race.Goblin);
-                yield return StartCoroutine(secondCard.AnimateDrawCard(pDeck, dealSpeed));
-
-                //deal the rest of the cards
-                for (int c = 1; c < numberOfCards; c++)
-                {
-                    Card card = mainDeck.DrawRandomCard();
-                    card.ChangeRace(rulesVariantType == GameSettings.RulesVariantType.GoblinsRule ? Race.Fairy : Race.Goblin);
-                    yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
-                }
-
-                pDeck.Refresh();
-            }
-        }
-
-        callEvent("DrawPhase3");
+        return numberOfCards;
     }
 
     //Draw cards into the Fairy Row

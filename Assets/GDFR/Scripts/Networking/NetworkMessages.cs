@@ -272,6 +272,13 @@ public class Phase1DrawMessage : MessageBase
     public Phase1DrawMessage () {}
 }
 
+public class Phase2DrawMessage : Phase1DrawMessage
+{
+    public Phase2DrawMessage(int fromDeck, List<int> cards, List<int> toDecks) : base(fromDeck, cards, toDecks) {}
+
+    public Phase2DrawMessage () {}
+}
+
 public class ChangeSceneMessage : MessageBase
 {
     public string sceneName = "";

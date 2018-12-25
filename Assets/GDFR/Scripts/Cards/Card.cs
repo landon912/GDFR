@@ -5,6 +5,8 @@ public class Card : MonoBehaviour
 {
     public int Id = -1;
 
+    public bool hasBeenDrawnButNotDealt = false;
+
     private bool _cardSparkle;
     private bool isFront = true;
 
@@ -338,6 +340,7 @@ public class Card : MonoBehaviour
 
     public void DrawCard(Deck toDeck, Transform parent = null)
     {
+        hasBeenDrawnButNotDealt = false;
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
         toDeck.AddCard(this);
@@ -346,6 +349,7 @@ public class Card : MonoBehaviour
 
     public void DrawCardInstant(Deck toDeck, Transform parent = null)
     {
+        hasBeenDrawnButNotDealt = false;
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
         toDeck.AddCardInstant(this);

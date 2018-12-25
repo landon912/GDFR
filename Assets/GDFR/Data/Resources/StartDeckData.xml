@@ -2,6 +2,7 @@
 <!-- Cards 1 - 5 -->	
 <!-- {Our, Oop, Ock, Elly, Ew} -->	
 	<card>
+		<Id>1</Id>
 		<GoblinSpriteName>01_GOBLIN_Gobble_T_Goop</GoblinSpriteName>
 		<FairySpriteName>01_FAIRY_PB_and_Jelly</FairySpriteName>	
 		<GoblinSymbol>Moon</GoblinSymbol>
@@ -14,6 +15,7 @@
 		<FairyText>PB and Jelly</FairyText>
 	</card>	
 	<card>
+		<Id>2</Id>
 		<GoblinSpriteName>02_GOBLIN_Vermin_Vermicelli</GoblinSpriteName>
 		<FairySpriteName>02_FAIRY_Dewdrop_Shower</FairySpriteName>	
 		<GoblinSymbol>Mushroom</GoblinSymbol>
@@ -26,6 +28,7 @@
 		<FairyText>Dewdrop Shower</FairyText>			
 	</card>	
 	<card>
+		<Id>3</Id>
 		<GoblinSpriteName>03_GOBLIN_Nervous_Nelly</GoblinSpriteName>
 		<FairySpriteName>03_FAIRY_Vanilla_Scoop</FairySpriteName>	
 		<GoblinSymbol>Sun</GoblinSymbol>
@@ -38,6 +41,7 @@
 		<FairyText>Vanilla Scoop</FairyText>		
 	</card>	
 	<card>
+		<Id>4</Id>
 		<GoblinSpriteName>04_GOBLIN_Chicken_Pock</GoblinSpriteName>
 		<FairySpriteName>04_FAIRY_Willow_Sue</FairySpriteName>	
 		<GoblinSymbol>Moon</GoblinSymbol>
@@ -50,6 +54,7 @@
 		<FairyText>Willow Sue</FairyText>		
 	</card>	
 	<card>
+		<Id>5</Id>
 		<GoblinSpriteName>05_GOBLIN_Full_Moon_Moo</GoblinSpriteName>
 		<FairySpriteName>05_FAIRY_Pixie_Power</FairySpriteName>	
 		<GoblinSymbol>Moon</GoblinSymbol>
@@ -64,6 +69,7 @@
 <!-- Cards 6 - 10 -->	
 <!-- {Our, Oop, Ock, Elly, Ew} -->		
 	<card>
+		<Id>6</Id>
 		<GoblinSpriteName>06_GOBLIN_Earwax_Stew</GoblinSpriteName>
 		<FairySpriteName>06_FAIRY_Kokopelli</FairySpriteName>	
 		<GoblinSymbol>Mushroom</GoblinSymbol>
@@ -76,6 +82,7 @@
 		<FairyText>Kokopelli</FairyText>			
 	</card>	
 	<card>
+		<Id>7</Id>
 		<GoblinSpriteName>07_GOBLIN_Old_Man_Sock</GoblinSpriteName>
 		<FairySpriteName>07_FAIRY_Sweet_and_Sour</FairySpriteName>		
 		<GoblinSymbol>Sun</GoblinSymbol>
@@ -88,6 +95,7 @@
 		<FairyText>Sweet and Sour</FairyText>			
 	</card>	
 	<card>
+		<Id>8</Id>
 		<GoblinSpriteName>08_GOBLIN_Big_Big_Belly</GoblinSpriteName>
 		<FairySpriteName>08_FAIRY_Penny_Clue</FairySpriteName>		
 		<GoblinSymbol>Frog</GoblinSymbol>
@@ -100,6 +108,7 @@
 		<FairyText>Penny Clue</FairyText>			
 	</card>	
 	<card>
+		<Id>9</Id>
 		<GoblinSpriteName>09_GOBLIN_Nappy_Hour</GoblinSpriteName>
 		<FairySpriteName>09_FAIRY_Lemon_Loop</FairySpriteName>		
 		<GoblinSymbol>Moon</GoblinSymbol>
@@ -114,6 +123,7 @@
 	<!-- Cards 10 - 15 -->
 	<!-- {Our, Oop, Ock, Elly, Ew} -->	
 	<card>
+		<Id>10</Id>
 		<GoblinSpriteName>10_GOBLIN_Cuckoo_Clock</GoblinSpriteName>
 		<FairySpriteName>10_FAIRY_Lucky_OKelly</FairySpriteName>		
 		<GoblinSymbol>Frog</GoblinSymbol>
@@ -126,6 +136,7 @@
 		<FairyText>Lucky OKelly</FairyText>		
 	</card>	
 	<card>
+		<Id>11</Id>
 		<GoblinSpriteName>11_GOBLIN_He_So_Smelly</GoblinSpriteName>
 		<FairySpriteName>11_FAIRY_Candy_Rock</FairySpriteName>		
 		<GoblinSymbol>Moon</GoblinSymbol>
@@ -138,6 +149,7 @@
 		<FairyText>Candy Rock</FairyText>			
 	</card>	
 	<card>
+		<Id>12</Id>
 		<GoblinSpriteName>12_GOBLIN_Dastardly_Droop</GoblinSpriteName>
 		<FairySpriteName>12_FAIRY_Goldie_Lock</FairySpriteName>		
 		<GoblinSymbol>Mushroom</GoblinSymbol>
@@ -150,6 +162,7 @@
 		<FairyText>Goldie Lock</FairyText>		
 	</card>	
 	<card>
+		<Id>13</Id>
 		<GoblinSpriteName>13_GOBLIN_Cobweb_Shock</GoblinSpriteName>
 		<FairySpriteName>13_FAIRY_Hula_Hoop</FairySpriteName>		
 		<GoblinSymbol>Mushroom</GoblinSymbol>
@@ -162,6 +175,7 @@
 		<FairyText>Hula Hoop</FairyText>		
 	</card>		
 	<card>
+		<Id>14</Id>
 		<GoblinSpriteName>14_GOBLIN_Goblin_Soup</GoblinSpriteName>
 		<FairySpriteName>14_FAIRY_Morning_Dew</FairySpriteName>		
 		<GoblinSymbol>Sun</GoblinSymbol>
@@ -174,6 +188,7 @@
 		<FairyText>Morning Dew</FairyText>			
 	</card>	
 	<card>
+		<Id>15</Id>
 		<GoblinSpriteName>15_GOBLIN_Spidery_Glue</GoblinSpriteName>
 		<FairySpriteName>15_FAIRY_Rainbow_Swoop</FairySpriteName>		
 		<GoblinSymbol>Frog</GoblinSymbol>
@@ -188,6 +203,7 @@
 	<!-- Cards 16 - 20 -->
 	<!-- {Our, Oop, Ock, Elly, Ew} -->	
 	<card>
+		<Id>16</Id>
 		<GoblinSpriteName>16_GOBLIN_Cringe_and_Cower</GoblinSpriteName>
 		<FairySpriteName>16_FAIRY_Hickory_Dock</FairySpriteName>		
 		<GoblinSymbol>Frog</GoblinSymbol>
@@ -200,6 +216,7 @@
 		<FairyText>Hickory Dock</FairyText>			
 	</card>	
 	<card>
+		<Id>17</Id>
 		<GoblinSpriteName>17_GOBLIN_Needs_a_Shower</GoblinSpriteName>
 		<FairySpriteName>17_FAIRY_Snowflake_Shelly</FairySpriteName>	
 		<GoblinSymbol>Sun</GoblinSymbol>
@@ -212,6 +229,7 @@
 		<FairyText>Snowflake Shelly</FairyText>			
 	</card>	
 	<card>
+		<Id>18</Id>
 		<GoblinSpriteName>18_GOBLIN_OP_You</GoblinSpriteName>
 		<FairySpriteName>18_FAIRY_Poppy_Smock</FairySpriteName>		
 		<GoblinSymbol>Sun</GoblinSymbol>
@@ -224,6 +242,7 @@
 		<FairyText>Poppy Smock</FairyText>			
 	</card>	
 	<card>
+		<Id>19</Id>
 		<GoblinSpriteName>19_GOBLIN_Salamander_Snoop</GoblinSpriteName>
 		<FairySpriteName>19_FAIRY_Petal_Flower</FairySpriteName>		
 		<GoblinSymbol>Frog</GoblinSymbol>
@@ -236,6 +255,7 @@
 		<FairyText>Petal Flower</FairyText>		
 	</card>	
 	<card>
+		<Id>20</Id>
 		<GoblinSpriteName>20_GOBLIN_Dusty_Dour</GoblinSpriteName>
 		<FairySpriteName>20_FAIRY_Baby_Blue</FairySpriteName>		
 		<GoblinSymbol>Mushroom</GoblinSymbol>
