@@ -184,25 +184,25 @@ public class GDFRNetworkManager : MonoBehaviour
         return NetworkServer.active || NetworkClient.active;
     }
 
-    public NetworkClient FindNetworkClientFromId(int connectionId)
-    {
-        if (IsLocalClientTheHost())
-        {
-            for (int i = 0; i < NetworkClient.allClients.Count; i++)
-            {
-                if (NetworkClient.allClients[i].connection.connectionId == connectionId)
-                {
-                    return NetworkClient.allClients[i];
-                }
-            }
+    // public NetworkClient FindNetworkClientFromId(int connectionId)
+    // {
+    //     if (IsLocalClientTheHost())
+    //     {
+    //         for (int i = 0; i < NetworkServer.connections.Count; i++)
+    //         {
+    //             if (NetworkServer.connections[i].connectionId == connectionId)
+    //             {
+    //                 return NetworkServer.connections[i].client;
+    //             }
+    //         }
 
-            Debug.LogError("Client not found");
-            return null;
-        }
+    //         Debug.LogError("Client not found");
+    //         return null;
+    //     }
 
-        Debug.LogError("This is a server only method!");
-        return null;
-    }
+    //     Debug.LogError("This is a server only method!");
+    //     return null;
+    // }
 
     IEnumerator ChangeSceneAsync(string sceneName, bool selfDestructOnLoad = false)
     {
@@ -377,7 +377,7 @@ public class GDFRNetworkManager : MonoBehaviour
     {
         ClientInfoMessage mess = message.ReadMessage<ClientInfoMessage>();
 
-        NetworkServer.SetClientReady(FindNetworkClientFromId(mess.clientId).connection);
+        // NetworkServer.SetClientReady(FindNetworkClientFromId(mess.clientId).connection);
 
         Debug.Log("Client with connectionId " + mess.clientId + " has successfully loaded the scene and is now ready.");
     }
@@ -388,7 +388,7 @@ public class GDFRNetworkManager : MonoBehaviour
 
         Debug.Log("A client has requested to leave. Preparing client id " + clientConnId + " for departure.");
 
-        NetworkServer.SetClientNotReady(FindNetworkClientFromId(clientConnId).connection);
+        // NetworkServer.SetClientNotReady(FindNetworkClientFromId(clientConnId).connection);
 
         NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerFlagForDestruction, new EmptyMessage());
         NetworkServer.SendToClient(clientConnId, MsgIndexes.ServerRequestSceneChange, new ChangeSceneMessage("MainMenu"));

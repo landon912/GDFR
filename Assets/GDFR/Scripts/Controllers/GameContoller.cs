@@ -612,8 +612,7 @@ public class GameContoller : RxFx_FSM
             yield return StartCoroutine(State_Offline_Initiative());
         }
 
-        Debug.Log("would call PlayerSelect now");
-        //callEvent("PlayerSelect");
+        callEvent("PlayerSelect");
     }
 
     private IEnumerator State_Offline_Initiative()
@@ -679,13 +678,15 @@ public class GameContoller : RxFx_FSM
         // Is it AI ?
         if (Toolbox.Instance.playerProfiles[currentPlayer].type == PlayersProfile.Type.AI)
         {
-            callEvent("AIMove");
+            Debug.Log("would call AI Move");
+            //callEvent("AIMove");
         }
         else
         {
             callEvent("PlayerPickCard");
-            yield break;
         }
+
+        yield return null;
     }
 
     IEnumerator State_PlayerPickCard(params object[] data)
