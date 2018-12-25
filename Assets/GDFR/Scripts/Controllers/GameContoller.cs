@@ -37,7 +37,7 @@ public class GameContoller : RxFx_FSM
 
     protected float lastVolume;
 
-    public List<int> PLayersPosition
+    public List<int> PlayersPosition
     {
         get { return mPlayersPosition; }
     }
@@ -537,8 +537,7 @@ public class GameContoller : RxFx_FSM
             yield return StartCoroutine(State_Offline_DrawPhase3());
         }
 
-        Debug.Log("would now call initiative");
-        //callEvent("Initiative");
+        callEvent("Initiative");
     }
 
     private IEnumerator State_Offline_DrawPhase3()
@@ -604,6 +603,21 @@ public class GameContoller : RxFx_FSM
     {
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: Initiative");
 
+        if (GDFRNetworkManager.Instance.IsNetworkGame())
+        {
+            yield return StartCoroutine(GDFRNetworkGameManager.Instance.State_Network_Initiative());
+        }
+        else
+        {
+            yield return StartCoroutine(State_Offline_Initiative());
+        }
+
+        Debug.Log("would call PlayerSelect now");
+        //callEvent("PlayerSelect");
+    }
+
+    private IEnumerator State_Offline_Initiative()
+    {
         // pick a random player IF Difficulty isn't easy
         // if so, get a human player to start
         if (Toolbox.Instance.gameSettings.DifficultyLevel == GameSettings.Difficulty.Easy)
@@ -636,7 +650,6 @@ public class GameContoller : RxFx_FSM
 
         avatars[mPlayersPosition[currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
 
-        callEvent("PlayerSelect");
         yield break;
     }
 

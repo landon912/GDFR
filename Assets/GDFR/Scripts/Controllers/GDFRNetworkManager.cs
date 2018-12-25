@@ -28,6 +28,7 @@ public class MsgIndexes
     public const short SetupNameChanged = 68;
     public const short DrawCard = 69;
     public const short GroupedDrawMessage = 70;
+    public const short InitiativeSelected = 71;
 }
 
 public class GDFRNetworkManager : MonoBehaviour

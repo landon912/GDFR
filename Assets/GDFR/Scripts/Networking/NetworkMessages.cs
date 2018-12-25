@@ -281,6 +281,18 @@ public class GroupedDrawMessage : MessageBase
     public GroupedDrawMessage () {}
 }
 
+public class IntMessage : MessageBase
+{
+    public int payload;
+
+    public IntMessage(int payload)
+    {
+        this.payload = payload;
+    }
+
+    public IntMessage () {}
+}
+
 public class ChangeSceneMessage : MessageBase
 {
     public string sceneName = "";

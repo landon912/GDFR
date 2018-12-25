@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
+using Random = UnityEngine.Random;
 
 public class GDFRNetworkGameManager : MonoBehaviour
 {
@@ -19,9 +20,11 @@ public class GDFRNetworkGameManager : MonoBehaviour
     }
 
     private GameContoller mController;
-    private GroupedDrawMessage phase1Data;
-    private GroupedDrawMessage phase2Data;
-    private GroupedDrawMessage phase3Data;
+    private GroupedDrawMessage phase1DrawData;
+    private GroupedDrawMessage phase2DrawData;
+    private GroupedDrawMessage phase3DrawData;
+    private IntMessage initiativeData;
+
 
     private void Awake()
     {
@@ -38,6 +41,7 @@ public class GDFRNetworkGameManager : MonoBehaviour
     {
         //GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.DrawCard, NetOnDrawCard);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.GroupedDrawMessage, NetOnGroupDrawMessage);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.InitiativeSelected, NetOnRecieveInitiative);
     }
 
     public void SetupServerMessageHandlers()
@@ -49,13 +53,27 @@ public class GDFRNetworkGameManager : MonoBehaviour
     {
         //GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.DrawCard);
         GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.GroupedDrawMessage);
+        GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.InitiativeSelected);
 
         //NetworkServer.UnregisterHandler(MsgType.Ready);
     }
 
+    private IEnumerator HandleGroupDrawData(GroupedDrawMessage data)
+    {
+        //handle data once we get it from server
+        Deck fromDeck = mController.GetDeckFromId(data.fromDeck);
+
+        for (int i = 0; i < data.cardIds.Length; i++)
+        {
+            Card c = fromDeck.DrawExactCard(data.cardIds[i]);
+            Deck toDeck = mController.GetDeckFromId(data.toDeckIds[i]);
+            yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
+        }
+    }
+
     public IEnumerator State_Network_DrawPhase1()
     {
-        Debug.Log("NETWORK: " + " Player " + mController.currentPlayer + "- Position: " + mController.PLayersPosition[mController.currentPlayer] + " - State: DrawPhase1");
+        Debug.Log("NETWORK: " + " Player " + mController.currentPlayer + "- Position: " + mController.PlayersPosition[mController.currentPlayer] + " - State: DrawPhase1");
 
         //give 1 star card to each deck
         if (GDFRNetworkManager.Instance.IsLocalClientTheHost())
@@ -84,21 +102,13 @@ public class GDFRNetworkGameManager : MonoBehaviour
         }
 
         //handle data
-        while (phase1Data == null)
+        while (phase1DrawData == null)
         {
             Debug.Log("Waiting for data");
             yield return null;
         }
 
-        //handle data once we get it from server
-        Deck fromDeck = mController.GetDeckFromId(phase1Data.fromDeck);
-
-        for (int i = 0; i < phase1Data.cardIds.Length; i++)
-        {
-            Card c = fromDeck.DrawExactCard(phase1Data.cardIds[i]);
-            Deck toDeck = mController.GetDeckFromId(phase1Data.toDeckIds[i]);
-            yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
-        }
+        yield return StartCoroutine(HandleGroupDrawData(phase1DrawData));
     }
 
     public IEnumerator State_Network_DrawPhase2()
@@ -148,20 +158,13 @@ public class GDFRNetworkGameManager : MonoBehaviour
         }
 
         //wait until we get data
-        while (phase2Data == null)
+        while (phase2DrawData == null)
         {
             Debug.Log("Waiting for data in phase2");
             yield return null;
         }
 
-
-        Deck fromDeck = mController.GetDeckFromId(phase2Data.fromDeck);
-        for (int i = 0; i < phase2Data.cardIds.Length; i++)
-        {
-            Card c = fromDeck.DrawExactCard(phase2Data.cardIds[i]);
-            Deck toDeck = mController.GetDeckFromId(phase2Data.toDeckIds[i]);
-            yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
-        }
+        yield return StartCoroutine(HandleGroupDrawData(phase2DrawData));
     }
 
     public IEnumerator State_Network_DrawPhase3()
@@ -177,12 +180,9 @@ public class GDFRNetworkGameManager : MonoBehaviour
             for (int d = 0; d < numberOfCards; d++)
             {
                 Card card = mController.mainDeck.DrawRandomCard();
-                //card.CurrentRace = Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule ? Race.Goblin : Race.Fairy;
 
                 cards.Add(card.Id);
                 toDecks.Add(mController.fairyRingDeck.Id);
-
-                //yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck, dealSpeed));
             }
 
             GroupedDrawMessage outMess = new GroupedDrawMessage(GroupDrawPhase.Phase3, mController.mainDeck.Id, cards, toDecks);
@@ -190,23 +190,69 @@ public class GDFRNetworkGameManager : MonoBehaviour
             GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.GroupedDrawMessage, outMess);
         }
 
-        while(phase3Data == null)
+        while (phase3DrawData == null)
         {
             Debug.Log("waiting for data in phase3");
             yield return null;
         }
 
-        //todo: make this into a method and abstract it out of all three phases
-        Deck fromDeck = mController.GetDeckFromId(phase3Data.fromDeck);
-        for (int i = 0; i < phase3Data.cardIds.Length; i++)
+        Deck fromDeck = mController.GetDeckFromId(phase3DrawData.fromDeck);
+        for (int i = 0; i < phase3DrawData.cardIds.Length; i++)
         {
-            Card c = fromDeck.DrawExactCard(phase3Data.cardIds[i]);
+            Card c = fromDeck.DrawExactCard(phase3DrawData.cardIds[i]);
             c.CurrentRace = Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule ? Race.Goblin : Race.Fairy;
-            Deck toDeck = mController.GetDeckFromId(phase3Data.toDeckIds[i]);
+            Deck toDeck = mController.GetDeckFromId(phase3DrawData.toDeckIds[i]);
             yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
         }
 
         mController.fairyRingDeck.Refresh();
+    }
+
+    public IEnumerator State_Network_Initiative()
+    {
+        if (GDFRNetworkManager.Instance.IsLocalClientTheHost())
+        {
+            // pick a random player IF Difficulty isn't easy
+            // if so, get a human player to start
+            if (Toolbox.Instance.gameSettings.DifficultyLevel == GameSettings.Difficulty.Easy)
+            {
+                bool foundPlayer = false;
+                while (!foundPlayer)
+                {
+                    bool noHuman = true;
+                    for (int idx = 0; idx < Toolbox.Instance.gameSettings.numberOfPlayers; idx++)
+                    {
+                        if ((Toolbox.Instance.playerProfiles[idx].type == PlayersProfile.Type.Human) && (Random.Range(0, 2) == 0))
+                        {
+                            foundPlayer = true;
+
+                            GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.InitiativeSelected, new IntMessage(idx));
+                            //currentPlayer = idx;
+                        break;
+                        }
+
+                        if (Toolbox.Instance.playerProfiles[idx].type == PlayersProfile.Type.Human)
+                        {
+                            noHuman = false;
+                        }
+                    }
+                    if (noHuman) break;
+                }
+            }
+            else
+            {
+                GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.InitiativeSelected, new IntMessage(Random.Range(0, Toolbox.Instance.gameSettings.numberOfPlayers)));
+                //mController.currentPlayer = Random.Range(0, Toolbox.Instance.gameSettings.numberOfPlayers);
+            }
+        }
+
+        while (initiativeData == null)
+        {
+            Debug.Log("waiting for data in initiative");
+            yield return null;
+        }
+
+        mController.avatars[mController.PlayersPosition[mController.currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
     }
 
     private void NetOnDrawCard(NetworkMessage message)
@@ -228,17 +274,24 @@ public class GDFRNetworkGameManager : MonoBehaviour
         //cache command until we need it
         GroupedDrawMessage data = message.ReadMessage<GroupedDrawMessage>();
 
-        switch (data.groupPhase)
+        switch(data.groupPhase)
         {
             case GroupDrawPhase.Phase1:
-                phase1Data = data;
+                phase1DrawData = data;
                 break;
             case GroupDrawPhase.Phase2:
-                phase2Data = data;
+                phase2DrawData = data;
                 break;
             case GroupDrawPhase.Phase3:
-                phase3Data = data;
+                phase3DrawData = data;
                 break;
         }
+    }
+
+    private void NetOnRecieveInitiative(NetworkMessage message)
+    {
+        IntMessage data = message.ReadMessage<IntMessage>();
+
+        initiativeData = data;
     }
 }
