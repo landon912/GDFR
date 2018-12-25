@@ -256,27 +256,29 @@ public class DrawCardMessage : MessageBase
     public DrawCardMessage() { }
 }
 
-public class Phase1DrawMessage : MessageBase
+public enum GroupDrawPhase
 {
+    Phase1,
+    Phase2,
+    Phase3
+}
+
+public class GroupedDrawMessage : MessageBase
+{
+    public GroupDrawPhase groupPhase;
     public int fromDeck;
     public int[] cardIds;
     public int[] toDeckIds;
 
-    public Phase1DrawMessage(int fromDeck, List<int> cards, List<int> toDecks)
+    public GroupedDrawMessage(GroupDrawPhase phase, int fromDeck, List<int> cards, List<int> toDecks)
     {
+        groupPhase = phase;
         this.fromDeck = fromDeck;
         cardIds = cards.ToArray();
         toDeckIds = toDecks.ToArray();
     }
 
-    public Phase1DrawMessage () {}
-}
-
-public class Phase2DrawMessage : Phase1DrawMessage
-{
-    public Phase2DrawMessage(int fromDeck, List<int> cards, List<int> toDecks) : base(fromDeck, cards, toDecks) {}
-
-    public Phase2DrawMessage () {}
+    public GroupedDrawMessage () {}
 }
 
 public class ChangeSceneMessage : MessageBase

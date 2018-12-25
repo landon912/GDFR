@@ -79,8 +79,8 @@ public class GameContoller : RxFx_FSM
         mDeckDict.Add(fairyRingDeck.Id, fairyRingDeck);
         playedCardDeck.Id = 4;
         mDeckDict.Add(playedCardDeck.Id, playedCardDeck);
-        
-        for(int i = 0; i < playerDecks.Length; i++)
+
+        for (int i = 0; i < playerDecks.Length; i++)
         {
             playerDecks[i].Id = mDeckDict.Count + 1;
             mDeckDict.Add(playerDecks[i].Id, playerDecks[i]);
@@ -90,7 +90,7 @@ public class GameContoller : RxFx_FSM
     public Deck GetDeckFromId(int id)
     {
         Deck deck;
-        if(mDeckDict.TryGetValue(id, out deck))
+        if (mDeckDict.TryGetValue(id, out deck))
         {
             return deck;
         }
@@ -423,7 +423,6 @@ public class GameContoller : RxFx_FSM
     //Draw Player Cards
     IEnumerator State_DrawPhase2(params object[] data)
     {
-        //FSM_Event nextPhase = new FSM_Event("",State_DrawPhase3);	
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase2");
 
         if (GDFRNetworkManager.Instance.IsNetworkGame())
@@ -435,15 +434,14 @@ public class GameContoller : RxFx_FSM
             yield return StartCoroutine(State_Offline_DrawPhase2());
         }
 
-        Debug.Log("Will now call phase 3");
-        //callEvent("DrawPhase3");
+        callEvent("DrawPhase3");
     }
 
     private IEnumerator State_Offline_DrawPhase2()
     {
         GameSettings.RulesVariantType rulesVariantType = Toolbox.Instance.gameSettings.RulesVariant;
 
-        int numberOfCards = DetermineCardCount();
+        int numberOfCards = DeterminePlayerCardCount();
 
         //For balance reasons, select a random card from the symbol combo OPPOSITE of the dealt star card's symbol combo
         // Ex. If you get a Sun/Moon, your next card should be a random Frog/Mushroom card
@@ -470,7 +468,7 @@ public class GameContoller : RxFx_FSM
         }
     }
 
-    public int DetermineCardCount()
+    public int DeterminePlayerCardCount()
     {
         int numberOfCards; // classic mode
 
@@ -519,9 +517,46 @@ public class GameContoller : RxFx_FSM
     //Draw cards into the Fairy Row
     IEnumerator State_DrawPhase3(params object[] data)
     {
-        //FSM_Event nextPhase = new FSM_Event("",State_Initiative);	
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase3");
 
+        // If the number of players is above 2 (equal 3), return remaining star cards to the mainDeck.
+        if (Toolbox.Instance.gameSettings.numberOfPlayers > 2)
+        {
+            foreach (Card c in starDeck.GetCardList())
+            {
+                c.DrawCardInstant(mainDeck);
+            }
+        }
+
+        if (GDFRNetworkManager.Instance.IsNetworkGame())
+        {
+            yield return StartCoroutine(GDFRNetworkGameManager.Instance.State_Network_DrawPhase3());
+        }
+        else
+        {
+            yield return StartCoroutine(State_Offline_DrawPhase3());
+        }
+
+        Debug.Log("would now call initiative");
+        //callEvent("Initiative");
+    }
+
+    private IEnumerator State_Offline_DrawPhase3()
+    {
+        int numberOfCards = DetermineFairyRowCardCount();
+
+        //draw 4 cards to the fairy ring and make them all fairies.
+        for (int d = 0; d < numberOfCards; d++)
+        {
+            Card card = mainDeck.DrawRandomCard();
+            card.CurrentRace = Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule ? Race.Goblin : Race.Fairy;
+            yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck, dealSpeed));
+        }
+        fairyRingDeck.Refresh();
+    }
+
+    public int DetermineFairyRowCardCount()
+    {
         int numberOfCards = 4; // classic mode
         // Solitaire modes?
         switch (Toolbox.Instance.gameSettings.RulesVariant)
@@ -562,25 +597,7 @@ public class GameContoller : RxFx_FSM
                 break;
         }
 
-        // If the number of players is above 2 (equal 3), return remaining star cards to the mainDeck.
-        if (Toolbox.Instance.gameSettings.numberOfPlayers > 2)
-        {
-            foreach (Card c in starDeck.GetCardList())
-            {
-                c.DrawCardInstant(mainDeck);
-            }
-        }
-
-        //draw 4 cards to the fairy ring and make them all fairies.
-        for (int d = 0; d < numberOfCards; d++)
-        {
-            Card card = mainDeck.DrawRandomCard();
-            card.CurrentRace = Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule ? Race.Goblin : Race.Fairy;
-            yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck, dealSpeed));
-        }
-        fairyRingDeck.Refresh();
-
-        callEvent("Initiative");
+        return numberOfCards;
     }
 
     IEnumerator State_Initiative(params object[] data)

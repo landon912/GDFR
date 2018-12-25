@@ -167,8 +167,6 @@ public class Deck : MonoBehaviour
 
     public Card DrawExactCard(int id)
     {
-        Debug.Log("Looking for ID: " + id + " in deck" + gameObject.name);
-
         foreach (Card c in mCards)
         {
             //do not need to check if already drawn but not dealt because not random
