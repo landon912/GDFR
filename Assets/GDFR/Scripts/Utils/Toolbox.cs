@@ -56,4 +56,5 @@ public class PlayersProfile
     public Type type = Type.Human;
     public string name = "";
     public int avatar = 0;
+    public NetworkProfile networkProfile;
 }

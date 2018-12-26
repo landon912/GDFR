@@ -28,6 +28,22 @@ public static class NetworkMessageHelper
 
             return writer.ToArray();
         }
+        else if(message is CardPlayedMessage)
+        {
+            CardPlayedMessage pickedMessage = (CardPlayedMessage)message;
+
+            short myMsgType = MsgIndexes.CardPlayed;
+
+            NetworkWriter writer = new NetworkWriter();
+
+            writer.StartMessage(myMsgType);
+
+            writer.Write(pickedMessage.cardPlayed);
+
+            writer.FinishMessage();
+
+            return writer.ToArray();
+        }
         else
         {
             throw new NotImplementedException();
@@ -58,6 +74,14 @@ public static class NetworkMessageHelper
 
             message.idx = networkReader.ReadInt32();
             message.avatarId = networkReader.ReadInt32();
+
+            return message;
+        }
+        else if(typeof(T) == typeof(CardPlayedMessage))
+        {
+            CardPlayedMessage message = new CardPlayedMessage();
+
+            message.cardPlayed = networkReader.ReadInt32();
 
             return message;
         }
@@ -303,4 +327,16 @@ public class ChangeSceneMessage : MessageBase
     }
 
     public ChangeSceneMessage() {}
+}
+
+public class CardPlayedMessage : MessageBase
+{
+    public int cardPlayed;
+
+    public CardPlayedMessage(int card)
+    {
+        cardPlayed = card;
+    }
+
+    public CardPlayedMessage() { }
 }

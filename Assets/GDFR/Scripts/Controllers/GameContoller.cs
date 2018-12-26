@@ -69,6 +69,13 @@ public class GameContoller : RxFx_FSM
         //The main menu's track's probability is 0 at the beginning to keep it from being selected; since at this point, another track has been selected we can renable it's probability
         GameObject.FindWithTag("GlobalMusicController").GetComponent<AudioController>()._GetAudioItem("Game Music").subItems[0].Probability = 100;
 
+        for (int i = 0; i < GDFRNetworkManager.Instance.networkProfiles.Count; i++)
+        {
+            NetworkProfile profile = GDFRNetworkManager.Instance.networkProfiles[i];
+
+            Toolbox.Instance.playerProfiles[i].networkProfile = profile;
+        }
+
         mainDeck.Id = 0;
         mDeckDict.Add(mainDeck.Id, mainDeck);
         swapDeck.Id = 1;
@@ -187,7 +194,12 @@ public class GameContoller : RxFx_FSM
 
     void OnCardSelected(Card card)
     {
-        callEvent("CardPicked", card);
+        if(GDFRNetworkManager.Instance.IsNetworkGame())
+        {
+            GDFRNetworkManager.Instance.TriggerEvent(MsgIndexes.CardPlayed, new CardPlayedMessage(card.Id));
+        }
+        else
+            callEvent("CardPicked", card);
     }
 
     IEnumerator State_LoadData(params object[] data)
@@ -693,10 +705,13 @@ public class GameContoller : RxFx_FSM
     {
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayerPickCard");
 
-        playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(true);
-        playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
-        playerDecks[mPlayersPosition[currentPlayer]].zDepth = 600;
-        yield return new WaitForSeconds(0.5f);
+        if(GDFRNetworkGameManager.Instance.IsCurrentPlayerTheLocalClient())
+        {
+            playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(true);
+            playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
+            playerDecks[mPlayersPosition[currentPlayer]].zDepth = 600;
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     IEnumerator State_PlayerMove(params object[] data)
@@ -713,6 +728,11 @@ public class GameContoller : RxFx_FSM
 
         callEvent("PlayResolve");
     }
+
+    //private IEnumerator State_Offline_PlayerMove(Card cardPlayed)
+    //{
+        
+    //}
 
     IEnumerator State_AIMove(params object[] data)
     {

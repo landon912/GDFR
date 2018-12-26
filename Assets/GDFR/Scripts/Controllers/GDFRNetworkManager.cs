@@ -29,6 +29,7 @@ public class MsgIndexes
     public const short DrawCard = 69;
     public const short GroupedDrawMessage = 70;
     public const short InitiativeSelected = 71;
+    public const short CardPlayed = 72;
 }
 
 public class GDFRNetworkManager : MonoBehaviour
@@ -334,7 +335,15 @@ public class GDFRNetworkManager : MonoBehaviour
         {
             MessageBase commandMessage = NetworkMessageHelper.BytesToNetworkMessage<PlayerAvatarMessage>(mess.message);
 
-            Debug.Log("Replicating command to all clients");
+            Debug.Log("Replicating avatar changed command to all clients");
+
+            NetworkServer.SendToAll(mess.commandId, commandMessage);
+        }
+        else if(mess.commandId == MsgIndexes.CardPlayed)
+        {
+            MessageBase commandMessage = NetworkMessageHelper.BytesToNetworkMessage<CardPlayedMessage>(mess.message);
+
+            Debug.Log("Replicating card played command to all clients");
 
             NetworkServer.SendToAll(mess.commandId, commandMessage);
         }

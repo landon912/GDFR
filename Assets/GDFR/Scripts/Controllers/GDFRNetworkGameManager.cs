@@ -42,6 +42,7 @@ public class GDFRNetworkGameManager : MonoBehaviour
         //GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.DrawCard, NetOnDrawCard);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.GroupedDrawMessage, NetOnGroupDrawMessage);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.InitiativeSelected, NetOnRecieveInitiative);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.CardPlayed, NetOnCardPlayed);
     }
 
     public void SetupServerMessageHandlers()
@@ -54,8 +55,14 @@ public class GDFRNetworkGameManager : MonoBehaviour
         //GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.DrawCard);
         GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.GroupedDrawMessage);
         GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.InitiativeSelected);
+        GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.CardPlayed);
 
         //NetworkServer.UnregisterHandler(MsgType.Ready);
+    }
+
+    public bool IsCurrentPlayerTheLocalClient()
+    {
+        return Toolbox.Instance.playerProfiles[mController.currentPlayer].networkProfile.networkId == GDFRNetworkManager.Instance.LocalConnectionId;
     }
 
     private IEnumerator HandleGroupDrawData(GroupedDrawMessage data)
@@ -255,6 +262,22 @@ public class GDFRNetworkGameManager : MonoBehaviour
         mController.avatars[mController.PlayersPosition[mController.currentPlayer]].avatarGlowSprite.gameObject.SetActive(true);
     }
 
+    //public IEnumerator State_Network_PlayerMove(Card cardPlayed)
+    //{
+    //    if (GDFRNetworkManager.Instance.IsLocalClientTheHost())
+    //    {
+    //        GDFRNetworkManager.Instance.TriggerEvent(MsgIndexes.CardPlayed, new CardPlayedMessage(cardPlayed.Id));
+    //    }
+
+    //    //Get the select card from the event data;
+    //    selectedCard = playedCard = cardPlayed;
+    //    playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(false);
+
+    //    EventReceiver.TriggerCardPlayedEvent(playedCard);
+
+    //    yield return StartCoroutine(playedCard.AnimateDrawCard(playedCardDeck, 1.5f));
+    //}
+
     private void NetOnDrawCard(NetworkMessage message)
     {
         //phase2Data.Add(message.ReadMessage<DrawCardMessage>());
@@ -293,5 +316,14 @@ public class GDFRNetworkGameManager : MonoBehaviour
         IntMessage data = message.ReadMessage<IntMessage>();
 
         initiativeData = data;
+    }
+
+    private void NetOnCardPlayed(NetworkMessage message)
+    {
+        CardPlayedMessage mess = message.ReadMessage<CardPlayedMessage>();
+
+        Card card = mController.playerDecks[mController.PlayersPosition[mController.currentPlayer]].DrawExactCard(mess.cardPlayed);
+
+        mController.callEvent("CardPicked", card);
     }
 }

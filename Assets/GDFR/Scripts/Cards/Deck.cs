@@ -9,6 +9,8 @@ public class Deck : MonoBehaviour
 {
     public int Id { get; set; }
 
+    public int OwnerNetworkId = -1;
+
     private readonly List<Card> mCards = new List<Card>();
 
     public Transform deckTransform;
