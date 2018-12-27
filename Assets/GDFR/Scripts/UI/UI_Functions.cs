@@ -3,9 +3,11 @@ using System.Collections;
 
 public class UI_Functions : MonoBehaviour {
 
-	public UILabel messageLabel;
+    public UILabel messageLabel;
     public GameObject gameEndButtons;
-	public GameObject[] activateGameObject;
+    public GameObject[] activateGameObject;
+
+    public bool IsActive { private set; get; }
 
     private UILabel messageShadowLabel;
 
@@ -17,6 +19,8 @@ public class UI_Functions : MonoBehaviour {
 
     private void SetActivateGameObjectState(bool active, bool gameEnd = false)
     {
+        IsActive = active;
+
         messageLabel.gameObject.SetActive(active);
 
         gameEndButtons.SetActive(gameEnd);
@@ -46,7 +50,7 @@ public class UI_Functions : MonoBehaviour {
 	    SetActivateGameObjectState(false);
 	}
 
-    public IEnumerator SendGameOverMessage(string message)
+    public IEnumerator SendGameOverMessage(string message, bool enableButtons)
     {
         yield return new WaitForSeconds(0.01f);
 
@@ -56,8 +60,11 @@ public class UI_Functions : MonoBehaviour {
         SetActivateGameObjectState(true, true);
 
         PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
-        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 1, true, 1);
-        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 1, true, 1);
+        if(enableButtons)
+        {
+            PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 1, true, 1);
+            PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 1, true, 1);
+        }
     }
 
     public IEnumerator HideGameOverMessage()

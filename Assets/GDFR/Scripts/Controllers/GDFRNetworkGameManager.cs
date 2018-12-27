@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
 using Random = UnityEngine.Random;
 
 public class GDFRNetworkGameManager : MonoBehaviour
@@ -43,6 +41,7 @@ public class GDFRNetworkGameManager : MonoBehaviour
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.GroupedDrawMessage, NetOnGroupDrawMessage);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.InitiativeSelected, NetOnRecieveInitiative);
         GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.CardPlayed, NetOnCardPlayed);
+        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.StartNewGame, NetOnStartNewGame);
     }
 
     public void SetupServerMessageHandlers()
@@ -56,6 +55,7 @@ public class GDFRNetworkGameManager : MonoBehaviour
         GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.GroupedDrawMessage);
         GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.InitiativeSelected);
         GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.CardPlayed);
+        GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.StartNewGame);
 
         //NetworkServer.UnregisterHandler(MsgType.Ready);
     }
@@ -234,7 +234,6 @@ public class GDFRNetworkGameManager : MonoBehaviour
                             foundPlayer = true;
 
                             GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.InitiativeSelected, new IntMessage(idx));
-                            //currentPlayer = idx;
                         break;
                         }
 
@@ -249,7 +248,6 @@ public class GDFRNetworkGameManager : MonoBehaviour
             else
             {
                 GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.InitiativeSelected, new IntMessage(Random.Range(0, Toolbox.Instance.gameSettings.numberOfPlayers)));
-                //mController.currentPlayer = Random.Range(0, Toolbox.Instance.gameSettings.numberOfPlayers);
             }
         }
 
@@ -325,5 +323,10 @@ public class GDFRNetworkGameManager : MonoBehaviour
         Card card = mController.playerDecks[mController.PlayersPosition[mController.currentPlayer]].DrawExactCard(mess.cardPlayed);
 
         mController.callEvent("CardPicked", card);
+    }
+
+    private void NetOnStartNewGame(NetworkMessage message)
+    {
+        StartCoroutine(mController.State_Offline_StartNewGame());
     }
 }

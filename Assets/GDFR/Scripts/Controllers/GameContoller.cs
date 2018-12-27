@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -158,7 +159,7 @@ public class GameContoller : RxFx_FSM
 
     private void ForfeitGame()
     {
-        callEvent("GameReset");
+        callEvent("StartNewGame");
         GiveUpButtonGameObject.SetActive(false);
     }
 
@@ -194,12 +195,14 @@ public class GameContoller : RxFx_FSM
 
     void OnCardSelected(Card card)
     {
-        if(GDFRNetworkManager.Instance.IsNetworkGame())
+        if (GDFRNetworkManager.Instance.IsNetworkGame())
         {
             GDFRNetworkManager.Instance.TriggerEvent(MsgIndexes.CardPlayed, new CardPlayedMessage(card.Id));
         }
         else
+        {
             callEvent("CardPicked", card);
+        }
     }
 
     IEnumerator State_LoadData(params object[] data)
@@ -271,7 +274,7 @@ public class GameContoller : RxFx_FSM
             avatars[position].avatarGlowSprite.gameObject.SetActive(false);
         }
 
-        callEvent("GameReset");
+        CallGameReset();
         yield break;
     }
 
@@ -283,7 +286,6 @@ public class GameContoller : RxFx_FSM
 
         //FSM_Event nextPhase = new FSM_Event("",State_DrawPhase1);	
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: GameReset");
-
 
         foreach (int index in mPlayersPosition)
         {
@@ -393,7 +395,7 @@ public class GameContoller : RxFx_FSM
         callEvent("DrawPhase2");
     }
 
-    public IEnumerator State_Offline_DrawPhase1()
+    private IEnumerator State_Offline_DrawPhase1()
     {
         // Give 1 star card for each player
         foreach (Deck pDeck in playerDecks)
@@ -651,7 +653,10 @@ public class GameContoller : RxFx_FSM
                         noHuman = false;
                     }
                 }
-                if (noHuman) break;
+                if (noHuman)
+                {
+                    break;
+                }
             }
         }
         else
@@ -705,7 +710,7 @@ public class GameContoller : RxFx_FSM
     {
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_PlayerPickCard");
 
-        if(GDFRNetworkGameManager.Instance.IsCurrentPlayerTheLocalClient())
+        if (GDFRNetworkGameManager.Instance.IsCurrentPlayerTheLocalClient())
         {
             playerDecks[mPlayersPosition[currentPlayer]].DeckUiEnabled(true);
             playerDecks[mPlayersPosition[currentPlayer]].VisuallyActive = true;
@@ -728,11 +733,6 @@ public class GameContoller : RxFx_FSM
 
         callEvent("PlayResolve");
     }
-
-    //private IEnumerator State_Offline_PlayerMove(Card cardPlayed)
-    //{
-        
-    //}
 
     IEnumerator State_AIMove(params object[] data)
     {
@@ -795,7 +795,9 @@ public class GameContoller : RxFx_FSM
                 }
             }
             else
+            {
                 Debug.Log("Played Card Hit");
+            }
         }
         if (cardFlipped)
         {
@@ -822,7 +824,10 @@ public class GameContoller : RxFx_FSM
 
         Card[] cList = new Card[takenCards.Count + 1];
         for (int tc = 0; tc < takenCards.Count; tc++)
+        {
             cList[tc] = takenCards[tc];
+        }
+
         cList[takenCards.Count] = playedCard;
         EventReceiver.TriggerSymbolMatchEvent(cList);
 
@@ -879,9 +884,14 @@ public class GameContoller : RxFx_FSM
         foreach (Card c in cardList)
         {
             if (c.CurrentRace == Race.Fairy)
+            {
                 fairyCount++;
+            }
+
             if (c.CurrentRace == Race.Goblin)
+            {
                 goblinCount++;
+            }
         }
 
         switch (Toolbox.Instance.gameSettings.RulesVariant)
@@ -954,14 +964,40 @@ public class GameContoller : RxFx_FSM
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_DeclareWinner " + currentPlayer);
 
         EventReceiver.TriggerDeclareWinnerEvent(Toolbox.Instance.playerProfiles[currentPlayer]);
-        yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!"));
+
+        //disable buttons on client
+        if (GDFRNetworkManager.Instance.IsNetworkGame() && !GDFRNetworkManager.Instance.IsLocalClientTheHost())
+        {
+            yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!", false));
+        }
+        else
+        {
+            yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!", true));
+        }
     }
 
     IEnumerator State_StartNewGame(params object[] data)
     {
-        yield return StartCoroutine(uiFunctionScript.HideGameOverMessage());
+        Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: State_StartNewGame " + currentPlayer);
 
-        callEvent("GameReset");
+        if (GDFRNetworkManager.Instance.IsNetworkGame())
+        {
+            GDFRNetworkManager.Instance.TriggerEventIfHost(MsgIndexes.StartNewGame, new EmptyMessage());
+        }
+        else
+        {
+            yield return StartCoroutine(State_Offline_StartNewGame());
+        }
+    }
+
+    public IEnumerator State_Offline_StartNewGame()
+    {
+        if(uiFunctionScript.IsActive)
+        {
+            yield return StartCoroutine(uiFunctionScript.HideGameOverMessage());
+        }
+
+        CallGameReset();
     }
 
     IEnumerator State_ChangePlayer(params object[] data)
@@ -977,5 +1013,12 @@ public class GameContoller : RxFx_FSM
 
         callEvent("PlayerSelect");
         yield break;
+    }
+
+    private void CallGameReset()
+    {
+        GDFRNetworkGameManager.Instance.StopAllCoroutines();
+        StopAllCoroutines();
+        callEvent("GameReset");
     }
 }

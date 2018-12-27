@@ -30,6 +30,7 @@ public class MsgIndexes
     public const short GroupedDrawMessage = 70;
     public const short InitiativeSelected = 71;
     public const short CardPlayed = 72;
+    public const short StartNewGame = 73;
 }
 
 public class GDFRNetworkManager : MonoBehaviour
