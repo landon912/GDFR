@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
 
-public class UI_Functions : MonoBehaviour {
+public class UI_Functions : MonoBehaviour
+{
 
     public UILabel messageLabel;
     public GameObject gameEndButtons;
@@ -31,24 +32,24 @@ public class UI_Functions : MonoBehaviour {
         }
     }
 
-	public IEnumerator SendGameMessage(string messageString, float duration)
-	{
-		yield return new WaitForSeconds(0.01f);
+    public IEnumerator SendGameMessage(string messageString, float duration)
+    {
+        yield return new WaitForSeconds(0.01f);
 
-	    messageLabel.text = messageString;
-	    messageShadowLabel.text = messageString;
-	    SetActivateGameObjectState(true);
+        messageLabel.text = messageString;
+        messageShadowLabel.text = messageString;
+        SetActivateGameObjectState(true);
 
-		PlayTweens.PlayTweenGroup(messageLabel.gameObject,1,true,1);
+        PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
 
         yield return new WaitForSeconds(duration);
 
-        PlayTweens.PlayTweenGroup(messageLabel.gameObject,2,true,1);
+        PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
 
         yield return new WaitForSeconds(0.5f);
 
-	    SetActivateGameObjectState(false);
-	}
+        SetActivateGameObjectState(false);
+    }
 
     public IEnumerator SendGameOverMessage(string message, bool enableButtons)
     {
@@ -57,10 +58,10 @@ public class UI_Functions : MonoBehaviour {
         messageLabel.text = message;
         messageShadowLabel.text = message;
 
-        SetActivateGameObjectState(true, true);
+        SetActivateGameObjectState(true, enableButtons);
 
         PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
-        if(enableButtons)
+        if (enableButtons)
         {
             PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 1, true, 1);
             PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 1, true, 1);

@@ -970,7 +970,7 @@ public class GameContoller : RxFx_FSM
         {
             yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!", false));
         }
-        else
+        else if(!GDFRNetworkManager.Instance.IsNetworkGame() || GDFRNetworkManager.Instance.IsLocalClientTheHost())
         {
             yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!", true));
         }
