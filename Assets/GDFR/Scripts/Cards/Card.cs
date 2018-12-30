@@ -5,8 +5,6 @@ public class Card : MonoBehaviour
 {
     public int Id = -1;
 
-    public bool hasBeenDrawnButNotDealt = false;
-
     private bool _cardSparkle;
     private bool isFront = true;
 
@@ -338,18 +336,16 @@ public class Card : MonoBehaviour
         tween.Play(true);
     }
 
-    public void DrawCard(Deck toDeck, Transform parent = null)
+    public void MoveToNewDeck(Deck toDeck, Transform parent = null)
     {
-        hasBeenDrawnButNotDealt = false;
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
         toDeck.AddCard(this);
         toDeck.gameObject.SetActive(deckActive);
     }
 
-    public void DrawCardInstant(Deck toDeck, Transform parent = null)
+    public void MoveToNewDeckInstant(Deck toDeck, Transform parent = null)
     {
-        hasBeenDrawnButNotDealt = false;
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
         toDeck.AddCardInstant(this);
@@ -364,7 +360,7 @@ public class Card : MonoBehaviour
 
     private void UpdateDepth()
     {
-        for (var w = 0; w < widgetList.Length; w++)
+        for (int w = 0; w < widgetList.Length; w++)
              widgetList[w].depth = widgetDefaultDepth[w] + Depth + DeckDepthOffset;
     }
 

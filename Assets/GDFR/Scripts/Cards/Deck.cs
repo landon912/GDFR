@@ -12,7 +12,7 @@ public class Deck : MonoBehaviour
     public int OwnerNetworkId = -1;
 
     private readonly List<Card> mCards = new List<Card>();
-
+    private List<Card> mDrawableCards { get; set; } = new List<Card>();
     public Transform deckTransform;
 
     public Object xmlDataFile;
@@ -96,14 +96,15 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public Card DrawRandomCard(Deck toDeck)
+    //debug only
+    public Card DrawAndMoveRandomCard(Deck toDeck)
     {
         if (mCards.Count > 0)
         {
             int randomTmp = Random.Range(0, mCards.Count);
             Debug.Log("Random card: " + randomTmp + " from " + mCards.Count);
 
-            mCards[randomTmp].DrawCard(toDeck);
+            mCards[randomTmp].MoveToNewDeck(toDeck);
             randomTmp = Random.Range(0, 2);
             mCards[randomTmp].ChangeRace((Race)randomTmp);
             return mCards[randomTmp];
@@ -113,33 +114,30 @@ public class Deck : MonoBehaviour
 
     public Card DrawRandomCard()
     {
-        if (mCards.Count > 0)
+        if (mDrawableCards.Count > 0)
         {
-            int randomTmp = Random.Range(0, mCards.Count);
+            int randomTmp = Random.Range(0, mDrawableCards.Count);
 
-            if (mCards[randomTmp].hasBeenDrawnButNotDealt == false)
-            {
-                mCards[randomTmp].hasBeenDrawnButNotDealt = true;
+            Card c = mDrawableCards[randomTmp];
 
-                return mCards[randomTmp];
-            }
-            else
-            {
-                return DrawRandomCard();
-            }
+            mDrawableCards.Remove(c);
+
+            return c;
         }
+
+        Debug.LogError("Failed to draw card");
 
         return null;
     }
 
     public Card DrawRandomCardOfSymbolGroup(SymbolGroup symbolGroup)
     {
-        if (mCards.Count > 0)
+        if (mDrawableCards.Count > 0)
         {
             List<Card> tempCards = new List<Card>();
 
             //sort cards
-            foreach (Card c in mCards)
+            foreach (Card c in mDrawableCards)
             {
                 if (c.CurrentSymbolGroup == symbolGroup)
                 {
@@ -151,34 +149,35 @@ public class Deck : MonoBehaviour
             {
                 int randomTmp = Random.Range(0, tempCards.Count);
 
-                if (mCards[randomTmp].hasBeenDrawnButNotDealt == false)
-                {
-                    mCards[randomTmp].hasBeenDrawnButNotDealt = true;
+                Card c = tempCards[randomTmp];
 
-                    return mCards[randomTmp];
-                }
-                else
+                if(mDrawableCards.Remove(c) == false)
                 {
-                    return DrawRandomCard();
+                    Debug.Log("remove failed");
                 }
+
+                return c;
             }
         }
 
         return null;
     }
 
-    public Card DrawExactCard(int id)
+    public Card GetExactCard(int id)
     {
-        foreach (Card c in mCards)
+        //do not check from drawable cards
+        for (int i = 0; i < mCards.Count; i++)
         {
-            //do not need to check if already drawn but not dealt because not random
+            Card c = mCards[i];
+
             if (c.Id == id)
             {
+                //mCards.Remove(c);
                 return c;
             }
         }
 
-        Debug.LogError("Card not found in deck " + id);
+        Debug.LogError("Card " + id + " not found in deck " + Id);
         return null;
     }
 
@@ -204,7 +203,9 @@ public class Deck : MonoBehaviour
         Card[] cardList = GetCardList();
         foreach (Card c in cardList)
         {
-            c.DrawCard(toDeck);
+            c.GetComponent<UIButton>().enabled = false;
+            c.GetComponent<Collider>().enabled = false;
+            c.MoveToNewDeck(toDeck);
         }
     }
 
@@ -214,13 +215,14 @@ public class Deck : MonoBehaviour
         Transform newCardTrans = card.gameObject.transform;
         Vector3 tempScale = newCardTrans.localScale;
 
-        if (card.parentDeck != null)
-            card.parentDeck.RemoveCard(card);
+        if (fromDeck != null)
+            fromDeck.RemoveCard(card);
 
         card.gameObject.transform.parent = deckTransform;
         card.parentDeck = this;
 
         mCards.Add(card);
+        mDrawableCards.Add(card);
 
         EventReceiver.TriggerCardMovedEvent(card);
 
@@ -243,6 +245,7 @@ public class Deck : MonoBehaviour
         card.parentDeck = this;
 
         mCards.Add(card);
+        mDrawableCards.Add(card);
 
         card.transform.localPosition = Vector3.zero;
         card.DeckDepthOffset = zDepth;
@@ -254,6 +257,7 @@ public class Deck : MonoBehaviour
     {
         removeCard.gameObject.transform.parent = null;
         mCards.Remove(removeCard);
+        mDrawableCards.Remove(removeCard);
         return removeCard;
     }
 
@@ -298,6 +302,7 @@ public class Deck : MonoBehaviour
                     if (cNode.Name == "Id")
                     {
                         cardScript.Id = XmlConvert.ToInt32(cNode.InnerText);
+                        cardScript.gameObject.name = "Card - Id: " + cardScript.Id;
                     }
                     if (cNode.Name == "GoblinSpriteName")
                     {

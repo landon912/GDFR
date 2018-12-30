@@ -21,13 +21,13 @@ public class Deck_Test_Controller : MonoBehaviour {
 
 	public void AddRandomCard()
 	{
-		masterDeck.DrawRandomCard(testDeck);
+		masterDeck.DrawAndMoveRandomCard(testDeck);
 		testDeck.Refresh();
 	}
 
 	public void RemoveRandomCard()
 	{
-		testDeck.DrawRandomCard(masterDeck);
+		testDeck.DrawAndMoveRandomCard(masterDeck);
 		testDeck.Refresh();
 	}
 }

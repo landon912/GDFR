@@ -72,7 +72,7 @@ public class GDFRNetworkGameManager : MonoBehaviour
 
         for (int i = 0; i < data.cardIds.Length; i++)
         {
-            Card c = fromDeck.DrawExactCard(data.cardIds[i]);
+            Card c = fromDeck.GetExactCard(data.cardIds[i]);
             Deck toDeck = mController.GetDeckFromId(data.toDeckIds[i]);
             yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
         }
@@ -206,13 +206,13 @@ public class GDFRNetworkGameManager : MonoBehaviour
         Deck fromDeck = mController.GetDeckFromId(phase3DrawData.fromDeck);
         for (int i = 0; i < phase3DrawData.cardIds.Length; i++)
         {
-            Card c = fromDeck.DrawExactCard(phase3DrawData.cardIds[i]);
+            Card c = fromDeck.GetExactCard(phase3DrawData.cardIds[i]);
             c.CurrentRace = Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule ? Race.Goblin : Race.Fairy;
             Deck toDeck = mController.GetDeckFromId(phase3DrawData.toDeckIds[i]);
             yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
         }
 
-        mController.fairyRingDeck.Refresh();
+        //mController.fairyRingDeck.Refresh();
     }
 
     public IEnumerator State_Network_Initiative()
@@ -292,10 +292,12 @@ public class GDFRNetworkGameManager : MonoBehaviour
 
     private void NetOnGroupDrawMessage(NetworkMessage message)
     {
+        Debug.Log("getting group draw data");
+
         //cache command until we need it
         GroupedDrawMessage data = message.ReadMessage<GroupedDrawMessage>();
 
-        switch(data.groupPhase)
+        switch (data.groupPhase)
         {
             case GroupDrawPhase.Phase1:
                 phase1DrawData = data;
@@ -311,6 +313,8 @@ public class GDFRNetworkGameManager : MonoBehaviour
 
     private void NetOnRecieveInitiative(NetworkMessage message)
     {
+        Debug.Log("getting data");
+
         IntMessage data = message.ReadMessage<IntMessage>();
 
         initiativeData = data;
@@ -318,15 +322,22 @@ public class GDFRNetworkGameManager : MonoBehaviour
 
     private void NetOnCardPlayed(NetworkMessage message)
     {
+        Debug.Log("getting data");
+
         CardPlayedMessage mess = message.ReadMessage<CardPlayedMessage>();
 
-        Card card = mController.playerDecks[mController.PlayersPosition[mController.currentPlayer]].DrawExactCard(mess.cardPlayed);
+        Card card = mController.playerDecks[mController.PlayersPosition[mController.currentPlayer]].GetExactCard(mess.cardPlayed);
 
         mController.callEvent("CardPicked", card);
     }
 
     private void NetOnStartNewGame(NetworkMessage message)
     {
+        phase1DrawData = null;
+        phase2DrawData = null;
+        phase3DrawData = null;
+        initiativeData = null;
+
         StartCoroutine(mController.State_Offline_StartNewGame());
     }
 }

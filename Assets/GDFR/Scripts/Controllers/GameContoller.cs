@@ -11,13 +11,13 @@ public class GameContoller : RxFx_FSM
 {
     public GameObject GiveUpButtonGameObject;
     public Object mainDeckXmlData;
-    public Deck swapDeck;
+    //public Deck swapDeck;
     public Deck mainDeck;
     public Deck starDeck;
     public Deck fairyRingDeck;
+    public Deck playedCardDeck;
     public Deck[] playerDecks;
     public Avatar[] avatars;
-    public Deck playedCardDeck;
     public int currentPlayer;
     public Card selectedCard;
     public Card playedCard;
@@ -79,13 +79,11 @@ public class GameContoller : RxFx_FSM
 
         mainDeck.Id = 0;
         mDeckDict.Add(mainDeck.Id, mainDeck);
-        swapDeck.Id = 1;
-        mDeckDict.Add(swapDeck.Id, swapDeck);
-        starDeck.Id = 2;
+        starDeck.Id = 1;
         mDeckDict.Add(starDeck.Id, starDeck);
-        fairyRingDeck.Id = 3;
+        fairyRingDeck.Id = 2;
         mDeckDict.Add(fairyRingDeck.Id, fairyRingDeck);
-        playedCardDeck.Id = 4;
+        playedCardDeck.Id = 3;
         mDeckDict.Add(playedCardDeck.Id, playedCardDeck);
 
         for (int i = 0; i < playerDecks.Length; i++)
@@ -231,6 +229,7 @@ public class GameContoller : RxFx_FSM
             avatar.enabled = false;
         }
 
+        mPlayersPosition.Clear();
         switch (Toolbox.Instance.gameSettings.numberOfPlayers)
         {
             case 1:
@@ -253,6 +252,7 @@ public class GameContoller : RxFx_FSM
                 break;
         }
 
+        mManuallyControlledDecks.Clear();
         for (int playerIdx = 0; playerIdx < mPlayersPosition.Count; playerIdx++)
         {
             int position = mPlayersPosition[playerIdx];
@@ -299,10 +299,11 @@ public class GameContoller : RxFx_FSM
             playerDecks[p].ReturnAllCards(mainDeck);
             playerDecks[p].DeckUiEnabled(false);
         }
+        mainDeck.ReturnAllCards(mainDeck); //this is needed to reset the drawable states
         fairyRingDeck.ReturnAllCards(mainDeck);
-        swapDeck.ReturnAllCards(mainDeck);
         starDeck.ReturnAllCards(mainDeck);
         playedCardDeck.ReturnAllCards(mainDeck);
+
         mainDeck.CollapseDeck();
 
         string rulesMessage = "";
@@ -420,7 +421,7 @@ public class GameContoller : RxFx_FSM
                 c.CurrentRace = Race.Fairy;
                 if (c.fairyStarBorder)
                 {
-                    c.DrawCardInstant(starDeck);
+                    c.MoveToNewDeckInstant(starDeck);
                 }
             }
             else
@@ -428,7 +429,7 @@ public class GameContoller : RxFx_FSM
                 c.CurrentRace = Race.Goblin;
                 if (c.goblinStarBorder)
                 {
-                    c.DrawCardInstant(starDeck);
+                    c.MoveToNewDeckInstant(starDeck);
                 }
             }
         }
@@ -533,14 +534,7 @@ public class GameContoller : RxFx_FSM
     {
         Debug.Log("Player " + currentPlayer + "- Position: " + mPlayersPosition[currentPlayer] + " - State: DrawPhase3");
 
-        // If the number of players is above 2 (equal 3), return remaining star cards to the mainDeck.
-        if (Toolbox.Instance.gameSettings.numberOfPlayers > 2)
-        {
-            foreach (Card c in starDeck.GetCardList())
-            {
-                c.DrawCardInstant(mainDeck);
-            }
-        }
+        //starDeck.ReturnAllCards(mainDeck);
 
         if (GDFRNetworkManager.Instance.IsNetworkGame())
         {
@@ -997,7 +991,8 @@ public class GameContoller : RxFx_FSM
             yield return StartCoroutine(uiFunctionScript.HideGameOverMessage());
         }
 
-        CallGameReset();
+        //reset
+        callEvent("SettingUpRules");
     }
 
     IEnumerator State_ChangePlayer(params object[] data)
