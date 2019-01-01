@@ -5,12 +5,12 @@ public class Card : MonoBehaviour
 {
     public int Id = -1;
 
-    private bool _cardSparkle;
-    private bool isFront = true;
+    private bool mCardSparkle;
+    private bool mIsFront = true;
 
-    private UITweener[] tweenerList;
-    private int[] widgetDefaultDepth;
-    private UIWidget[] widgetList;
+    private UITweener[] mTweenerList;
+    private UIPanel mUiPanel;
+    private UIWidget[] mWidgetList;
 
     private Race mCurrentRace;
     private string mNameSound = "Not Set";
@@ -127,10 +127,10 @@ public class Card : MonoBehaviour
     {
         set
         {
-            _cardSparkle = value;
-            cardSparkleEmitter.enabled = _cardSparkle;
+            mCardSparkle = value;
+            cardSparkleEmitter.enabled = mCardSparkle;
         }
-        get { return _cardSparkle; }
+        get { return mCardSparkle; }
     }
 
     private void Start()
@@ -144,15 +144,12 @@ public class Card : MonoBehaviour
     private void Awake()
     {
         transform.localScale = scaleTransform.localScale = new Vector3(1, 1, 1);
-        tweenerList = GetComponentsInChildren<UITweener>();
-        cardSparkle = _cardSparkle;
+        mTweenerList = GetComponentsInChildren<UITweener>();
+        cardSparkle = mCardSparkle;
 
-        widgetList = GetComponentsInChildren<UIWidget>(true);
+        mWidgetList = GetComponentsInChildren<UIWidget>(true);
 
-        //Capture default z
-        widgetDefaultDepth = new int[widgetList.Length];
-        for (var w = 0; w < widgetList.Length; w++)
-            widgetDefaultDepth[w] = widgetList[w].depth;
+        mUiPanel = GetComponent<UIPanel>();
 
         text.transform.position = defaultLabelPosition.transform.position;
     }
@@ -173,7 +170,7 @@ public class Card : MonoBehaviour
             MoveLabel(labelPositionOnFlip.transform, 1f);
         }
 
-        if (isFront)
+        if (mIsFront)
             cardFlipTweenerA.PlayForward();
         else
             cardFlipTweenerA.PlayReverse();
@@ -182,7 +179,7 @@ public class Card : MonoBehaviour
 
         text.gameObject.SetActive(true);
 
-        isFront = !isFront;
+        mIsFront = !mIsFront;
 
         if (mCurrentRace == Race.Fairy)
         {
@@ -208,7 +205,7 @@ public class Card : MonoBehaviour
             SetSymbol(fairySymbol);
         }
 
-        scaleTransform.localScale = isFront ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
+        scaleTransform.localScale = mIsFront ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
 
 
         yield return new WaitForSeconds(0.5f);
@@ -360,8 +357,7 @@ public class Card : MonoBehaviour
 
     private void UpdateDepth()
     {
-        for (int w = 0; w < widgetList.Length; w++)
-             widgetList[w].depth = widgetDefaultDepth[w] + Depth + DeckDepthOffset;
+        mUiPanel.depth = Depth + DeckDepthOffset;
     }
 
     public void SymbolMatchEffect()
@@ -371,7 +367,7 @@ public class Card : MonoBehaviour
 
     public void PlayTweenGroup(int index)
     {
-        foreach (var t in tweenerList)
+        foreach (var t in mTweenerList)
         {
             if (t.tweenGroup == index)
             {

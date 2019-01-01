@@ -205,6 +205,8 @@ public class Deck : MonoBehaviour
         {
             c.GetComponent<UIButton>().enabled = false;
             c.GetComponent<Collider>().enabled = false;
+            c.DeckDepthOffset = 0;
+            c.Depth = 0;
             c.MoveToNewDeck(toDeck);
         }
     }
