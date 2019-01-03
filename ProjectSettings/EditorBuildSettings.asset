@@ -15,12 +15,12 @@ EditorBuildSettings:
     path: Assets/GDFR/Scenes/NewGame.unity
     guid: 77596e6ea2bbc1147826560791d30b7a
   - enabled: 1
+    path: Assets/GDFR/Scenes/Lobby.unity
+    guid: 80787f94e63882649a5763af2c4fa2ec
+  - enabled: 1
     path: Assets/GDFR/Scenes/MainGame.unity
-    guid: 7b96b54b6e73b3148830454dba434cc8
+    guid: 3f633c0b0118f8a4389618a0f7f140e9
   - enabled: 1
     path: Assets/GDFR/Scenes/Help_Additive.unity
     guid: 2fd26721ae4bb414a8ce172e05d8fd08
-  - enabled: 1
-    path: Assets/GDFR/Scenes/Lobby.unity
-    guid: 80787f94e63882649a5763af2c4fa2ec
   m_configObjects: {}

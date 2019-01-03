@@ -6,7 +6,14 @@ public class AudioEvents : MonoBehaviour
 {
     private const string FAIRY_LAUGH = "Fairy Laugh", GOBLIN_LAUGH = "Goblin Laugh";
 
-	void OnEnable()
+    //private AudioController gameAudioController;
+
+    //private void Awake()
+    //{
+    //    gameAudioController = GameObject.FindWithTag("GameAudioController").GetComponent<AudioController>();
+    //}
+
+    void OnEnable()
 	{
 	    EventReceiver.NewGameStartedEvent += OnNewGameStarted;
 		EventReceiver.CardMovedEvent += OnCardMoved;

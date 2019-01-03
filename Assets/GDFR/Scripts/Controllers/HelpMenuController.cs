@@ -28,7 +28,7 @@ public class HelpMenuController : MonoBehaviour
         GameContoller gameContoller = FindObjectOfType<GameContoller>();
         if (gameContoller)
         {
-            gameContoller.mainUICamera.enabled = false;
+            gameContoller.mainGUIObj.SetActive(false);
         }
 
         Time.timeScale = 0;
@@ -61,7 +61,7 @@ public class HelpMenuController : MonoBehaviour
         GameContoller gameContoller = FindObjectOfType<GameContoller>();
         if (gameContoller)
         {
-            gameContoller.mainUICamera.enabled = true;
+            gameContoller.mainGUIObj.SetActive(true);
         }
 
         Time.timeScale = 1;

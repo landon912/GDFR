@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -24,9 +25,12 @@ public class GameContoller : RxFx_FSM
     public float dealSpeed = 0.1f;
     public UI_Functions uiFunctionScript;
     public MonoBehaviour[] starEffectActivateList;
-    public UILabel turnsCounter;
+    public TextMeshProUGUI turnsCounter;
     public ButtonSpriteSwaper muteButtonSpriteSwaper;
-    public UICamera mainUICamera;
+    public GameObject mainGUIObj;
+    public Sprite[] cardSprites;
+
+    public Dictionary<string, Sprite> cardSpriteDict = new Dictionary<string, Sprite>();
 
     private int mTurnsCount;
     private AIModule mAIModule;
@@ -45,6 +49,12 @@ public class GameContoller : RxFx_FSM
 
     void Awake()
     {
+        //build card sprite dictionary
+        foreach(Sprite s in cardSprites)
+        {
+            cardSpriteDict.Add(s.name, s);
+        }
+
         new FSM_Event("StartEvent", State_LoadData);
         new FSM_Event("SettingUpRules", State_SettingUpRules);
         new FSM_Event("GameReset", State_GameReset);
@@ -164,7 +174,7 @@ public class GameContoller : RxFx_FSM
     private void SetTurnCounterText(string text)
     {
         turnsCounter.text = text;
-        turnsCounter.transform.GetChild(0).GetComponent<UILabel>().text = text;
+        //turnsCounter.transform.GetChild(0).GetComponent<UILabel>().text = text;
     }
 
     #endregion
@@ -689,8 +699,8 @@ public class GameContoller : RxFx_FSM
         // Is it AI ?
         if (Toolbox.Instance.playerProfiles[currentPlayer].type == PlayersProfile.Type.AI)
         {
-            Debug.Log("would call AI Move");
-            //callEvent("AIMove");
+            //Debug.Log("would call AI Move");
+            callEvent("AIMove");
         }
         else
         {

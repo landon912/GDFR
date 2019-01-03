@@ -1,22 +1,25 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
-[RequireComponent(typeof(UIButton))]
+[RequireComponent(typeof(Button))]
 public class ButtonSpriteSwaper : MonoBehaviour
 {
-    public string initial;
-    public string alternative;
+    public Sprite initial;
+    public Sprite alternative;
 
     private bool mIsInitial = true;
-    private UIButton mButton;
+    private Image mImage;
 
     void Awake()
     {
-        mButton = GetComponent<UIButton>();
+        mImage = GetComponent<Image>();
     }
 
     public void Swap()
     {
-        mButton.normalSprite = mIsInitial ? alternative : initial;
+        //initial.enabled = !mIsInitial;
+        //alternative.enabled = mIsInitial;
+        mImage.sprite = mIsInitial ? alternative : initial;
         mIsInitial = !mIsInitial;
     }
 }
