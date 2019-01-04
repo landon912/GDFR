@@ -23,10 +23,9 @@ public class GDFRNetworkGameManager : MonoBehaviour
     private GroupedDrawMessage phase3DrawData;
     private IntMessage initiativeData;
 
-
     private void Awake()
     {
-        mController = FindObjectOfType<GameContoller>();
+        mController = GameContoller.Instance;
     }
 
     private void OnEnable()

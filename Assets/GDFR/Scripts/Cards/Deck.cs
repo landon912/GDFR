@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -13,12 +14,12 @@ public class Deck : MonoBehaviour
 
     private readonly List<Card> mCards = new List<Card>();
     private List<Card> mDrawableCards { get; set; } = new List<Card>();
-    public Transform deckTransform;
+    public RectTransform deckTransform;
 
     public Object xmlDataFile;
     public GameObject cardPrefab;
     public TweenScale deckScaleTweener = null;
-    UI_DeckGrid deckGrid;
+    public UI_DeckGrid deckGrid;
     public bool _VisuallyActive;
     public float deckActiveWidthLimit = 600f;
     float deckInActiveWidthLimit = 600f;
@@ -58,9 +59,9 @@ public class Deck : MonoBehaviour
 
     void Awake()
     {
-        deckGrid = gameObject.GetComponentInChildren<UI_DeckGrid>();
+        //deckGrid = gameObject.GetComponentInChildren<UI_DeckGrid>();
         deckInActiveWidthLimit = deckGrid.widthLimit;
-        deckTransform = deckGrid.gameObject.transform;
+        //deckTransform = deckGrid.gameObject.GetComponent<RectTransform>();
         if (xmlDataFile != null)
             LoadDeckData(xmlDataFile);
         Refresh();
@@ -188,11 +189,10 @@ public class Deck : MonoBehaviour
 
     public void DeckUiEnabled(bool isEnabled)
     {
-        UIButton[] buttons = deckTransform.gameObject.GetComponentsInChildren<UIButton>();
-        foreach (UIButton b in buttons)
+        Button[] buttons = deckTransform.gameObject.GetComponentsInChildren<Button>();
+        foreach (Button b in buttons)
         {
-            b.enabled = isEnabled;
-            b.GetComponent<Collider>().enabled = isEnabled;
+            b.interactable = isEnabled;
         }
     }
 
@@ -203,8 +203,7 @@ public class Deck : MonoBehaviour
         Card[] cardList = GetCardList();
         foreach (Card c in cardList)
         {
-            c.GetComponent<UIButton>().enabled = false;
-            c.GetComponent<Collider>().enabled = false;
+            c.GetComponent<Button>().interactable = false;
             c.DeckDepthOffset = 0;
             c.Depth = 0;
             c.MoveToNewDeck(toDeck);

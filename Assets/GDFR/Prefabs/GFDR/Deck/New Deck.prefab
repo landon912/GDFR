@@ -50,10 +50,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OwnerNetworkId: -1
-  deckTransform: {fileID: 0}
+  deckTransform: {fileID: 7437169046464655018}
   xmlDataFile: {fileID: 0}
   cardPrefab: {fileID: 100000, guid: 189a22849b6e744499c1e7035c57a7d8, type: 3}
   deckScaleTweener: {fileID: 3661679306569165592}
+  deckGrid: {fileID: 3661679306575732470}
   _VisuallyActive: 0
   deckActiveWidthLimit: 750
   _zDepth: 0

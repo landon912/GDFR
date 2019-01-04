@@ -25,10 +25,9 @@ public class HelpMenuController : MonoBehaviour
     void Start()
     {
         //hide main game to stop you from being able to click on things
-        GameContoller gameContoller = FindObjectOfType<GameContoller>();
-        if (gameContoller)
+        if (GameContoller.Instance)
         {
-            gameContoller.mainGUIObj.SetActive(false);
+            GameContoller.Instance.mainGUIObj.SetActive(false);
         }
 
         Time.timeScale = 0;
@@ -58,10 +57,9 @@ public class HelpMenuController : MonoBehaviour
         }
 
         //bring back main game to allow you to click on things
-        GameContoller gameContoller = FindObjectOfType<GameContoller>();
-        if (gameContoller)
+        if (GameContoller.Instance)
         {
-            gameContoller.mainGUIObj.SetActive(true);
+            GameContoller.Instance.mainGUIObj.SetActive(true);
         }
 
         Time.timeScale = 1;

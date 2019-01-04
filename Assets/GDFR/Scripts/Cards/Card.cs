@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
@@ -9,8 +11,8 @@ public class Card : MonoBehaviour
     private bool mIsFront = true;
 
     private UITweener[] mTweenerList;
-    private UIPanel mUiPanel;
-    private UIWidget[] mWidgetList;
+    private Canvas mCanvas;
+    //private UIWidget[] mWidgetList;
 
     private Race mCurrentRace;
     private string mNameSound = "Not Set";
@@ -25,7 +27,7 @@ public class Card : MonoBehaviour
 
     public nEmitter cardSparkleEmitter = null;
     public GameObject defaultLabelPosition;
-    public UILabel fadingFlipText;
+    public TextMeshProUGUI fadingFlipText;
     public bool fairyStarBorder = false;
     public string fairyText = "Fairy Test";
     public bool goblinStarBorder = false;
@@ -45,15 +47,15 @@ public class Card : MonoBehaviour
     public string sunSpriteName = "SYMBOL_Sun";
     public string frogSpriteName = "SYMBOL_Frog";
 
-    public Transform scaleTransform = null;
-    public UISprite shadowSprite;
+    public RectTransform scaleTransform = null;
+    public Image shadowSprite;
 
-    public UISprite sprite;
+    public Image sprite;
     public bool starBorder = false;
     public CardStars starsScript;
-    public UISprite symbolGlowSprite;
-    public UISprite symbolSprite;
-    public UILabel text;
+    public Image symbolGlowSprite;
+    public Image symbolSprite;
+    public TextMeshProUGUI text;
 
     public const int NUMBERS_FONT_SIZE = 40;
     public const int NUMBERS_END_LABEL_X_POSITION = 56;
@@ -137,8 +139,8 @@ public class Card : MonoBehaviour
     {
         ChangeRace(mCurrentRace);
         //mCurrentRace = Race.Fairy;
-        var button = GetComponent<UIButton>();
-        button.normalSprite = null;
+        //var button = GetComponent<UIButton>();
+        //button.normalSprite = null;
     }
 
     private void Awake()
@@ -147,11 +149,11 @@ public class Card : MonoBehaviour
         mTweenerList = GetComponentsInChildren<UITweener>();
         cardSparkle = mCardSparkle;
 
-        mWidgetList = GetComponentsInChildren<UIWidget>(true);
+        //mWidgetList = GetComponentsInChildren<UIWidget>(true);
 
-        mUiPanel = GetComponent<UIPanel>();
+        mCanvas = GetComponent<Canvas>();
 
-        text.transform.position = defaultLabelPosition.transform.position;
+        text.GetComponent<RectTransform>().position = defaultLabelPosition.GetComponent<RectTransform>().position;
     }
 
     public IEnumerator Flip(bool wasFromStar)
@@ -218,19 +220,19 @@ public class Card : MonoBehaviour
         switch (symbol)
         {
             case Symbol.Sun:
-                symbolSprite.spriteName = sunSpriteName;
+                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[sunSpriteName];
                 break;
             case Symbol.Moon:
-                symbolSprite.spriteName = moonSpriteName;
+                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[moonSpriteName];
                 break;
             case Symbol.Mushroom:
-                symbolSprite.spriteName = mushroomSpriteName;
+                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[mushroomSpriteName];
                 break;
             case Symbol.Frog:
-                symbolSprite.spriteName = frogSpriteName;
+                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[frogSpriteName];
                 break;
         }
-        symbolGlowSprite.spriteName = symbolSprite.spriteName + "_Glow";
+        symbolGlowSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[symbolSprite.sprite.name + "_Glow"];
     }
 
     public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
@@ -245,7 +247,7 @@ public class Card : MonoBehaviour
         switch (race)
         {
             case Race.Fairy:
-                sprite.spriteName = fairySpriteName;
+                sprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[fairySpriteName];
                 mCurrentRace = Race.Fairy;
                 CurrentRhyme = fairyRhyme;
                 CurrentSymbol = fairySymbol;
@@ -263,7 +265,7 @@ public class Card : MonoBehaviour
                 //Debug.Log ("HIT  Race Set To Fairy");
                 break;
             case Race.Goblin:
-                sprite.spriteName = goblinSpriteName;
+                sprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[goblinSpriteName];
                 mCurrentRace = Race.Goblin;
                 CurrentRhyme = goblinRhyme;
                 CurrentSymbol = goblinSymbol;
@@ -298,9 +300,9 @@ public class Card : MonoBehaviour
         if (isNumbersVariant)
         {
             text.fontSize = NUMBERS_FONT_SIZE;
-            text.alignment = NGUIText.Alignment.Right;
+            text.alignment = TextAlignmentOptions.Right;
             fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
-            fadingFlipText.alignment = NGUIText.Alignment.Right;
+            fadingFlipText.alignment = TextAlignmentOptions.Right;
             labelPositionOnFlip.transform.localPosition = new Vector3(NUMBERS_END_LABEL_X_POSITION,labelPositionOnFlip.transform.localPosition.y,labelPositionOnFlip.transform.localPosition.z);
         }
         else
@@ -357,7 +359,7 @@ public class Card : MonoBehaviour
 
     private void UpdateDepth()
     {
-        mUiPanel.depth = Depth + DeckDepthOffset;
+        mCanvas.sortingOrder = Depth + DeckDepthOffset;
     }
 
     public void SymbolMatchEffect()
