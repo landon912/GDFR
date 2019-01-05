@@ -2927,14 +2927,6 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
-      propertyPath: xmlDataFile
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
-      propertyPath: playSparklesOnDraw
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
       propertyPath: limitWidth
       value: 1
@@ -2969,6 +2961,14 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
+      propertyPath: xmlDataFile
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
+      propertyPath: playSparklesOnDraw
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
@@ -3128,14 +3128,14 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
-      propertyPath: xmlDataFile
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6715731615915969685, guid: e1879abcd9d92ea429b1fa88d0b336e4,
         type: 3}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
+      propertyPath: xmlDataFile
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
@@ -4270,18 +4270,6 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
-      propertyPath: deckTransform
-      value: 
-      objectReference: {fileID: 1859291112}
-    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
-      propertyPath: playSparklesOnDraw
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
-      propertyPath: deckGrid
-      value: 
-      objectReference: {fileID: 1859291114}
     - target: {fileID: 11400000, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
       propertyPath: widthLimit
       value: 675
@@ -4302,13 +4290,25 @@ PrefabInstance:
     - target: {fileID: 6715731615915969685, guid: e1879abcd9d92ea429b1fa88d0b336e4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -750
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6715731615915969685, guid: e1879abcd9d92ea429b1fa88d0b336e4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
+      propertyPath: deckTransform
+      value: 
+      objectReference: {fileID: 1859291112}
+    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
+      propertyPath: playSparklesOnDraw
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
+      propertyPath: deckGrid
+      value: 
+      objectReference: {fileID: 1859291114}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1879abcd9d92ea429b1fa88d0b336e4, type: 3}
 --- !u!224 &1859291111 stripped

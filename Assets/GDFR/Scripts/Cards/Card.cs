@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Card : MonoBehaviour
@@ -12,7 +13,6 @@ public class Card : MonoBehaviour
 
     private UITweener[] mTweenerList;
     private Canvas mCanvas;
-    //private UIWidget[] mWidgetList;
 
     private Race mCurrentRace;
     private string mNameSound = "Not Set";
@@ -57,10 +57,10 @@ public class Card : MonoBehaviour
     public Image symbolSprite;
     public TextMeshProUGUI text;
 
-    public const int NUMBERS_FONT_SIZE = 40;
-    public const int NUMBERS_END_LABEL_X_POSITION = 56;
-    public const int REGULAR_FONT_SIZE = 23;
-    public const int REGULAR_END_LABEL_X_POSITION = 84;    
+    public const int NUMBERS_FONT_SIZE = 60;
+    public const int NUMBERS_END_LABEL_X_POSITION = 90;
+    public const int REGULAR_FONT_SIZE = 36;
+    public const int REGULAR_END_LABEL_X_POSITION = 0;    
 
     public bool StarsShowing
     {
@@ -100,6 +100,8 @@ public class Card : MonoBehaviour
 
     public string NameSound { get { return mNameSound; } }
 
+    private UnityAction localCardSelectedCallback;
+
     private int _depth;
     public int Depth
     {
@@ -138,9 +140,6 @@ public class Card : MonoBehaviour
     private void Start()
     {
         ChangeRace(mCurrentRace);
-        //mCurrentRace = Race.Fairy;
-        //var button = GetComponent<UIButton>();
-        //button.normalSprite = null;
     }
 
     private void Awake()
@@ -149,11 +148,20 @@ public class Card : MonoBehaviour
         mTweenerList = GetComponentsInChildren<UITweener>();
         cardSparkle = mCardSparkle;
 
-        //mWidgetList = GetComponentsInChildren<UIWidget>(true);
+        mCanvas = gameObject.AddComponent<Canvas>();
+        mCanvas.overrideSorting = true;
 
-        mCanvas = GetComponent<Canvas>();
+        gameObject.AddComponent<GraphicRaycaster>();
+
+        localCardSelectedCallback += CardSelectedReplicator;
+        GetComponent<Button>().onClick.AddListener(localCardSelectedCallback);
 
         text.GetComponent<RectTransform>().position = defaultLabelPosition.GetComponent<RectTransform>().position;
+    }
+
+    private void CardSelectedReplicator()
+    {
+        UI_Event_Receiver.TriggerCardSelectedEvent(this);
     }
 
     public IEnumerator Flip(bool wasFromStar)
@@ -359,6 +367,7 @@ public class Card : MonoBehaviour
 
     private void UpdateDepth()
     {
+        mCanvas.overrideSorting = true;
         mCanvas.sortingOrder = Depth + DeckDepthOffset;
     }
 
