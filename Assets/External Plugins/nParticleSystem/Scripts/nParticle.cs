@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 public class nParticle : MonoBehaviour {
 	
@@ -7,13 +7,13 @@ public class nParticle : MonoBehaviour {
 	public float startSize = 1f;
 	public AnimationCurve sizeOverLife;
 	Vector3 velocity;
-	UISprite sprite;
+	Image sprite;
 	Vector3 position;
 	nPhysics physics;
 	nKiller killer;
 
 	void Awake(){
-		sprite = GetComponent<UISprite>();
+		sprite = GetComponent<Image>();
 		sprite.enabled = false;
 		physics = GetComponent<nPhysics>();
 		killer = GetComponent<nKiller>();
