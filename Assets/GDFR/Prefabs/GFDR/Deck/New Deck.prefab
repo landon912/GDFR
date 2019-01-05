@@ -57,7 +57,7 @@ MonoBehaviour:
   deckScaleTweener: {fileID: 3661679306569165592}
   deckGrid: {fileID: 3661679306575732470}
   _VisuallyActive: 0
-  deckActiveWidthLimit: 750
+  deckActiveWidthLimit: 1000
   _zDepth: 0
   playSparklesOnDraw: 1
 --- !u!1 &3661679306569165590
@@ -112,9 +112,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxPerLine: 20
-  _cellWidth: 135
-  _cellHeight: 120
-  widthLimit: 500
+  _cellWidth: 190
+  _cellHeight: 210
+  widthLimit: 600
   limitWidth: 1
   hJustify: 0
   vJustify: 0

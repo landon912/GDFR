@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxPerLine: 20
-  _cellWidth: 200
-  _cellHeight: 300
+  _cellWidth: 190
+  _cellHeight: 210
   widthLimit: 600
   limitWidth: 1
   hJustify: 1
