@@ -52,7 +52,8 @@ MonoBehaviour:
   OwnerNetworkId: -1
   deckTransform: {fileID: 7437169046464655018}
   xmlDataFile: {fileID: 0}
-  cardPrefab: {fileID: 100000, guid: 189a22849b6e744499c1e7035c57a7d8, type: 3}
+  cardPrefab: {fileID: 7977685212043210753, guid: bc1ecda25c426b246bb5e81e68626c97,
+    type: 3}
   deckScaleTweener: {fileID: 3661679306569165592}
   deckGrid: {fileID: 3661679306575732470}
   _VisuallyActive: 0
@@ -95,7 +96,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 140, y: -120}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3661679306575732470

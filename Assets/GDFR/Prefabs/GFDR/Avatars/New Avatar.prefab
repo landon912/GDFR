@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2644662912462623743}
   - component: {fileID: 2644662912462623713}
   - component: {fileID: 2644662912462623742}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 18, y: 0}
-  m_SizeDelta: {x: 350, y: 50}
+  m_AnchoredPosition: {x: 20, y: 0}
+  m_SizeDelta: {x: 480, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2644662912462623713
 CanvasRenderer:
@@ -94,8 +94,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 2644662913055567364}
   - component: {fileID: 2644662913055567366}
   - component: {fileID: 2644662913055567367}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,7 +196,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 12, y: -48}
-  m_SizeDelta: {x: 84, y: 84}
+  m_SizeDelta: {x: 168, y: 168}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2644662913055567366
 CanvasRenderer:
@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 2644662913198187677}
   - component: {fileID: 2644662913198187679}
   - component: {fileID: 2644662913198187676}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: New Avatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -298,19 +298,6 @@ MonoBehaviour:
   avatarSprite: {fileID: 2644662913055567367}
   avatarGlowSprite: {fileID: 2644662913810836007}
   avatarLabel: {fileID: 2644662912462623742}
-  avatars:
-  - {fileID: 21300000, guid: bb4ec4bc8237a764dbcfd2e0494975bf, type: 3}
-  - {fileID: 21300000, guid: 998a72f1556a57e40a8948b9e7cda362, type: 3}
-  - {fileID: 21300000, guid: 3da6ed77dd765fe47b8ca961b28981de, type: 3}
-  - {fileID: 21300000, guid: 065d109f6b200054084d52b2785699da, type: 3}
-  - {fileID: 21300000, guid: 32ed267118387254db116cc5f3251f48, type: 3}
-  - {fileID: 21300000, guid: 9cc0867309009ef4689294d05af8a385, type: 3}
-  - {fileID: 21300000, guid: 7121e252ec11e734f83b1cd789464ddd, type: 3}
-  - {fileID: 21300000, guid: 3d087b8def4cab74f9d2b7250d245138, type: 3}
-  - {fileID: 21300000, guid: 135d97c008b348741bffed225587e47f, type: 3}
-  - {fileID: 21300000, guid: d0c418a6fbc5a4a42b59400c762264f1, type: 3}
-  - {fileID: 21300000, guid: 4043b431b20e6104db20a7d1474738c4, type: 3}
-  - {fileID: 21300000, guid: 9021b68d195fce543a8fa80ef91d8b69, type: 3}
   _name: Avatar
   _spriteName: Avatar_01
 --- !u!1 &2644662913810836005
@@ -324,7 +311,7 @@ GameObject:
   - component: {fileID: 2644662913810836004}
   - component: {fileID: 2644662913810836006}
   - component: {fileID: 2644662913810836007}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +335,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 12, y: -48}
-  m_SizeDelta: {x: 84, y: 84}
+  m_SizeDelta: {x: 168, y: 168}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2644662913810836006
 CanvasRenderer:
