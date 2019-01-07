@@ -51,54 +51,50 @@ public class UI_DeckGrid : UIWidgetContainer
 	{
 		if(!enabled)
 		{
-			foreach(Transform tr in transform)
-				tr.localPosition = Vector3.zero;
+			foreach(RectTransform tr in transform)
+				tr.anchoredPosition3D = Vector3.zero;
 			return;
 		}
-		//Debug.Log("Refreshed");
+
+        const float TWEEN_SPEED = 0.33f;
+
 		int count = transform.childCount;
 		for(int c=0;c<count;c++)
 		{
-			Vector3 newPosition = new Vector3(GetGridPosition(c).x,GetGridPosition(c).y,0f);
 			Card card = transform.GetChild(c).GetComponent<Card>();
-			TweenPosition tp = transform.GetChild(c).gameObject.GetComponent<TweenPosition>();
-			TweenScale ts = transform.GetChild(c).gameObject.GetComponent<TweenScale>();
-			TweenRotation tr = transform.GetChild(c).gameObject.GetComponent<TweenRotation>();
-			tp.from = transform.GetChild(c).localPosition;
-			ts.from = transform.GetChild(c).localScale;
-			tr.from = transform.GetChild(c).localEulerAngles;
-			tp.to = newPosition;
-			ts.to = new Vector3(1f,1f,1f);
-			tr.to = Vector3.zero;
-			tp.ResetToBeginning();
-			ts.ResetToBeginning();
-			tr.ResetToBeginning();
-			tp.enabled = true;
-			ts.enabled = true;
-			tr.enabled = true;
+
+            Vector3 to = new Vector3(GetGridPosition(c).x, GetGridPosition(c).y, 0f);
+
+            LeanTween.move(card.LocalRectTransform, to, TWEEN_SPEED);
+            LeanTween.rotateLocal(card.gameObject, Vector3.zero, TWEEN_SPEED);
+            LeanTween.scale(card.LocalRectTransform, Vector3.one, TWEEN_SPEED);
 
             //sets card's depth in comparison with the others
             if (hJustify==HorizontalJustify.Right)
 			{
-				card.Depth = /*(int)getYindex(c) + */ c * OFFSET_PER_CARD;
+				card.Depth = c * OFFSET_PER_CARD;
 			}
 			else
-		        card.Depth = /*(int)getYindex(c) + */ c * -OFFSET_PER_CARD;
+		        card.Depth = c * -OFFSET_PER_CARD;
 		}
 
-		if(positionTweener==null)
-			positionTweener = gameObject.GetComponent<TweenPosition>();
-		positionTweener.enabled = false;
+        Vector2 bounds = GetGridBounds();
+        RectTransform localRect = GetComponent<RectTransform>();
 
-		positionTweener.from = positionTweener.to = transform.localPosition; 
-		Vector2 bounds = GetGridBounds();
-		if(hJustify==HorizontalJustify.Center)
-			positionTweener.to.x = -(bounds.x-cellWidth)/2;
-		if(vJustify==VerticalJustify.Center)
-			positionTweener.to.y = (bounds.y-cellHeight) /2;
+        float x = localRect.anchoredPosition.x;
+        float y = localRect.anchoredPosition.y;
+        if(hJustify == HorizontalJustify.Center)
+        {
+            x = -(bounds.x - cellWidth) / 2;
+        }
+        if(vJustify == VerticalJustify.Center)
+        {
+            y = (bounds.y - cellHeight) / 2;
+        }
 
-		positionTweener.ResetToBeginning();
-		positionTweener.enabled = true;
+        Vector3 toPos = new Vector3(x, y, localRect.anchoredPosition3D.z);
+
+        LeanTween.move(GetComponent<RectTransform>(), toPos, TWEEN_SPEED);
 	}
 
 	public Vector2 GetGridBounds()
@@ -147,7 +143,6 @@ public class UI_DeckGrid : UIWidgetContainer
 		float totalWidth = _cellWidth * cellCount;
 		if(totalWidth>=widthLimit && limitWidth)
 		{
-			//Debug.Log(this.transform.parent.name + " " + totalWidth);
 			limitFactor = widthLimit/totalWidth;
 		}
 		else
@@ -162,5 +157,4 @@ public class UI_DeckGrid : UIWidgetContainer
 			x*=-1f;
 		return new Vector3(x,y,0f);
 	}
-
 }

@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 
-public class AvatarButton : MonoBehaviour
+namespace GDFR
 {
-    [HideInInspector]
-    public int id;
-
-    public void OnClick()
+    public class AvatarButton : MonoBehaviour
     {
-        GetComponentInParent<AvatarSelector>().AvatarSelected(id);
+        [HideInInspector]
+        public int id;
+
+        public void OnClick()
+        {
+            GetComponentInParent<AvatarSelector>().AvatarSelected(id);
+        }
     }
 }

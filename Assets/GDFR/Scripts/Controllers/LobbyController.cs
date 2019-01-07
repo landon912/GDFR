@@ -7,8 +7,6 @@ public class LobbyController : MonoBehaviour
     public TweenAlpha mainAlphaTweener;
     public UILabel playerCountLabel;
 
-    private int mCurrentPlayerCount = -1;
-
     public void StartServer()
     {
         GDFRNetworkManager.Instance.SetupHost();

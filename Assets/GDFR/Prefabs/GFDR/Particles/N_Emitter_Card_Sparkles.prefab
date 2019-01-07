@@ -49,9 +49,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440ac1cac2af56847ac06babf22914a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particle: {fileID: 0}
+  particle: {fileID: 8991973695952167915, guid: 9e1f596614a9ccf4bacc8db229b191a4,
+    type: 3}
   renderTransform: {fileID: 0}
-  pps: 30
+  pps: 120
   lifeSpanRange: {x: 0.5, y: 1}
   startTime: 0
   stopTime: 2
@@ -68,5 +69,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minRange: {x: -0.2, y: -0.2, z: 0}
-  maxRange: {x: 0.2, y: 0.2, z: 0}
+  maxRange: {x: 1, y: 1, z: 0}
   hollow: 0

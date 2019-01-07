@@ -14,11 +14,16 @@ public class Deck : MonoBehaviour
 
     private readonly List<Card> mCards = new List<Card>();
     private List<Card> mDrawableCards { get; set; } = new List<Card>();
-    public RectTransform deckTransform;
+    
+    private RectTransform mLocalRectTransform;
+    public RectTransform LocalRectTransform
+    {
+        get { if(mLocalRectTransform == null) { mLocalRectTransform = GetComponent<RectTransform>(); } return mLocalRectTransform; }
+    }
 
     public Object xmlDataFile;
     public GameObject cardPrefab;
-    public TweenScale deckScaleTweener = null;
+    //public TweenScale deckScaleTweener = null;
     public UI_DeckGrid deckGrid;
     public bool _VisuallyActive;
     public float deckActiveWidthLimit = 600f;
@@ -45,10 +50,9 @@ public class Deck : MonoBehaviour
         get { return _zDepth; }
     }
 
-    public Transform deckPivot
-    {
-        get { return deckTransform; }
-    }
+    public RectTransform mDeckPivot;
+    public RectTransform DeckPivot { get { return mDeckPivot; }
+                                     private set { mDeckPivot = value; } }
 
     public bool playSparklesOnDraw = false;
 
@@ -59,9 +63,9 @@ public class Deck : MonoBehaviour
 
     void Awake()
     {
-        //deckGrid = gameObject.GetComponentInChildren<UI_DeckGrid>();
+        DeckPivot = transform.GetChild(0).GetComponent<RectTransform>();
+
         deckInActiveWidthLimit = deckGrid.widthLimit;
-        //deckTransform = deckGrid.gameObject.GetComponent<RectTransform>();
         if (xmlDataFile != null)
             LoadDeckData(xmlDataFile);
         Refresh();
@@ -72,13 +76,13 @@ public class Deck : MonoBehaviour
 
         if (VisActive)
         {
-            deckScaleTweener.PlayForward();
+            DeckPivot.LeanScale(Vector3.one, 2).setEase(DeckPivot.GetComponent<TweenCurve>().tweenCurves[0]);
             deckGrid.widthLimit = deckActiveWidthLimit;
             deckGrid.Reposition();
         }
         else
         {
-            deckScaleTweener.PlayReverse();
+            DeckPivot.LeanScale(new Vector3(0.6f, 0.6f, 0.6f), 2).setEase(DeckPivot.GetComponent<TweenCurve>().tweenCurves[0]);
             deckGrid.widthLimit = deckInActiveWidthLimit;
             deckGrid.Reposition();
         }
@@ -91,9 +95,9 @@ public class Deck : MonoBehaviour
 
     public void CollapseDeck()
     {
-        foreach (Transform t in transform)
+        foreach (RectTransform t in transform) //TODO: change to recttransform if nothing cast errors
         {
-            t.localPosition = new Vector3(0f, 0f, 0f);
+           t.anchoredPosition = Vector3.zero;
         }
     }
 
@@ -173,7 +177,6 @@ public class Deck : MonoBehaviour
 
             if (c.Id == id)
             {
-                //mCards.Remove(c);
                 return c;
             }
         }
@@ -189,7 +192,7 @@ public class Deck : MonoBehaviour
 
     public void DeckUiEnabled(bool isEnabled)
     {
-        Button[] buttons = deckTransform.gameObject.GetComponentsInChildren<Button>();
+        Button[] buttons = DeckPivot.gameObject.GetComponentsInChildren<Button>();
         foreach (Button b in buttons)
         {
             b.interactable = isEnabled;
@@ -213,13 +216,11 @@ public class Deck : MonoBehaviour
     public Card AddCard(Card card)
     {
         Deck fromDeck = card.parentDeck;
-        Transform newCardTrans = card.gameObject.transform;
-        Vector3 tempScale = newCardTrans.localScale;
 
         if (fromDeck != null)
             fromDeck.RemoveCard(card);
 
-        card.gameObject.transform.parent = deckTransform;
+        card.LocalRectTransform.SetParent(DeckPivot);
         card.parentDeck = this;
 
         mCards.Add(card);
@@ -242,13 +243,13 @@ public class Deck : MonoBehaviour
         if (card.parentDeck != null)
             card.parentDeck.RemoveCard(card);
 
-        card.gameObject.transform.parent = deckTransform;
+        card.LocalRectTransform.SetParent(DeckPivot);
         card.parentDeck = this;
 
         mCards.Add(card);
         mDrawableCards.Add(card);
 
-        card.transform.localPosition = Vector3.zero;
+        card.LocalRectTransform.anchoredPosition = Vector3.zero;
         card.DeckDepthOffset = zDepth;
 
         return card;
@@ -256,7 +257,7 @@ public class Deck : MonoBehaviour
 
     public Card RemoveCard(Card removeCard)
     {
-        removeCard.gameObject.transform.parent = null;
+        removeCard.LocalRectTransform.SetParent(null);
         mCards.Remove(removeCard);
         mDrawableCards.Remove(removeCard);
         return removeCard;
@@ -349,7 +350,7 @@ public class Deck : MonoBehaviour
                     {
                         cardScript.fairyText = cNode.InnerText;
                     }
-                    cardScript.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+                    cardScript.LocalRectTransform.localScale = new Vector3(1f, 1f, 1f);
                 }
             }
         }

@@ -1,22 +1,18 @@
 ﻿using System.Collections;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class UI_Functions : MonoBehaviour
 {
-
     public TextMeshProUGUI messageLabel;
     public GameObject gameEndButtons;
     public GameObject[] activateGameObject;
 
     public bool IsActive { private set; get; }
 
-    //private UILabel messageShadowLabel;
-
     void Start()
     {
         SetActivateGameObjectState(false);
-        //messageShadowLabel = messageLabel.transform.GetChild(0).GetComponent<UILabel>();
     }
 
     private void SetActivateGameObjectState(bool active, bool gameEnd = false)
@@ -38,14 +34,15 @@ public class UI_Functions : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
 
         messageLabel.text = messageString;
-        //messageShadowLabel.text = messageString;
         SetActivateGameObjectState(true);
 
-        PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
+        //PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
+        LeanTween.scale(messageLabel.GetComponent<RectTransform>(), Vector3.one, duration / 4.0f);
 
         yield return new WaitForSeconds(duration);
 
-        PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
+        //PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
+        LeanTween.scale(messageLabel.GetComponent<RectTransform>(), Vector3.zero, duration / 4.0f);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -57,7 +54,6 @@ public class UI_Functions : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
 
         messageLabel.text = message;
-        //messageShadowLabel.text = message;
 
         SetActivateGameObjectState(true, enableButtons);
 

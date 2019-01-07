@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
-using TMPro;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -16,14 +16,16 @@ public class GameContoller : RxFx_FSM
         get
         {
             if (mInstance == null)
+            {
                 mInstance = FindObjectOfType<GameContoller>();
+            }
+
             return mInstance;
         }
     }
 
     public GameObject GiveUpButtonGameObject;
     public Object mainDeckXmlData;
-    //public Deck swapDeck;
     public Deck mainDeck;
     public Deck starDeck;
     public Deck fairyRingDeck;
@@ -172,7 +174,6 @@ public class GameContoller : RxFx_FSM
     private void SetTurnCounterText(string text)
     {
         turnsCounter.text = text;
-        //turnsCounter.transform.GetChild(0).GetComponent<UILabel>().text = text;
     }
 
     #endregion
@@ -974,7 +975,7 @@ public class GameContoller : RxFx_FSM
         {
             yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!", false));
         }
-        else if(!GDFRNetworkManager.Instance.IsNetworkGame() || GDFRNetworkManager.Instance.IsLocalClientTheHost())
+        else if (!GDFRNetworkManager.Instance.IsNetworkGame() || GDFRNetworkManager.Instance.IsLocalClientTheHost())
         {
             yield return StartCoroutine(uiFunctionScript.SendGameOverMessage(Toolbox.Instance.playerProfiles[currentPlayer].name + " Wins!", true));
         }
@@ -996,7 +997,7 @@ public class GameContoller : RxFx_FSM
 
     public IEnumerator State_Offline_StartNewGame()
     {
-        if(uiFunctionScript.IsActive)
+        if (uiFunctionScript.IsActive)
         {
             yield return StartCoroutine(uiFunctionScript.HideGameOverMessage());
         }

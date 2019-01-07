@@ -1,45 +1,35 @@
 ﻿using UnityEngine;
 
-public class NewGameController : MonoBehaviour
+namespace GDFR
 {
-    Animator anim = null;
-
-    public GameObject MenuAudioController;
-
-    public void Start()
+    public class NewGameController : MonoBehaviour
     {
-        if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
+        public GameObject MenuAudioController;
+
+        public void Start()
         {
-            Instantiate(MenuAudioController);
+            if (GameObject.FindGameObjectWithTag("MenuAudioController") == null)
+            {
+                Instantiate(MenuAudioController);
+            }
         }
 
-        anim = GetComponent<Animator>();
-    }
-
-    public void backScene()
-    {
-        Debug.Log("back button");
-        Toolbox.Instance.gameObject.RemoveFromDontDestroyOnLoad();
-        GDFRNetworkManager.Instance.ShutdownAndLoadScene("MainMenu");
-    }
-    
-    public void animateButon()
-    {
-        if (null != anim)
+        public void BackScene()
         {
-            Debug.Log("Playing anim");
-            anim.Play("Pressed");
+            Debug.Log("back button");
+            Toolbox.Instance.gameObject.RemoveFromDontDestroyOnLoad();
+            GDFRNetworkManager.Instance.ShutdownAndLoadScene("MainMenu");
         }
-    }
 
-    public void startGame()
-    {
-        Debug.Log("startGame button");
-
-        if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
+        public void StartGame()
         {
-            FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
-            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("MainGame");
+            Debug.Log("startGame button");
+
+            if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
+            {
+                FindObjectOfType<GameSettingUIEvents>().SelectRealAIProfiles();
+                GDFRNetworkManager.Instance.ChangeSceneOnAllClients("MainGame");
+            }
         }
     }
 }

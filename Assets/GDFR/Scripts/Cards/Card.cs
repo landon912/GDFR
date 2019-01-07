@@ -13,7 +13,6 @@ public class Card : MonoBehaviour
 
     private UITweener[] mTweenerList;
     private Canvas mCanvas;
-
     private Race mCurrentRace;
     private string mNameSound = "Not Set";
 
@@ -26,7 +25,7 @@ public class Card : MonoBehaviour
     public TweenScale cardScaleTweener = null;
 
     public nEmitter cardSparkleEmitter = null;
-    public GameObject defaultLabelPosition;
+    public RectTransform defaultLabelPosition;
     public TextMeshProUGUI fadingFlipText;
     public bool fairyStarBorder = false;
     public string fairyText = "Fairy Test";
@@ -47,7 +46,7 @@ public class Card : MonoBehaviour
     public string sunSpriteName = "SYMBOL_Sun";
     public string frogSpriteName = "SYMBOL_Frog";
 
-    public RectTransform scaleTransform = null;
+    public RectTransform flipTransform = null;
     public Image shadowSprite;
 
     public Image sprite;
@@ -60,7 +59,7 @@ public class Card : MonoBehaviour
     public const int NUMBERS_FONT_SIZE = 60;
     public const int NUMBERS_END_LABEL_X_POSITION = 90;
     public const int REGULAR_FONT_SIZE = 36;
-    public const int REGULAR_END_LABEL_X_POSITION = 0;    
+    public const int REGULAR_END_LABEL_X_POSITION = 0;
 
     public bool StarsShowing
     {
@@ -90,8 +89,8 @@ public class Card : MonoBehaviour
     {
         get
         {
-            return CurrentSymbol == Symbol.Frog || CurrentSymbol == Symbol.Mushroom ? 
-                SymbolGroup.FrogMushroom: 
+            return CurrentSymbol == Symbol.Frog || CurrentSymbol == Symbol.Mushroom ?
+                SymbolGroup.FrogMushroom :
                 SymbolGroup.SunMoon;
         }
     }
@@ -99,6 +98,16 @@ public class Card : MonoBehaviour
     public Rhyme CurrentRhyme { get; private set; }
 
     public string NameSound { get { return mNameSound; } }
+
+    private RectTransform mRectTransform;
+    public RectTransform LocalRectTransform
+    {
+        get
+        {
+            if (mRectTransform == null){ mRectTransform = GetComponent<RectTransform>(); }
+            return mRectTransform;
+        } 
+    }
 
     private UnityAction localCardSelectedCallback;
 
@@ -144,19 +153,19 @@ public class Card : MonoBehaviour
 
     private void Awake()
     {
-        transform.localScale = scaleTransform.localScale = new Vector3(1, 1, 1);
+        LocalRectTransform.localScale = Vector3.one;
         mTweenerList = GetComponentsInChildren<UITweener>();
         cardSparkle = mCardSparkle;
 
         mCanvas = gameObject.AddComponent<Canvas>();
         mCanvas.overrideSorting = true;
 
-        gameObject.AddComponent<GraphicRaycaster>();
+        gameObject.AddComponent<GraphicRaycaster>().ignoreReversedGraphics = false;
 
         localCardSelectedCallback += CardSelectedReplicator;
         GetComponent<Button>().onClick.AddListener(localCardSelectedCallback);
 
-        text.GetComponent<RectTransform>().position = defaultLabelPosition.GetComponent<RectTransform>().position;
+        text.GetComponent<RectTransform>().anchoredPosition = defaultLabelPosition.anchoredPosition;
     }
 
     private void CardSelectedReplicator()
@@ -177,7 +186,7 @@ public class Card : MonoBehaviour
             fadingFlipText.text = text.text;
             fadingFlipText.gameObject.SetActive(true);
             text.gameObject.SetActive(false);
-            MoveLabel(labelPositionOnFlip.transform, 1f);
+            MoveLabel(labelPositionOnFlip.GetComponent<RectTransform>(), 1f);
         }
 
         if (mIsFront)
@@ -215,8 +224,7 @@ public class Card : MonoBehaviour
             SetSymbol(fairySymbol);
         }
 
-        scaleTransform.localScale = mIsFront ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
-
+        flipTransform.localScale = mIsFront ? Vector3.one : new Vector3(-1, 1, 1);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -311,27 +319,31 @@ public class Card : MonoBehaviour
             text.alignment = TextAlignmentOptions.Right;
             fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
             fadingFlipText.alignment = TextAlignmentOptions.Right;
-            labelPositionOnFlip.transform.localPosition = new Vector3(NUMBERS_END_LABEL_X_POSITION,labelPositionOnFlip.transform.localPosition.y,labelPositionOnFlip.transform.localPosition.z);
+
+            RectTransform flipTrans = labelPositionOnFlip.GetComponent<RectTransform>();
+            flipTrans.anchoredPosition3D = new Vector3(NUMBERS_END_LABEL_X_POSITION, flipTrans.anchoredPosition3D.y, flipTrans.anchoredPosition3D.z);
         }
         else
         {
             text.fontSize = REGULAR_FONT_SIZE;
             fadingFlipText.fontSize = REGULAR_FONT_SIZE;
-            labelPositionOnFlip.transform.localPosition = new Vector3(REGULAR_END_LABEL_X_POSITION,labelPositionOnFlip.transform.localPosition.y,labelPositionOnFlip.transform.localPosition.z);            
+
+            RectTransform flipTrans = labelPositionOnFlip.GetComponent<RectTransform>();
+            flipTrans.anchoredPosition3D = new Vector3(REGULAR_END_LABEL_X_POSITION, flipTrans.anchoredPosition3D.y, flipTrans.anchoredPosition3D.z);
         }
     }
 
-    public void MoveCard(Transform to, float duration)
+    public void MoveCard(RectTransform to, float duration)
     {
-        Move(to, duration, cardMoveTweener, transform);
+        Move(to, duration, cardMoveTweener, LocalRectTransform);
     }
 
-    public void MoveLabel(Transform to, float duration)
+    public void MoveLabel(RectTransform to, float duration)
     {
-        Move(to, duration, cardLabelMoveOnFlipTweener, defaultLabelPosition.transform);
+        Move(to, duration, cardLabelMoveOnFlipTweener, defaultLabelPosition);
     }
 
-    public void Move(Transform to, float duration, TweenTransform tween, Transform from)
+    public void Move(RectTransform to, float duration, TweenTransform tween, RectTransform from)
     {
         var toParent = to.parent;
 
@@ -343,7 +355,7 @@ public class Card : MonoBehaviour
         tween.Play(true);
     }
 
-    public void MoveToNewDeck(Deck toDeck, Transform parent = null)
+    public void MoveToNewDeck(Deck toDeck, RectTransform parent = null)
     {
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
@@ -351,7 +363,7 @@ public class Card : MonoBehaviour
         toDeck.gameObject.SetActive(deckActive);
     }
 
-    public void MoveToNewDeckInstant(Deck toDeck, Transform parent = null)
+    public void MoveToNewDeckInstant(Deck toDeck, RectTransform parent = null)
     {
         var deckActive = toDeck.gameObject.activeSelf;
         toDeck.gameObject.SetActive(true);
@@ -373,20 +385,22 @@ public class Card : MonoBehaviour
 
     public void SymbolMatchEffect()
     {
-        PlayTweenGroup(1);
+        const int ALPHA_TIME = 2;
+        AnimationCurve curve = symbolGlowSprite.GetComponent<TweenCurve>().tweenCurves[0];
+        LeanTween.alpha(symbolGlowSprite.rectTransform, 1, ALPHA_TIME).setEase(curve);
     }
 
-    public void PlayTweenGroup(int index)
-    {
-        foreach (var t in mTweenerList)
-        {
-            if (t.tweenGroup == index)
-            {
-                t.ResetToBeginning();
-                t.PlayForward();
-            }
-        }
-    }
+    //public void PlayTweenGroup(int index)
+    //{
+    //    foreach (var t in mTweenerList)
+    //    {
+    //        if (t.tweenGroup == index)
+    //        {
+    //            t.ResetToBeginning();
+    //            t.PlayForward();
+    //        }
+    //    }
+    //}
 
     public void CardSparkleOverTime(float duration)
     {

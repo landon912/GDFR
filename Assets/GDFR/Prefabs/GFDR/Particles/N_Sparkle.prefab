@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startVelocity: {x: -0.01, y: 0, z: 0}
-  startSize: 1.2
+  startSize: 0
   sizeOverLife:
     serializedVersion: 2
     m_Curve:

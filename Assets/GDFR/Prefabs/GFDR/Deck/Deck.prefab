@@ -209,13 +209,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OwnerNetworkId: -1
-  deckTransform: {fileID: 1333929799259927918}
   xmlDataFile: {fileID: 0}
   cardPrefab: {fileID: 7977685212043210753, guid: bc1ecda25c426b246bb5e81e68626c97,
     type: 3}
-  deckScaleTweener: {fileID: 11400006}
   deckGrid: {fileID: 11400000}
   _VisuallyActive: 0
   deckActiveWidthLimit: 600
   _zDepth: 0
+  mDeckPivot: {fileID: 1333929799259927918}
   playSparklesOnDraw: 0
