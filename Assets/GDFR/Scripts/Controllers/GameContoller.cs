@@ -430,7 +430,7 @@ public class GameContoller : RxFx_FSM
             if (Toolbox.Instance.gameSettings.RulesVariant == GameSettings.RulesVariantType.GoblinsRule)
             {
                 c.CurrentRace = Race.Fairy;
-                if (c.fairyStarBorder)
+                if (c.FairyStarBorder)
                 {
                     c.MoveToNewDeckInstant(starDeck);
                 }
@@ -438,7 +438,7 @@ public class GameContoller : RxFx_FSM
             else
             {
                 c.CurrentRace = Race.Goblin;
-                if (c.goblinStarBorder)
+                if (c.GoblinStarBorder)
                 {
                     c.MoveToNewDeckInstant(starDeck);
                 }
@@ -769,7 +769,7 @@ public class GameContoller : RxFx_FSM
         int Rhymecount = 0;
         bool cardFlipped = false;
 
-        if (PlayedCard.StarsShowing)
+        if (PlayedCard.AreStarsShowing)
         {
             PlayedCard.PlayStarsEffect();
             EventReceiver.TriggerStarPlayedEvent(PlayedCard);
@@ -782,20 +782,20 @@ public class GameContoller : RxFx_FSM
             Card c = fCard[i];
             if (c != PlayedCard)
             {
-                if (c.CurrentRhyme == PlayedCard.CurrentRhyme || PlayedCard.StarsShowing)
+                if (c.CurrentRhyme == PlayedCard.CurrentRhyme || PlayedCard.AreStarsShowing)
                 {
                     cardFlipped = true;
                     Rhymecount++;
-                    if (PlayedCard.StarsShowing)
+                    if (PlayedCard.AreStarsShowing)
                     {
                         //faster flip
-                        StartCoroutine(c.Flip(PlayedCard.StarsShowing));
-                        yield return new WaitForSeconds(c.cardFlipTweenerA.duration / 3f);
+                        StartCoroutine(c.Flip(PlayedCard.AreStarsShowing));
+                        yield return new WaitForSeconds(Card.FLIP_TIME_SECONDS / 3f);
                     }
                     else
                     {
                         //slow flip
-                        yield return StartCoroutine(c.Flip(PlayedCard.StarsShowing));
+                        yield return StartCoroutine(c.Flip(PlayedCard.AreStarsShowing));
                     }
                 }
             }

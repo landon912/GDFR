@@ -62,7 +62,7 @@ public abstract class AIModule
             Race centerRace;
             CheckAndFlipCardIfNeeded(centerCard, cardBeingPlayed, out centerRace, out centerSymbol);
 
-            bool flipped = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme || cardBeingPlayed.StarsShowing;
+            bool flipped = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme || cardBeingPlayed.AreStarsShowing;
 
             //would be able to take, CONSIDERING FLIP
             if (centerSymbol == cardBeingPlayed.CurrentSymbol)
@@ -129,12 +129,12 @@ public abstract class AIModule
             foreach (Card centerCard in centerCards)
             {
                 bool wouldFlip = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme ||
-                                 cardBeingPlayed.StarsShowing;
+                                 cardBeingPlayed.AreStarsShowing;
 
                 if (wouldFlip)
                 {
                     //check current card status
-                    if (!playerCard.StarsShowing && playerCard.CurrentSymbol == centerCard.CurrentSymbol)
+                    if (!playerCard.AreStarsShowing && playerCard.CurrentSymbol == centerCard.CurrentSymbol)
                     {
                         //center card is currently of use to player before flip
                         if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Fairy)
@@ -150,7 +150,7 @@ public abstract class AIModule
                         }
                     }
                     //if the player card is a star card or would rhyme with the center card if played, flip our evaluation
-                    if ((playerCard.StarsShowing || centerCard.CurrentRhyme == playerCard.CurrentRhyme) &&
+                    if ((playerCard.AreStarsShowing || centerCard.CurrentRhyme == playerCard.CurrentRhyme) &&
                         playerCard.CurrentSymbolGroup == centerCard.CurrentSymbolGroup && playerCard.CurrentSymbol != centerCard.CurrentSymbol)
                     {
                         if (playerCard.CurrentRace == Race.Goblin && centerCard.CurrentRace == Race.Goblin)
@@ -173,7 +173,7 @@ public abstract class AIModule
 
 
                     //if the player card is a star card or would rhyme with the center card if played, flip our evaluation
-                    if (playerCard.StarsShowing || centerRhyme == playerCard.CurrentRhyme)
+                    if (playerCard.AreStarsShowing || centerRhyme == playerCard.CurrentRhyme)
                     {
                         //would take
                         if (playerCard.CurrentSymbolGroup == centerCard.CurrentSymbolGroup && playerCard.CurrentSymbol != centerSymbol)
@@ -273,7 +273,7 @@ public abstract class AIModule
             Race centerRace;
             CheckAndFlipCardIfNeeded(centerCard, cardBeingPlayed, out centerRace, out centerSymbol);
 
-            bool flipped = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme || cardBeingPlayed.StarsShowing;
+            bool flipped = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme || cardBeingPlayed.AreStarsShowing;
 
             //would be able to take, CONSIDERING FLIP
             if (centerSymbol == cardBeingPlayed.CurrentSymbol)
@@ -340,12 +340,12 @@ public abstract class AIModule
             foreach (Card centerCard in centerCards)
             {
                 bool wouldFlip = centerCard.CurrentRhyme == cardBeingPlayed.CurrentRhyme ||
-                                 cardBeingPlayed.StarsShowing;
+                                 cardBeingPlayed.AreStarsShowing;
 
                 if (wouldFlip)
                 {
                     //check current card status
-                    if (!playerCard.StarsShowing && playerCard.CurrentSymbol == centerCard.CurrentSymbol)
+                    if (!playerCard.AreStarsShowing && playerCard.CurrentSymbol == centerCard.CurrentSymbol)
                     {
                         //center card is currently of use to player before flip
                         if (playerCard.CurrentRace == Race.Fairy && centerCard.CurrentRace == Race.Goblin)
@@ -361,7 +361,7 @@ public abstract class AIModule
                         }
                     }
                     //if the player card is a star card or would rhyme with the center card if played, flip our evaluation
-                    if ((playerCard.StarsShowing || centerCard.CurrentRhyme == playerCard.CurrentRhyme) &&
+                    if ((playerCard.AreStarsShowing || centerCard.CurrentRhyme == playerCard.CurrentRhyme) &&
                         playerCard.CurrentSymbolGroup == centerCard.CurrentSymbolGroup && playerCard.CurrentSymbol != centerCard.CurrentSymbol)
                     {
                         if (playerCard.CurrentRace == Race.Fairy && centerCard.CurrentRace == Race.Fairy)
@@ -384,7 +384,7 @@ public abstract class AIModule
 
 
                     //if the player card is a star card or would rhyme with the center card if played, flip our evaluation
-                    if (playerCard.StarsShowing || centerRhyme == playerCard.CurrentRhyme)
+                    if (playerCard.AreStarsShowing || centerRhyme == playerCard.CurrentRhyme)
                     {
                         //would take
                         if (playerCard.CurrentSymbolGroup == centerCard.CurrentSymbolGroup && playerCard.CurrentSymbol != centerSymbol)
@@ -454,7 +454,7 @@ public abstract class AIModule
     {
         tRace = cardToFlip.CurrentRace;
         tSymbol = cardToFlip.CurrentSymbol;
-        if(cardToFlip.CurrentRhyme == playerCard.CurrentRhyme || playerCard.StarsShowing)
+        if(cardToFlip.CurrentRhyme == playerCard.CurrentRhyme || playerCard.AreStarsShowing)
         {
             switch (cardToFlip.CurrentSymbol)
             {
@@ -495,9 +495,9 @@ public abstract class AIModule
         tRhyme = cardToFlip.CurrentRhyme;
         CheckAndFlipCardIfNeeded(cardToFlip, playerCard, out tRace, out tSymbol);
 
-        if (cardToFlip.CurrentRhyme == playerCard.CurrentRhyme || playerCard.StarsShowing)
+        if (cardToFlip.CurrentRhyme == playerCard.CurrentRhyme || playerCard.AreStarsShowing)
         {
-            tRhyme = cardToFlip.CurrentRace == Race.Fairy ? cardToFlip.goblinRhyme : cardToFlip.fairyRhyme;
+            tRhyme = cardToFlip.CurrentRace == Race.Fairy ? cardToFlip.GoblinRhyme : cardToFlip.FairyRhyme;
         }
     }
 }

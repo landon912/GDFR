@@ -6,69 +6,73 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-    public int Id = -1;
-
-    private bool mCardSparkle;
-    private bool mIsFront = true;
-
-    private UITweener[] mTweenerList;
-    private Canvas mCanvas;
-    private Race mCurrentRace;
-    private string mNameSound = "Not Set";
-
-    public Deck parentDeck = null;
-    public TweenScale cardBumpTweener = null;
-    public TweenRotation cardFlipTweenerA = null;
-    public TweenRotation cardFlipTweenerB = null;
-    public TweenTransform cardLabelMoveOnFlipTweener = null;
-    public TweenTransform cardMoveTweener = null;
-    public TweenScale cardScaleTweener = null;
-
-    public nEmitter cardSparkleEmitter = null;
-    public RectTransform defaultLabelPosition;
-    public TextMeshProUGUI fadingFlipText;
-    public bool fairyStarBorder = false;
-    public string fairyText = "Fairy Test";
-    public bool goblinStarBorder = false;
-
-    public string goblinText = "Goblin Test";
-    public GameObject labelPositionOnFlip;
-
-    public Rhyme fairyRhyme;
-    public Rhyme goblinRhyme;
-    public Symbol fairySymbol;
-    public Symbol goblinSymbol;
-
-    public string fairySpriteName = "";
-    public string goblinSpriteName = "";
-    public string moonSpriteName = "SYMBOL_Moon";
-    public string mushroomSpriteName = "SYMBOL_Mushroom";
-    public string sunSpriteName = "SYMBOL_Sun";
-    public string frogSpriteName = "SYMBOL_Frog";
-
-    public RectTransform flipTransform = null;
-    public Image shadowSprite;
-
-    public Image sprite;
-    public bool starBorder = false;
-    public CardStars starsScript;
-    public Image symbolGlowSprite;
-    public Image symbolSprite;
-    public TextMeshProUGUI text;
+    public const float BUMP_TIME_SECONDS = 0.3f;
+    public const int FLIP_TIME_SECONDS = 1;
+    public const float FLIP_TEXT_TWEEN_SCALE = 1.3f
 
     public const int NUMBERS_FONT_SIZE = 60;
     public const int NUMBERS_END_LABEL_X_POSITION = 90;
     public const int REGULAR_FONT_SIZE = 36;
     public const int REGULAR_END_LABEL_X_POSITION = 0;
 
-    public bool StarsShowing
+    private const string MOON_SPRITE_NAME = "SYMBOL_Moon";
+    private const string MUSHROOM_SPRITE_NAME = "SYMBOL_Mushroom";
+    private const string SUN_SPRITE_NAME = "SYMBOL_Sun";
+    private const string FROG_SPRITE_NAME = "SYMBOL_Frog";
+
+    public int Id = -1;
+
+    public Deck ParentDeck = null;
+    public Image CardSprite;
+    public TextMeshProUGUI MainText;
+    public Image SymbolSprite;
+    public Image SymbolGlowSprite;
+
+    public bool FairyStarBorder = false;
+    public bool GoblinStarBorder = false;
+    public bool StarBorder = false;
+    public CardStars StarsScript;
+
+    public string FairyText = "Fairy Test";
+    public string GoblinText = "Goblin Test";
+
+    public Rhyme FairyRhyme;
+    public Rhyme GoblinRhyme;
+    public Symbol FairySymbol;
+    public Symbol GoblinSymbol;
+
+    public string FairySpriteName = "";
+    public string GoblinSpriteName = "";
+
+    private bool mIsFront = true;
+    private Race mCurrentRace;
+
+    private Canvas mCanvas;
+    [SerializeField] private RectTransform mMoveRect;
+    [SerializeField] private TweenCurve mMoveEaseCurve;
+    [SerializeField] private RectTransform mScaleRect;
+    [SerializeField] private TweenCurve mScaleEaseCurve;
+    [SerializeField] private RectTransform mFlipRect;
+    [SerializeField] private TweenCurve mFlipEaseCurve;
+    [SerializeField] private RectTransform mFlippingTextRect;
+    [SerializeField] private TweenCurve mFlippingTextEaseCurves;
+    [SerializeField] private TextMeshProUGUI mFlippingText;
+    [SerializeField] private nEmitter mCardSparkleEmitter;
+    [SerializeField] private RectTransform mEndLocationForFlippingText;
+
+    private UnityAction mLocalCardSelectedCallback;
+
+    public bool AreStarsShowing
     {
         get
         {
-            if (mCurrentRace == Race.Goblin && goblinStarBorder)
-                return true;
-            if (mCurrentRace == Race.Fairy && fairyStarBorder)
-                return true;
+            switch (mCurrentRace) {
+                case Race.Goblin when GoblinStarBorder:
+                    return true;
+                case Race.Fairy when FairyStarBorder:
+                    return true;
+            }
+
             return false;
         }
     }
@@ -80,7 +84,7 @@ public class Card : MonoBehaviour
             if (value != mCurrentRace)
                 ChangeRace(value);
         }
-        get { return mCurrentRace; }
+        get => mCurrentRace;
     }
 
     public Symbol CurrentSymbol { get; private set; }
@@ -97,7 +101,7 @@ public class Card : MonoBehaviour
 
     public Rhyme CurrentRhyme { get; private set; }
 
-    public string NameSound { get { return mNameSound; } }
+    public string NameSound { get; } = "Not Set";
 
     private RectTransform mRectTransform;
     public RectTransform LocalRectTransform
@@ -109,41 +113,37 @@ public class Card : MonoBehaviour
         } 
     }
 
-    private UnityAction localCardSelectedCallback;
-
-    private int _depth;
+    private int mDepth;
     public int Depth
     {
         set
         {
-            _depth = value;
+            mDepth = value;
             UpdateDepth();
         }
-        get
-        {
-            return _depth;
-        }
+        get => mDepth;
     }
 
-    private int _depthOffset;
+    private int mDepthOffset;
     public int DeckDepthOffset
     {
         set
         {
-            _depthOffset = value;
+            mDepthOffset = value;
             UpdateDepth();
         }
-        get{ return _depthOffset; }
+        get => mDepthOffset;
     }
 
-    public bool cardSparkle
+    private bool mCardSparkleOn;
+    public bool CardSparkleOn
     {
         set
         {
-            mCardSparkle = value;
-            cardSparkleEmitter.enabled = mCardSparkle;
+            mCardSparkleOn = value;
+            mCardSparkleEmitter.enabled = mCardSparkleOn;
         }
-        get { return mCardSparkle; }
+        get => mCardSparkleOn;
     }
 
     private void Start()
@@ -154,18 +154,15 @@ public class Card : MonoBehaviour
     private void Awake()
     {
         LocalRectTransform.localScale = Vector3.one;
-        mTweenerList = GetComponentsInChildren<UITweener>();
-        cardSparkle = mCardSparkle;
+        CardSparkleOn = mCardSparkleOn;
 
         mCanvas = gameObject.AddComponent<Canvas>();
         mCanvas.overrideSorting = true;
 
         gameObject.AddComponent<GraphicRaycaster>().ignoreReversedGraphics = false;
 
-        localCardSelectedCallback += CardSelectedReplicator;
-        GetComponent<Button>().onClick.AddListener(localCardSelectedCallback);
-
-        text.GetComponent<RectTransform>().anchoredPosition = defaultLabelPosition.anchoredPosition;
+        mLocalCardSelectedCallback += CardSelectedReplicator;
+        GetComponent<Button>().onClick.AddListener(mLocalCardSelectedCallback);
     }
 
     private void CardSelectedReplicator()
@@ -183,20 +180,14 @@ public class Card : MonoBehaviour
     {
         if (!wasFromStar)
         {
-            fadingFlipText.text = text.text;
-            fadingFlipText.gameObject.SetActive(true);
-            text.gameObject.SetActive(false);
-            MoveLabel(labelPositionOnFlip.GetComponent<RectTransform>(), 1f);
+            TriggerFlippingText();
         }
 
-        if (mIsFront)
-            cardFlipTweenerA.PlayForward();
-        else
-            cardFlipTweenerA.PlayReverse();
+        LeanTween.rotateAroundLocal(mFlipRect.gameObject, Vector3.up, 180f, FLIP_TIME_SECONDS).setEase(mFlipEaseCurve.tweenCurves[0]);
 
-        yield return new WaitForSeconds(cardFlipTweenerA.duration/2.0f);
+        yield return new WaitForSeconds(FLIP_TIME_SECONDS/2.0f);
 
-        text.gameObject.SetActive(true);
+        MainText.gameObject.SetActive(true);
 
         mIsFront = !mIsFront;
 
@@ -205,30 +196,46 @@ public class Card : MonoBehaviour
             CurrentRace = Race.Goblin;
             if (Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers)
             {
-                text.text = ((int) CurrentRhyme).ToString();
+                MainText.text = ((int) CurrentRhyme).ToString();
                 SetTextSettings(true);
             }
             else
             {
-                text.text = goblinText;
+                MainText.text = GoblinText;
                 SetTextSettings(false);
             }
-            SetSymbol(goblinSymbol);
+            SetSymbol(GoblinSymbol);
         }
         else
         {
             CurrentRace = Race.Fairy;
-            text.text = Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers
+            MainText.text = Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers
                 ? ((int) CurrentRhyme).ToString()
-                : fairyText;
-            SetSymbol(fairySymbol);
+                : FairyText;
+            SetSymbol(FairySymbol);
         }
 
-        flipTransform.localScale = mIsFront ? Vector3.one : new Vector3(-1, 1, 1);
+        mFlipRect.localScale = mIsFront ? Vector3.one : new Vector3(-1, 1, 1);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(FLIP_TIME_SECONDS / 2.0f);
 
-        fadingFlipText.gameObject.SetActive(false);
+        mFlippingText.gameObject.SetActive(false);
+    }
+
+    private void TriggerFlippingText()
+    {
+        //enable/disable
+        mFlippingText.text = MainText.text;
+        mFlippingText.gameObject.SetActive(true);
+        MainText.gameObject.SetActive(false);
+
+        //reset state
+        mFlippingTextRect.anchoredPosition3D = MainText.rectTransform.anchoredPosition3D;
+        mFlippingTextRect.localScale = Vector3.one;
+
+        //tween
+        Move(mFlippingTextRect, mEndLocationForFlippingText.anchoredPosition3D, FLIP_TIME_SECONDS, mFlippingTextEaseCurves.tweenCurves[0]);
+        LeanTween.scale(mFlippingTextRect, new Vector3(FLIP_TEXT_TWEEN_SCALE, FLIP_TEXT_TWEEN_SCALE, FLIP_TEXT_TWEEN_SCALE), FLIP_TIME_SECONDS);
     }
 
     private void SetSymbol(Symbol symbol)
@@ -236,24 +243,24 @@ public class Card : MonoBehaviour
         switch (symbol)
         {
             case Symbol.Sun:
-                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[sunSpriteName];
+                SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[SUN_SPRITE_NAME];
                 break;
             case Symbol.Moon:
-                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[moonSpriteName];
+                SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[MOON_SPRITE_NAME];
                 break;
             case Symbol.Mushroom:
-                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[mushroomSpriteName];
+                SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[MUSHROOM_SPRITE_NAME];
                 break;
             case Symbol.Frog:
-                symbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[frogSpriteName];
+                SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[FROG_SPRITE_NAME];
                 break;
         }
-        symbolGlowSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[symbolSprite.sprite.name + "_Glow"];
+        SymbolGlowSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[SymbolSprite.sprite.name + "_Glow"];
     }
 
     public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
     {
-        parentDeck.RemoveCard(this);
+        ParentDeck.RemoveCard(this);
         toDeck.AddCard(this);
         yield return new WaitForSeconds(duration);
     }
@@ -263,51 +270,49 @@ public class Card : MonoBehaviour
         switch (race)
         {
             case Race.Fairy:
-                sprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[fairySpriteName];
+                CardSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[FairySpriteName];
                 mCurrentRace = Race.Fairy;
-                CurrentRhyme = fairyRhyme;
-                CurrentSymbol = fairySymbol;
+                CurrentRhyme = FairyRhyme;
+                CurrentSymbol = FairySymbol;
                 if (Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers)
                 {
-                    text.text = ((int) CurrentRhyme).ToString();
+                    MainText.text = ((int) CurrentRhyme).ToString();
                     SetTextSettings(true);
                 }
                 else
                 {
-                    text.text = fairyText;
+                    MainText.text = FairyText;
                     SetTextSettings(false);
                 }
 
-                //Debug.Log ("HIT  Race Set To Fairy");
                 break;
             case Race.Goblin:
-                sprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[goblinSpriteName];
+                CardSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[GoblinSpriteName];
                 mCurrentRace = Race.Goblin;
-                CurrentRhyme = goblinRhyme;
-                CurrentSymbol = goblinSymbol;
+                CurrentRhyme = GoblinRhyme;
+                CurrentSymbol = GoblinSymbol;
                 if (Toolbox.Instance.gameSettings.CardVariant == GameSettings.CardVariantType.Numbers)
                 {
-                    text.text = ((int) CurrentRhyme).ToString();
+                    MainText.text = ((int) CurrentRhyme).ToString();
                     SetTextSettings(true);
                 }
                 else
                 {
-                    text.text = goblinText;
+                    MainText.text = GoblinText;
                     SetTextSettings(false);
                 }
 
-                //Debug.Log ("Race Set To goblin");
                 break;
         }
         SetSymbol(CurrentSymbol);
-        if (StarsShowing)
+        if (AreStarsShowing)
         {
-            starsScript.Show();
+            StarsScript.Show();
             //PlayStarsEffect();
         }
         else
         {
-            starsScript.Hide();
+            StarsScript.Hide();
         }
     }
 
@@ -315,44 +320,32 @@ public class Card : MonoBehaviour
     {
         if (isNumbersVariant)
         {
-            text.fontSize = NUMBERS_FONT_SIZE;
-            text.alignment = TextAlignmentOptions.Right;
-            fadingFlipText.fontSize = NUMBERS_FONT_SIZE;
-            fadingFlipText.alignment = TextAlignmentOptions.Right;
+            MainText.fontSize = NUMBERS_FONT_SIZE;
+            MainText.alignment = TextAlignmentOptions.Right;
+            mFlippingText.fontSize = NUMBERS_FONT_SIZE;
+            mFlippingText.alignment = TextAlignmentOptions.Right;
 
-            RectTransform flipTrans = labelPositionOnFlip.GetComponent<RectTransform>();
+            RectTransform flipTrans = mEndLocationForFlippingText.GetComponent<RectTransform>();
             flipTrans.anchoredPosition3D = new Vector3(NUMBERS_END_LABEL_X_POSITION, flipTrans.anchoredPosition3D.y, flipTrans.anchoredPosition3D.z);
         }
         else
         {
-            text.fontSize = REGULAR_FONT_SIZE;
-            fadingFlipText.fontSize = REGULAR_FONT_SIZE;
+            MainText.fontSize = REGULAR_FONT_SIZE;
+            mFlippingText.fontSize = REGULAR_FONT_SIZE;
 
-            RectTransform flipTrans = labelPositionOnFlip.GetComponent<RectTransform>();
+            RectTransform flipTrans = mEndLocationForFlippingText.GetComponent<RectTransform>();
             flipTrans.anchoredPosition3D = new Vector3(REGULAR_END_LABEL_X_POSITION, flipTrans.anchoredPosition3D.y, flipTrans.anchoredPosition3D.z);
         }
     }
 
-    public void MoveCard(RectTransform to, float duration)
+    public void MoveCard(Vector3 to, float duration)
     {
-        Move(to, duration, cardMoveTweener, LocalRectTransform);
+        Move(mMoveRect, to, duration, mMoveEaseCurve.tweenCurves[0]);
     }
 
-    public void MoveLabel(RectTransform to, float duration)
+    public void Move(RectTransform rect, Vector3 to, float duration, AnimationCurve easement)
     {
-        Move(to, duration, cardLabelMoveOnFlipTweener, defaultLabelPosition);
-    }
-
-    public void Move(RectTransform to, float duration, TweenTransform tween, RectTransform from)
-    {
-        var toParent = to.parent;
-
-        tween.from = from;
-        tween.to = to;
-        tween.duration = duration;
-
-        tween.ResetToBeginning();
-        tween.Play(true);
+        LeanTween.move(rect, to, duration).setEase(easement);
     }
 
     public void MoveToNewDeck(Deck toDeck, RectTransform parent = null)
@@ -373,8 +366,9 @@ public class Card : MonoBehaviour
 
     public void Bump()
     {
-        cardBumpTweener.ResetToBeginning();
-        cardBumpTweener.PlayForward();
+        LeanTween.scale(mScaleRect, new Vector3(1.2f, 1.2f, 1.2f), BUMP_TIME_SECONDS).setEase(mScaleEaseCurve.tweenCurves[0]);
+        //cardBumpTweener.ResetToBeginning();
+        //cardBumpTweener.PlayForward();
     }
 
     private void UpdateDepth()
@@ -386,21 +380,9 @@ public class Card : MonoBehaviour
     public void SymbolMatchEffect()
     {
         const int ALPHA_TIME = 2;
-        AnimationCurve curve = symbolGlowSprite.GetComponent<TweenCurve>().tweenCurves[0];
-        LeanTween.alpha(symbolGlowSprite.rectTransform, 1, ALPHA_TIME).setEase(curve);
+        AnimationCurve curve = SymbolGlowSprite.GetComponent<TweenCurve>().tweenCurves[0];
+        LeanTween.alpha(SymbolGlowSprite.rectTransform, 1, ALPHA_TIME).setEase(curve);
     }
-
-    //public void PlayTweenGroup(int index)
-    //{
-    //    foreach (var t in mTweenerList)
-    //    {
-    //        if (t.tweenGroup == index)
-    //        {
-    //            t.ResetToBeginning();
-    //            t.PlayForward();
-    //        }
-    //    }
-    //}
 
     public void CardSparkleOverTime(float duration)
     {
@@ -409,19 +391,19 @@ public class Card : MonoBehaviour
 
     private IEnumerator CO_CardSparkleOverTime(float duration)
     {
-        cardSparkle = true;
+        CardSparkleOn = true;
         yield return new WaitForSeconds(duration);
-        cardSparkle = false;
+        CardSparkleOn = false;
     }
 
     public void PlayStarsEffect()
     {
-        starsScript.Play();
+        StarsScript.Play();
     }
 
     public override string ToString()
     {
-        string name = CurrentRace == Race.Fairy ? fairyText : goblinText;
+        string name = CurrentRace == Race.Fairy ? FairyText : GoblinText;
         return name + ", " + CurrentSymbol + ", " + CurrentRace + ", " + CurrentRhyme;
     }
 }

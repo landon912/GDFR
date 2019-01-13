@@ -215,13 +215,13 @@ public class Deck : MonoBehaviour
 
     public Card AddCard(Card card)
     {
-        Deck fromDeck = card.parentDeck;
+        Deck fromDeck = card.ParentDeck;
 
         if (fromDeck != null)
             fromDeck.RemoveCard(card);
 
         card.LocalRectTransform.SetParent(DeckPivot);
-        card.parentDeck = this;
+        card.ParentDeck = this;
 
         mCards.Add(card);
         mDrawableCards.Add(card);
@@ -240,11 +240,11 @@ public class Deck : MonoBehaviour
 
     public Card AddCardInstant(Card card)
     {
-        if (card.parentDeck != null)
-            card.parentDeck.RemoveCard(card);
+        if (card.ParentDeck != null)
+            card.ParentDeck.RemoveCard(card);
 
         card.LocalRectTransform.SetParent(DeckPivot);
-        card.parentDeck = this;
+        card.ParentDeck = this;
 
         mCards.Add(card);
         mDrawableCards.Add(card);
@@ -308,47 +308,47 @@ public class Deck : MonoBehaviour
                     }
                     if (cNode.Name == "GoblinSpriteName")
                     {
-                        cardScript.goblinSpriteName = cNode.InnerText;
+                        cardScript.GoblinSpriteName = cNode.InnerText;
                     }
                     if (cNode.Name == "FairySpriteName")
                     {
-                        cardScript.fairySpriteName = cNode.InnerText;
+                        cardScript.FairySpriteName = cNode.InnerText;
                     }
                     if (cNode.Name == "GoblinSymbol")
                     {
-                        cardScript.goblinSymbol = (Symbol)Enum.Parse(typeof(Symbol), cNode.InnerText); ;
+                        cardScript.GoblinSymbol = (Symbol)Enum.Parse(typeof(Symbol), cNode.InnerText); ;
                     }
                     if (cNode.Name == "FairySymbol")
                     {
-                        cardScript.fairySymbol = (Symbol)Enum.Parse(typeof(Symbol), cNode.InnerText); ;
+                        cardScript.FairySymbol = (Symbol)Enum.Parse(typeof(Symbol), cNode.InnerText); ;
                     }
                     if (cNode.Name == "GoblinRhyme")
                     {
-                        cardScript.goblinRhyme = (Rhyme)Enum.Parse(typeof(Rhyme), cNode.InnerText); ;
+                        cardScript.GoblinRhyme = (Rhyme)Enum.Parse(typeof(Rhyme), cNode.InnerText); ;
                     }
                     if (cNode.Name == "FairyRhyme")
                     {
-                        cardScript.fairyRhyme = (Rhyme)Enum.Parse(typeof(Rhyme), cNode.InnerText); ;
+                        cardScript.FairyRhyme = (Rhyme)Enum.Parse(typeof(Rhyme), cNode.InnerText); ;
                     }
                     if (cNode.Name == "GoblinStarBorder")
                     {
-                        cardScript.goblinStarBorder = XmlConvert.ToBoolean(cNode.InnerText);
-                        if (!cardScript.starBorder && cardScript.goblinStarBorder)
-                            cardScript.starBorder = true;
+                        cardScript.GoblinStarBorder = XmlConvert.ToBoolean(cNode.InnerText);
+                        if (!cardScript.StarBorder && cardScript.GoblinStarBorder)
+                            cardScript.StarBorder = true;
                     }
                     if (cNode.Name == "FairyStarBorder")
                     {
-                        cardScript.fairyStarBorder = XmlConvert.ToBoolean(cNode.InnerText);
-                        if (!cardScript.starBorder && cardScript.fairyStarBorder)
-                            cardScript.starBorder = true;
+                        cardScript.FairyStarBorder = XmlConvert.ToBoolean(cNode.InnerText);
+                        if (!cardScript.StarBorder && cardScript.FairyStarBorder)
+                            cardScript.StarBorder = true;
                     }
                     if (cNode.Name == "GoblinText")
                     {
-                        cardScript.goblinText = cNode.InnerText;
+                        cardScript.GoblinText = cNode.InnerText;
                     }
                     if (cNode.Name == "FairyText")
                     {
-                        cardScript.fairyText = cNode.InnerText;
+                        cardScript.FairyText = cNode.InnerText;
                     }
                     cardScript.LocalRectTransform.localScale = new Vector3(1f, 1f, 1f);
                 }

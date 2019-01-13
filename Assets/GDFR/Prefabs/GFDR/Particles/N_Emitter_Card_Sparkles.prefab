@@ -52,7 +52,7 @@ MonoBehaviour:
   particle: {fileID: 8991973695952167915, guid: 9e1f596614a9ccf4bacc8db229b191a4,
     type: 3}
   renderTransform: {fileID: 0}
-  pps: 120
+  pps: 80
   lifeSpanRange: {x: 0.5, y: 1}
   startTime: 0
   stopTime: 2
