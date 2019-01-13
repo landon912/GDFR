@@ -5,6 +5,8 @@ using System.Xml;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
+#pragma warning disable CS0618 //deprecation
+
 namespace GDFR
 {
     public class AIData

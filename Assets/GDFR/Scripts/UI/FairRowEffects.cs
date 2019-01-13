@@ -1,30 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FairRowEffects : MonoBehaviour {
+namespace GDFR
+{
+    public class FairRowEffects : MonoBehaviour
+    {
 
-	public GameObject starEffect = null;
+        public GameObject starEffect = null;
 
-	// Use this for initialization
-	void OnEnable () {
-		EventReceiver.StarPlayedEvent+=OnStarPlayedEvent;
-	}
+        // Use this for initialization
+        void OnEnable()
+        {
+            EventReceiver.StarPlayedEvent += OnStarPlayedEvent;
+        }
 
-	void OnDisable () {
-		EventReceiver.StarPlayedEvent-=OnStarPlayedEvent;
-	}
-	
-	void OnStarPlayedEvent(Card card)
-	{
-		if(starEffect.activeSelf==true)
-			return;
-		StartCoroutine(CO_StarEffect());
-	}
+        void OnDisable()
+        {
+            EventReceiver.StarPlayedEvent -= OnStarPlayedEvent;
+        }
 
-	IEnumerator CO_StarEffect()
-	{
-		starEffect.SetActive(true);
-		yield return new WaitForSeconds(1.5f);
-		starEffect.SetActive(false);
-	}
+        void OnStarPlayedEvent(Card card)
+        {
+            if (starEffect.activeSelf == true)
+                return;
+            StartCoroutine(CO_StarEffect());
+        }
+
+        IEnumerator CO_StarEffect()
+        {
+            starEffect.SetActive(true);
+            yield return new WaitForSeconds(1.5f);
+            starEffect.SetActive(false);
+        }
+    }
 }

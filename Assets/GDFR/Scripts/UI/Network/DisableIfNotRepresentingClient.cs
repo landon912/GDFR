@@ -1,36 +1,42 @@
 ﻿using UnityEngine;
 
-public class DisableIfNotRepresentingClient : DisableMediaBase
+#pragma warning disable CS0618 //deprecation
+
+namespace GDFR
 {
-    [SerializeField] [TypeRestriction(typeof(IRepresentClient))]
-    private Object _ScriptToCheck;
-
-    public bool enableIfAI = false;
-
-    public IRepresentClient ScriptToCheck
+    public class DisableIfNotRepresentingClient : DisableMediaBase
     {
-        get { return (IRepresentClient)_ScriptToCheck; }
-    }
+        [SerializeField] [TypeRestriction(typeof(IRepresentClient))]
+        private Object _ScriptToCheck;
 
-    void Update()
-    {
-        if (enableIfAI && ScriptToCheck.IsAI())
+        public bool enableIfAI = false;
+
+        public IRepresentClient ScriptToCheck
         {
-            if (!mCurrentState)
-                ToggleMedia(true);
-            return;
+            get { return (IRepresentClient) _ScriptToCheck; }
         }
-        if (ScriptToCheck.IsRepresentingClientId(GDFRNetworkManager.Instance.LocalConnectionId))
+
+        void Update()
         {
-            //am owner, enable
-            if (!mCurrentState)
-                ToggleMedia(true);
-        }
-        else
-        {
-            //not owner, disable
-            if (mCurrentState)
-                ToggleMedia(false);
+            if (enableIfAI && ScriptToCheck.IsAI())
+            {
+                if (!mCurrentState)
+                    ToggleMedia(true);
+                return;
+            }
+
+            if (ScriptToCheck.IsRepresentingClientId(GDFRNetworkManager.Instance.LocalConnectionId))
+            {
+                //am owner, enable
+                if (!mCurrentState)
+                    ToggleMedia(true);
+            }
+            else
+            {
+                //not owner, disable
+                if (mCurrentState)
+                    ToggleMedia(false);
+            }
         }
     }
 }

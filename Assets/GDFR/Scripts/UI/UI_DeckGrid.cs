@@ -5,8 +5,7 @@
 //----------------------------------------------
 
 using UnityEngine;
-using System.Collections;
-
+using GDFR;
 
 public class UI_DeckGrid : UIWidgetContainer
 {

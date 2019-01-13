@@ -2,56 +2,62 @@
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class LobbyController : MonoBehaviour
+#pragma warning disable CS0618 //deprecation
+
+namespace GDFR
 {
-    public TweenAlpha mainAlphaTweener;
-    public UILabel playerCountLabel;
-
-    public void StartServer()
+    public class LobbyController : MonoBehaviour
     {
-        GDFRNetworkManager.Instance.SetupHost();
-        StartNetworkHandlers();
-    }
+        public TweenAlpha mainAlphaTweener;
+        public UILabel playerCountLabel;
 
-    public void JoinGame()
-    {
-        GDFRNetworkManager.Instance.SetupClient();
-        StartNetworkHandlers();
-    }
-
-    private void StartNetworkHandlers()
-    {
-        GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.LobbyNumConnectionsChanged, OnNumConnectionChanged);
-    }
-
-    private void OnDisable()
-    {
-        GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.LobbyNumConnectionsChanged);
-    }
-
-    private void OnNumConnectionChanged(NetworkMessage message)
-    {
-        int count = message.ReadMessage<IntegerMessage>().value;
-
-        //only update if not host
-        if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+        public void StartServer()
         {
-            GDFRNetworkManager.Instance.NumPlayers = count;
+            GDFRNetworkManager.Instance.SetupHost();
+            StartNetworkHandlers();
         }
 
-        playerCountLabel.text = "# of Players: " + count;
-    }
-
-    public void NewGame()
-    {
-        if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
+        public void JoinGame()
         {
-            GDFRNetworkManager.Instance.ChangeSceneOnAllClients("NewGame");
+            GDFRNetworkManager.Instance.SetupClient();
+            StartNetworkHandlers();
         }
-    }
 
-    public void BackToMainMenu()
-    {
-        GDFRNetworkManager.Instance.ShutdownAndLoadScene("MainMenu");
+        private void StartNetworkHandlers()
+        {
+            GDFRNetworkManager.Instance.localClient.RegisterHandler(MsgIndexes.LobbyNumConnectionsChanged,
+                OnNumConnectionChanged);
+        }
+
+        private void OnDisable()
+        {
+            GDFRNetworkManager.Instance?.localClient?.UnregisterHandler(MsgIndexes.LobbyNumConnectionsChanged);
+        }
+
+        private void OnNumConnectionChanged(NetworkMessage message)
+        {
+            int count = message.ReadMessage<IntegerMessage>().value;
+
+            //only update if not host
+            if (GDFRNetworkManager.Instance.IsLocalClientTheHost() == false)
+            {
+                GDFRNetworkManager.Instance.NumPlayers = count;
+            }
+
+            playerCountLabel.text = "# of Players: " + count;
+        }
+
+        public void NewGame()
+        {
+            if (GDFRNetworkManager.Instance.IsClientTheHost(GDFRNetworkManager.Instance.localClient))
+            {
+                GDFRNetworkManager.Instance.ChangeSceneOnAllClients("NewGame");
+            }
+        }
+
+        public void BackToMainMenu()
+        {
+            GDFRNetworkManager.Instance.ShutdownAndLoadScene("MainMenu");
+        }
     }
 }

@@ -1,28 +1,32 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class MediumAIModule : AIModule
+namespace GDFR
 {
-    private readonly HardAIModule mHardAI;
-
-    public MediumAIModule()
+    public class MediumAIModule : AIModule
     {
-        mHardAI = new HardAIModule();
-    }
+        private readonly HardAIModule mHardAI;
 
-    public override int GetPlayValue(Card pCard, Deck toDeck, List<Deck> playerControlledDecks)
-    {
-        //get base play value
-        int discardValue = 3 * mHardAI.GetPlayValue(pCard, toDeck);
-        Debug.Log(pCard + " 's discard value before evaluating aid is " + discardValue);
+        public MediumAIModule()
+        {
+            mHardAI = new HardAIModule();
+        }
 
-        //calculate aid
-        discardValue += 2 * CalculateAidToPlayers(playerControlledDecks, pCard, toDeck);
+        public override int GetPlayValue(Card pCard, Deck toDeck, List<Deck> playerControlledDecks)
+        {
+            //get base play value
+            int discardValue = 3 * mHardAI.GetPlayValue(pCard, toDeck);
+            Debug.Log(pCard + " 's discard value before evaluating aid is " + discardValue);
 
-        discardValue = Mathf.RoundToInt(discardValue / 5.0f);
+            //calculate aid
+            discardValue += 2 * CalculateAidToPlayers(playerControlledDecks, pCard, toDeck);
 
-        Debug.Log("---------------------------------------------------------------------- \n " + pCard + "'s discard value was " + discardValue);
+            discardValue = Mathf.RoundToInt(discardValue / 5.0f);
 
-        return discardValue;
+            Debug.Log("---------------------------------------------------------------------- \n " + pCard +
+                      "'s discard value was " + discardValue);
+
+            return discardValue;
+        }
     }
 }

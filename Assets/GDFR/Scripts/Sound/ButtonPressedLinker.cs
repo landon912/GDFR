@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 
-public class ButtonPressedLinker : MonoBehaviour
+namespace GDFR
 {
-    public void DispathButtonPressedEvent()
+    public class ButtonPressedLinker : MonoBehaviour
     {
-        EventReceiver.TriggerButtonPressedEvent();
+        public void DispathButtonPressedEvent()
+        {
+            EventReceiver.TriggerButtonPressedEvent();
+        }
     }
 }

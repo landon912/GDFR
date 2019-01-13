@@ -2,95 +2,99 @@
 using System.Collections.Generic;
 using UnityEngine.Networking;
 
-public static class NetworkMessageHelper
+#pragma warning disable CS0618 //deprecation
+
+namespace GDFR
 {
-    public static byte[] NetworkMessageToByteArray(MessageBase message)
+    public static class NetworkMessageHelper
     {
-        if (message is PlayerAvatarMessage)
+        public static byte[] NetworkMessageToByteArray(MessageBase message)
         {
-            PlayerAvatarMessage playerMess = (PlayerAvatarMessage)message;
+            if (message is PlayerAvatarMessage)
+            {
+                PlayerAvatarMessage playerMess = (PlayerAvatarMessage) message;
 
-            short myMsgType = MsgIndexes.SetupAvatarChanged;
+                short myMsgType = MsgIndexes.SetupAvatarChanged;
 
-            NetworkWriter writer = new NetworkWriter();
+                NetworkWriter writer = new NetworkWriter();
 
-            // You start the message in your writer by passing in the message type.
-            // This is a short meaning that it will take up 2 bytes at the start of
-            // your message.
-            writer.StartMessage(myMsgType);
+                // You start the message in your writer by passing in the message type.
+                // This is a short meaning that it will take up 2 bytes at the start of
+                // your message.
+                writer.StartMessage(myMsgType);
 
-            // You can now begin your message.
-            writer.Write(playerMess.idx);
-            writer.Write(playerMess.avatarId);
+                // You can now begin your message.
+                writer.Write(playerMess.idx);
+                writer.Write(playerMess.avatarId);
 
-            // Make sure to end your message with FinishMessage()
-            writer.FinishMessage();
+                // Make sure to end your message with FinishMessage()
+                writer.FinishMessage();
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
+            else if (message is CardPlayedMessage)
+            {
+                CardPlayedMessage pickedMessage = (CardPlayedMessage) message;
+
+                short myMsgType = MsgIndexes.CardPlayed;
+
+                NetworkWriter writer = new NetworkWriter();
+
+                writer.StartMessage(myMsgType);
+
+                writer.Write(pickedMessage.cardPlayed);
+
+                writer.FinishMessage();
+
+                return writer.ToArray();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
-        else if(message is CardPlayedMessage)
+
+        public static MessageBase BytesToNetworkMessage<T>(byte[] messageBytes)
         {
-            CardPlayedMessage pickedMessage = (CardPlayedMessage)message;
+            // We will create the NetworkReader using the data from our previous
+            // NetworkWriter.
+            NetworkReader networkReader = new NetworkReader(messageBytes);
 
-            short myMsgType = MsgIndexes.CardPlayed;
+            // The first two bytes in the buffer represent the size
+            // of the message. This is equal to the NetworkReader.Length
+            // minus the size of the prefix.
+            byte[] readerMsgSizeData = networkReader.ReadBytes(2);
+            short readerMsgSize = (short) ((readerMsgSizeData[1] << 8) + readerMsgSizeData[0]);
 
-            NetworkWriter writer = new NetworkWriter();
+            // The message type added in NetworkWriter.StartMessage
+            // is to be read now. It is a short and so consists of
+            // two bytes. It is the second two bytes on the buffer.
+            byte[] readerMsgTypeData = networkReader.ReadBytes(2);
+            short readerMsgType = (short) ((readerMsgTypeData[1] << 8) + readerMsgTypeData[0]);
 
-            writer.StartMessage(myMsgType);
+            if (typeof(T) == typeof(PlayerAvatarMessage))
+            {
+                PlayerAvatarMessage message = new PlayerAvatarMessage();
 
-            writer.Write(pickedMessage.cardPlayed);
+                message.idx = networkReader.ReadInt32();
+                message.avatarId = networkReader.ReadInt32();
 
-            writer.FinishMessage();
+                return message;
+            }
+            else if (typeof(T) == typeof(CardPlayedMessage))
+            {
+                CardPlayedMessage message = new CardPlayedMessage();
 
-            return writer.ToArray();
-        }
-        else
-        {
-            throw new NotImplementedException();
+                message.cardPlayed = networkReader.ReadInt32();
+
+                return message;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
-
-    public static MessageBase BytesToNetworkMessage<T>(byte[] messageBytes)
-    {
-        // We will create the NetworkReader using the data from our previous
-        // NetworkWriter.
-        NetworkReader networkReader = new NetworkReader(messageBytes);
-
-        // The first two bytes in the buffer represent the size
-        // of the message. This is equal to the NetworkReader.Length
-        // minus the size of the prefix.
-        byte[] readerMsgSizeData = networkReader.ReadBytes(2);
-        short readerMsgSize = (short)((readerMsgSizeData[1] << 8) + readerMsgSizeData[0]);
-
-        // The message type added in NetworkWriter.StartMessage
-        // is to be read now. It is a short and so consists of
-        // two bytes. It is the second two bytes on the buffer.
-        byte[] readerMsgTypeData = networkReader.ReadBytes(2);
-        short readerMsgType = (short)((readerMsgTypeData[1] << 8) + readerMsgTypeData[0]);
-
-        if (typeof(T) == typeof(PlayerAvatarMessage))
-        {
-            PlayerAvatarMessage message = new PlayerAvatarMessage();
-
-            message.idx = networkReader.ReadInt32();
-            message.avatarId = networkReader.ReadInt32();
-
-            return message;
-        }
-        else if(typeof(T) == typeof(CardPlayedMessage))
-        {
-            CardPlayedMessage message = new CardPlayedMessage();
-
-            message.cardPlayed = networkReader.ReadInt32();
-
-            return message;
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
-    }
-}
 
 
 //public static class NetworkMessageSeralizer
@@ -156,187 +160,188 @@ public static class NetworkMessageHelper
 //    }
 //}
 
-public class ClientInfoMessage : MessageBase
-{
-    public int clientId;
-    public string message;
-}
-
-public class PlayerConnectInfoMessage : MessageBase
-{
-    public int clientId;
-    public NetworkProfile profile;
-}
-
-public class ClientCommandMessage : MessageBase
-{
-    public short commandId;
-    public byte[] message;
-}
-
-public class BooleanMessage : MessageBase
-{
-    public bool value;
-
-    public BooleanMessage() { }
-
-    public BooleanMessage(bool v)
+    public class ClientInfoMessage : MessageBase
     {
-        value = v;
+        public int clientId;
+        public string message;
     }
 
-    public override void Deserialize(NetworkReader reader)
+    public class PlayerConnectInfoMessage : MessageBase
     {
-        value = reader.ReadBoolean();
+        public int clientId;
+        public NetworkProfile profile;
     }
 
-    public override void Serialize(NetworkWriter writer)
+    public class ClientCommandMessage : MessageBase
     {
-        writer.Write(value);
-    }
-}
-
-public class PlayerToggleMessage : MessageBase
-{
-    public PlayerToggleMessage(int idx, bool isHuman)
-    {
-        this.idx = idx;
-        this.isHuman = isHuman;
+        public short commandId;
+        public byte[] message;
     }
 
-    public PlayerToggleMessage() { }
-
-    public int idx;
-    public bool isHuman;
-}
-
-[Serializable]
-public class PlayerAvatarMessage : MessageBase
-{
-    public PlayerAvatarMessage(int idx, int avatarId)
+    public class BooleanMessage : MessageBase
     {
-        this.idx = idx;
-        this.avatarId = avatarId;
+        public bool value;
+
+        public BooleanMessage() { }
+
+        public BooleanMessage(bool v)
+        {
+            value = v;
+        }
+
+        public override void Deserialize(NetworkReader reader)
+        {
+            value = reader.ReadBoolean();
+        }
+
+        public override void Serialize(NetworkWriter writer)
+        {
+            writer.Write(value);
+        }
     }
 
-    public PlayerAvatarMessage() { }
-
-    public int idx;
-    public int avatarId;
-
-    public override void Deserialize(NetworkReader reader)
+    public class PlayerToggleMessage : MessageBase
     {
-        idx = reader.ReadInt32();
-        avatarId = reader.ReadInt32();
+        public PlayerToggleMessage(int idx, bool isHuman)
+        {
+            this.idx = idx;
+            this.isHuman = isHuman;
+        }
+
+        public PlayerToggleMessage() { }
+
+        public int idx;
+        public bool isHuman;
     }
 
-    public override void Serialize(NetworkWriter writer)
+    [Serializable]
+    public class PlayerAvatarMessage : MessageBase
     {
-        writer.Write(idx);
-        writer.Write(avatarId);
-    }
-}
+        public PlayerAvatarMessage(int idx, int avatarId)
+        {
+            this.idx = idx;
+            this.avatarId = avatarId;
+        }
 
-[Serializable]
-public class PlayerNameMessage : MessageBase
-{
-    public PlayerNameMessage(int idx, string playerName)
-    {
-        this.idx = idx;
-        this.playerName = playerName;
-    }
+        public PlayerAvatarMessage() { }
 
-    public PlayerNameMessage() { }
+        public int idx;
+        public int avatarId;
 
-    public int idx;
-    public string playerName;
-}
+        public override void Deserialize(NetworkReader reader)
+        {
+            idx = reader.ReadInt32();
+            avatarId = reader.ReadInt32();
+        }
 
-public class LobbyDataMessage : MessageBase
-{
-    public LobbyDataMessage(NetworkProfile[] players)
-    {
-        this.players = players;
+        public override void Serialize(NetworkWriter writer)
+        {
+            writer.Write(idx);
+            writer.Write(avatarId);
+        }
     }
 
-    public LobbyDataMessage() { }
-
-    public NetworkProfile[] players;
-}
-
-public class DrawCardMessage : MessageBase
-{
-    public int fromDeckId;
-    public int cardId;
-    public int toDeckId;
-
-    public DrawCardMessage(Deck fromDeck, Card card, Deck toDeck)
+    [Serializable]
+    public class PlayerNameMessage : MessageBase
     {
-        this.fromDeckId = fromDeck.Id;
-        this.cardId = card.Id;
-        this.toDeckId = toDeck.Id;
+        public PlayerNameMessage(int idx, string playerName)
+        {
+            this.idx = idx;
+            this.playerName = playerName;
+        }
+
+        public PlayerNameMessage() { }
+
+        public int idx;
+        public string playerName;
     }
 
-    public DrawCardMessage() { }
-}
-
-public enum GroupDrawPhase
-{
-    Phase1,
-    Phase2,
-    Phase3
-}
-
-public class GroupedDrawMessage : MessageBase
-{
-    public GroupDrawPhase groupPhase;
-    public int fromDeck;
-    public int[] cardIds;
-    public int[] toDeckIds;
-
-    public GroupedDrawMessage(GroupDrawPhase phase, int fromDeck, List<int> cards, List<int> toDecks)
+    public class LobbyDataMessage : MessageBase
     {
-        groupPhase = phase;
-        this.fromDeck = fromDeck;
-        cardIds = cards.ToArray();
-        toDeckIds = toDecks.ToArray();
+        public LobbyDataMessage(NetworkProfile[] players)
+        {
+            this.players = players;
+        }
+
+        public LobbyDataMessage() { }
+
+        public NetworkProfile[] players;
     }
 
-    public GroupedDrawMessage () {}
-}
-
-public class IntMessage : MessageBase
-{
-    public int payload;
-
-    public IntMessage(int payload)
+    public class DrawCardMessage : MessageBase
     {
-        this.payload = payload;
+        public int fromDeckId;
+        public int cardId;
+        public int toDeckId;
+
+        public DrawCardMessage(Deck fromDeck, Card card, Deck toDeck)
+        {
+            this.fromDeckId = fromDeck.Id;
+            this.cardId = card.Id;
+            this.toDeckId = toDeck.Id;
+        }
+
+        public DrawCardMessage() { }
     }
 
-    public IntMessage () {}
-}
-
-public class ChangeSceneMessage : MessageBase
-{
-    public string sceneName = "";
-
-    public ChangeSceneMessage(string sceneName)
+    public enum GroupDrawPhase
     {
-        this.sceneName = sceneName;
+        Phase1,
+        Phase2,
+        Phase3
     }
 
-    public ChangeSceneMessage() {}
-}
-
-public class CardPlayedMessage : MessageBase
-{
-    public int cardPlayed;
-
-    public CardPlayedMessage(int card)
+    public class GroupedDrawMessage : MessageBase
     {
-        cardPlayed = card;
+        public GroupDrawPhase groupPhase;
+        public int fromDeck;
+        public int[] cardIds;
+        public int[] toDeckIds;
+
+        public GroupedDrawMessage(GroupDrawPhase phase, int fromDeck, List<int> cards, List<int> toDecks)
+        {
+            groupPhase = phase;
+            this.fromDeck = fromDeck;
+            cardIds = cards.ToArray();
+            toDeckIds = toDecks.ToArray();
+        }
+
+        public GroupedDrawMessage() { }
     }
 
-    public CardPlayedMessage() { }
+    public class IntMessage : MessageBase
+    {
+        public int payload;
+
+        public IntMessage(int payload)
+        {
+            this.payload = payload;
+        }
+
+        public IntMessage() { }
+    }
+
+    public class ChangeSceneMessage : MessageBase
+    {
+        public string sceneName = "";
+
+        public ChangeSceneMessage(string sceneName)
+        {
+            this.sceneName = sceneName;
+        }
+
+        public ChangeSceneMessage() { }
+    }
+
+    public class CardPlayedMessage : MessageBase
+    {
+        public int cardPlayed;
+
+        public CardPlayedMessage(int card)
+        {
+            cardPlayed = card;
+        }
+
+        public CardPlayedMessage() { }
+    }
 }
