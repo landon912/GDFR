@@ -87,3 +87,13 @@ ehthumbs.db
 Corridor/Library/ShaderCache/
 
 Corridor/Library/metadata/
+
+# ============ #
+
+#    Custom    #
+
+# ============ #
+
+Logs
+
+.vscode
