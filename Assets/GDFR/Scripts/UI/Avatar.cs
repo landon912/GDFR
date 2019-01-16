@@ -29,7 +29,7 @@ namespace GDFR
             set
             {
                 _spriteName = value;
-                avatarSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[_spriteName];
+                avatarSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[_spriteName];
             }
             get { return _spriteName; }
         }

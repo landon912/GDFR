@@ -25,7 +25,7 @@
 //        //StartCoroutine(card.AnimateDrawCard(deckB,1f));
 //        //deckB.AddCard(card);
 //        //card.DrawCard(deckB);
-//        //GameContoller.AI_PickBestCard(deckA,deckB);
+//        //GameController.AI_PickBestCard(deckA,deckB);
 //        //RefreshAllCards();
 //    }
 

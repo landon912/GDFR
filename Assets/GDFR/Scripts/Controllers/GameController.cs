@@ -10,17 +10,17 @@ using Random = UnityEngine.Random;
 
 namespace GDFR
 {
-    public class GameContoller : RxFx_FSM
+    public class GameController : RxFx_FSM
     {
-        private static GameContoller mInstance;
+        private static GameController mInstance;
 
-        public static GameContoller Instance
+        public static GameController Instance
         {
             get
             {
                 if (mInstance == null)
                 {
-                    mInstance = FindObjectOfType<GameContoller>();
+                    mInstance = FindObjectOfType<GameController>();
                 }
 
                 return mInstance;
@@ -319,7 +319,7 @@ namespace GDFR
                 playerDecks[p].DeckUiEnabled(false);
             }
 
-            mainDeck.ReturnAllCards(mainDeck); //this is needed to reset the drawable states
+            //mainDeck.ReturnAllCards(mainDeck); //this is needed to reset the drawable states
             fairyRingDeck.ReturnAllCards(mainDeck);
             starDeck.ReturnAllCards(mainDeck);
             playedCardDeck.ReturnAllCards(mainDeck);
@@ -518,7 +518,7 @@ namespace GDFR
                         yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
                     }
 
-                    pDeck.Refresh();
+                    //pDeck.Refresh();
                 }
             }
         }
@@ -606,7 +606,7 @@ namespace GDFR
                 yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck, dealSpeed));
             }
 
-            fairyRingDeck.Refresh();
+            //fairyRingDeck.Refresh();
         }
 
         public int DetermineFairyRowCardCount()
@@ -896,14 +896,14 @@ namespace GDFR
                 yield return StartCoroutine(c.AnimateDrawCard(playerDecks[PlayersPosition[currentPlayer]], 0f));
             }
 
-            fairyRingDeck.Refresh();
+            //fairyRingDeck.Refresh();
             fairyRingDeck.DeckUiEnabled(false);
-            playerDecks[PlayersPosition[currentPlayer]].Refresh();
+            //playerDecks[PlayersPosition[currentPlayer]].Refresh();
 
             yield return StartCoroutine(PlayedCard.AnimateDrawCard(fairyRingDeck, 1f));
             //EventReceiver.TriggerPlayResultEvent(playQuality);
             yield return new WaitForSeconds(1f);
-            fairyRingDeck.Refresh();
+            //fairyRingDeck.Refresh();
 
             switch (Toolbox.Instance.gameSettings.RulesVariant)
             {

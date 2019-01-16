@@ -22,7 +22,7 @@ namespace GDFR
             }
         }
 
-        private GameContoller mController;
+        private GameController mController;
         private GroupedDrawMessage phase1DrawData;
         private GroupedDrawMessage phase2DrawData;
         private GroupedDrawMessage phase3DrawData;
@@ -30,7 +30,7 @@ namespace GDFR
 
         private void Awake()
         {
-            mController = GameContoller.Instance;
+            mController = GameController.Instance;
         }
 
         private void OnEnable()
@@ -171,7 +171,7 @@ namespace GDFR
                             toDecksId.Add(pDeck.Id);
                         }
 
-                        pDeck.Refresh();
+                        //pDeck.Refresh();
 
                         GroupedDrawMessage outMess =
                             new GroupedDrawMessage(GroupDrawPhase.Phase2, fromDeckId, cardsId, toDecksId);

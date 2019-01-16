@@ -257,21 +257,21 @@ namespace GDFR
             switch (symbol)
             {
                 case Symbol.Sun:
-                    SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[SUN_SPRITE_NAME];
+                    SymbolSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[SUN_SPRITE_NAME];
                     break;
                 case Symbol.Moon:
-                    SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[MOON_SPRITE_NAME];
+                    SymbolSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[MOON_SPRITE_NAME];
                     break;
                 case Symbol.Mushroom:
-                    SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[MUSHROOM_SPRITE_NAME];
+                    SymbolSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[MUSHROOM_SPRITE_NAME];
                     break;
                 case Symbol.Frog:
-                    SymbolSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[FROG_SPRITE_NAME];
+                    SymbolSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[FROG_SPRITE_NAME];
                     break;
             }
 
             SymbolGlowSprite.sprite =
-                GameContoller.Instance.spriteSwapper.spriteDict[SymbolSprite.sprite.name + "_Glow"];
+                GameController.Instance.spriteSwapper.spriteDict[SymbolSprite.sprite.name + "_Glow"];
         }
 
         public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
@@ -286,7 +286,7 @@ namespace GDFR
             switch (race)
             {
                 case Race.Fairy:
-                    CardSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[FairySpriteName];
+                    CardSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[FairySpriteName];
                     mCurrentRace = Race.Fairy;
                     CurrentRhyme = FairyRhyme;
                     CurrentSymbol = FairySymbol;
@@ -303,7 +303,7 @@ namespace GDFR
 
                     break;
                 case Race.Goblin:
-                    CardSprite.sprite = GameContoller.Instance.spriteSwapper.spriteDict[GoblinSpriteName];
+                    CardSprite.sprite = GameController.Instance.spriteSwapper.spriteDict[GoblinSpriteName];
                     mCurrentRace = Race.Goblin;
                     CurrentRhyme = GoblinRhyme;
                     CurrentSymbol = GoblinSymbol;

@@ -36,15 +36,13 @@ public class UI_Functions : MonoBehaviour
         messageLabel.text = messageString;
         SetActivateGameObjectState(true);
 
-        //PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
         LeanTween.scale(messageLabel.GetComponent<RectTransform>(), Vector3.one, duration / 4.0f);
 
         yield return new WaitForSeconds(duration);
 
-        //PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
         LeanTween.scale(messageLabel.GetComponent<RectTransform>(), Vector3.zero, duration / 4.0f);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(duration/4.0f);
 
         SetActivateGameObjectState(false);
     }
@@ -57,11 +55,18 @@ public class UI_Functions : MonoBehaviour
 
         SetActivateGameObjectState(true, enableButtons);
 
-        PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
+        const float scaleTime = 1f;
+
+        LeanTween.scale(messageLabel.GetComponent<RectTransform>(), Vector3.one, scaleTime);
+
+        //PlayTweens.PlayTweenGroup(messageLabel.gameObject, 1, true, 1);
         if (enableButtons)
         {
-            PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 1, true, 1);
-            PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 1, true, 1);
+            LeanTween.scale(gameEndButtons.transform.GetChild(0).GetComponent<RectTransform>(), Vector3.one, scaleTime);
+            LeanTween.scale(gameEndButtons.transform.GetChild(1).GetComponent<RectTransform>(), Vector3.one, scaleTime);
+
+            //PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 1, true, 1);
+            //PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 1, true, 1);
         }
     }
 
@@ -69,11 +74,17 @@ public class UI_Functions : MonoBehaviour
     {
         yield return new WaitForSeconds(0.01f);
 
-        PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
-        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 2, true, 1);
-        PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 2, true, 1);
+        const float hideTime = 0.5f;
 
-        yield return new WaitForSeconds(0.5f);
+        LeanTween.scale(messageLabel.GetComponent<RectTransform>(), Vector3.zero, hideTime);
+        LeanTween.scale(gameEndButtons.transform.GetChild(0).GetComponent<RectTransform>(), Vector3.zero, hideTime);
+        LeanTween.scale(gameEndButtons.transform.GetChild(1).GetComponent<RectTransform>(), Vector3.zero, hideTime);
+
+        //PlayTweens.PlayTweenGroup(messageLabel.gameObject, 2, true, 1);
+        //PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(0).gameObject, 2, true, 1);
+        //PlayTweens.PlayTweenGroup(gameEndButtons.transform.GetChild(1).gameObject, 2, true, 1);
+
+        yield return new WaitForSeconds(hideTime);
 
         SetActivateGameObjectState(false);
 

@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1333929799259927918}
-  - component: {fileID: 11400000}
-  - component: {fileID: 11400004}
-  - component: {fileID: 11400006}
+  - component: {fileID: 9067766467102292303}
+  - component: {fileID: 3765086313945153530}
   m_Layer: 0
   m_Name: Deck_UI_Pivot
   m_TagString: Untagged
@@ -38,7 +37,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &11400000
+--- !u!114 &9067766467102292303
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,34 +46,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1df16590d3b264a40b7c7c1268fcedad, type: 3}
+  m_Script: {fileID: 11500000, guid: b3ded0123e58cd040ae79e09789d580d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxPerLine: 20
-  _cellWidth: 190
-  _cellHeight: 210
-  widthLimit: 600
-  limitWidth: 1
-  hJustify: 1
-  vJustify: 1
-  newRowOffset: {x: -20, y: -20, z: 0}
-  limitFactor: 1
---- !u!114 &11400004
+  elementSize: {x: 190, y: 210}
+  maxWidth: 1300
+  hOrder: 0
+--- !u!114 &3765086313945153530
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d166255cacf07b4292b8402b3ddefc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 24e9056ecd313d745a1127ab681bcca0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  method: 0
-  style: 0
-  animationCurve:
-    serializedVersion: 2
+  tweenCurves:
+  - serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
@@ -83,8 +74,8 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
@@ -92,73 +83,11 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
-  ignoreTimeScale: 1
-  delay: 0
-  duration: 0.5
-  steeperCurves: 0
-  tweenGroup: 0
-  useFixedUpdate: 0
-  onFinished: []
-  eventReceiver: {fileID: 0}
-  callWhenFinished: 
-  from: {x: 0, y: 0, z: 0}
-  to: {x: 0, y: 0, z: 0}
-  worldSpace: 0
---- !u!114 &11400006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75e7459110b9666449485c40f25362a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  method: 0
-  style: 0
-  animationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  ignoreTimeScale: 1
-  delay: 0
-  duration: 0.5
-  steeperCurves: 0
-  tweenGroup: 0
-  useFixedUpdate: 0
-  onFinished: []
-  eventReceiver: {fileID: 0}
-  callWhenFinished: 
-  from: {x: 0.6, y: 0.6, z: 0.6}
-  to: {x: 1, y: 1, z: 1}
-  updateTable: 0
+    m_RotationOrder: 0
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +141,7 @@ MonoBehaviour:
   xmlDataFile: {fileID: 0}
   cardPrefab: {fileID: 7977685212043210753, guid: bc1ecda25c426b246bb5e81e68626c97,
     type: 3}
-  deckGrid: {fileID: 11400000}
+  deckPositioner: {fileID: 9067766467102292303}
   _VisuallyActive: 0
   deckActiveWidthLimit: 600
   _zDepth: 0

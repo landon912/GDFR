@@ -12,6 +12,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Help_Button
       objectReference: {fileID: 0}
+    - target: {fileID: 7171816787145319531, guid: 143d2cdf81c8b0a4c95babd6211e0981,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggerHelpButtonPressedEvent
+      objectReference: {fileID: 0}
     - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -79,16 +84,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
         type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 140
-      objectReference: {fileID: 0}
-    - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 140
-      objectReference: {fileID: 0}
-    - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
-        type: 3}
       propertyPath: m_AnchorMin.x
       value: 0.5
       objectReference: {fileID: 0}
@@ -123,11 +118,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 23448ab51c009b24e8d9813ba6a035a0,
         type: 3}
-    - target: {fileID: 7171816787145319531, guid: 143d2cdf81c8b0a4c95babd6211e0981,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: TriggerHelpButtonPressedEvent
-      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7171816787145319534, guid: 143d2cdf81c8b0a4c95babd6211e0981, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 143d2cdf81c8b0a4c95babd6211e0981, type: 3}

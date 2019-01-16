@@ -34,7 +34,7 @@ namespace GDFR
         public GameObject cardPrefab;
 
         //public TweenScale deckScaleTweener = null;
-        public UI_DeckGrid deckGrid;
+        public DeckPositioner deckPositioner;
         public bool _VisuallyActive;
         public float deckActiveWidthLimit = 600f;
         float deckInActiveWidthLimit = 600f;
@@ -73,16 +73,15 @@ namespace GDFR
 
         public bool playSparklesOnDraw = false;
 
-        public Vector3 GetGridPosition(int index)
-        {
-            return deckGrid.GetGridPosition(index);
-        }
+        //public Vector3 GetGridPosition(int index)
+        //{
+        //    return deckPositioner.GetGridPosition(index);
+        //}
 
         void Awake()
         {
             DeckPivot = transform.GetChild(0).GetComponent<RectTransform>();
 
-            deckInActiveWidthLimit = deckGrid.widthLimit;
             if (xmlDataFile != null)
                 LoadDeckData(xmlDataFile);
             Refresh();
@@ -94,26 +93,24 @@ namespace GDFR
             if (VisActive)
             {
                 DeckPivot.LeanScale(Vector3.one, 2).setEase(DeckPivot.GetComponent<TweenCurve>().tweenCurves[0]);
-                deckGrid.widthLimit = deckActiveWidthLimit;
-                deckGrid.Reposition();
+                deckPositioner.SetPosition();
             }
             else
             {
                 DeckPivot.LeanScale(new Vector3(0.6f, 0.6f, 0.6f), 2)
                     .setEase(DeckPivot.GetComponent<TweenCurve>().tweenCurves[0]);
-                deckGrid.widthLimit = deckInActiveWidthLimit;
-                deckGrid.Reposition();
+                deckPositioner.SetPosition();
             }
         }
 
         public void Refresh()
         {
-            deckGrid.Reposition();
+            deckPositioner.SetPosition();
         }
 
         public void CollapseDeck()
         {
-            foreach (RectTransform t in transform) //TODO: change to recttransform if nothing cast errors
+            foreach (RectTransform t in transform)
             {
                 t.anchoredPosition = Vector3.zero;
             }
@@ -220,7 +217,16 @@ namespace GDFR
 
         public void ReturnAllCards(Deck toDeck)
         {
-            if (toDeck == null) return;
+            if (toDeck == null)
+            {
+                Debug.LogError("Cannot call this method on a null deck");
+                return;
+            }
+            if(toDeck == this)
+            {
+                Debug.LogError("Cannot return cards to the same deck.");
+                return;
+            }
 
             Card[] cardList = GetCardList();
             foreach (Card c in cardList)
@@ -228,8 +234,10 @@ namespace GDFR
                 c.GetComponent<Button>().interactable = false;
                 c.DeckDepthOffset = 0;
                 c.Depth = 0;
-                c.MoveToNewDeck(toDeck);
+                c.MoveToNewDeckInstant(toDeck);
             }
+
+            //toDeck.Refresh();
         }
 
         public Card AddCard(Card card)
@@ -240,6 +248,7 @@ namespace GDFR
                 fromDeck.RemoveCard(card);
 
             card.LocalRectTransform.SetParent(DeckPivot);
+
             card.ParentDeck = this;
 
             mCards.Add(card);

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2460935599343393393}
   - component: {fileID: 1785775882812314574}
   m_Layer: 8
-  m_Name: Button_large
+  m_Name: Button_Large
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 60
+  m_fontSize: 36
   m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0

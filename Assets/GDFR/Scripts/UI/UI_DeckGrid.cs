@@ -65,6 +65,8 @@ public class UI_DeckGrid : UIWidgetContainer
             Vector3 to = new Vector3(GetGridPosition(c).x, GetGridPosition(c).y, 0f);
 
             LeanTween.move(card.LocalRectTransform, to, TWEEN_SPEED);
+            
+		    //reset
             LeanTween.rotateLocal(card.gameObject, Vector3.zero, TWEEN_SPEED);
             LeanTween.scale(card.LocalRectTransform, Vector3.one, TWEEN_SPEED);
 

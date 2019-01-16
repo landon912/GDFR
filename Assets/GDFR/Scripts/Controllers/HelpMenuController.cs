@@ -27,9 +27,9 @@ namespace GDFR
         void Start()
         {
             //hide main game to stop you from being able to click on things
-            if (GameContoller.Instance)
+            if (GameController.Instance)
             {
-                GameContoller.Instance.mainGUIObj.SetActive(false);
+                GameController.Instance.mainGUIObj.SetActive(false);
             }
 
             Time.timeScale = 0;
@@ -59,9 +59,9 @@ namespace GDFR
             }
 
             //bring back main game to allow you to click on things
-            if (GameContoller.Instance)
+            if (GameController.Instance)
             {
-                GameContoller.Instance.mainGUIObj.SetActive(true);
+                GameController.Instance.mainGUIObj.SetActive(true);
             }
 
             Time.timeScale = 1;

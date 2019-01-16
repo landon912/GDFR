@@ -53,7 +53,7 @@ MonoBehaviour:
   xmlDataFile: {fileID: 0}
   cardPrefab: {fileID: 7977685212043210753, guid: bc1ecda25c426b246bb5e81e68626c97,
     type: 3}
-  deckGrid: {fileID: 3661679306575732470}
+  deckPositioner: {fileID: 5974726532916976750}
   _VisuallyActive: 0
   deckActiveWidthLimit: 1000
   _zDepth: 0
@@ -68,8 +68,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7437169046464655018}
-  - component: {fileID: 3661679306575732470}
   - component: {fileID: 55067530821173905}
+  - component: {fileID: 5974726532916976750}
   m_Layer: 8
   m_Name: Deck_UI_Pivot
   m_TagString: Untagged
@@ -96,27 +96,6 @@ RectTransform:
   m_AnchoredPosition: {x: 140, y: -120}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3661679306575732470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3661679306569165590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1df16590d3b264a40b7c7c1268fcedad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxPerLine: 20
-  _cellWidth: 190
-  _cellHeight: 210
-  widthLimit: 600
-  limitWidth: 1
-  hJustify: 0
-  vJustify: 0
-  newRowOffset: {x: -20, y: -20, z: 0}
-  limitFactor: 1
 --- !u!114 &55067530821173905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,3 +132,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &5974726532916976750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3661679306569165590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ded0123e58cd040ae79e09789d580d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  elementSize: {x: 190, y: 210}
+  maxWidth: 750
+  hOrder: 0

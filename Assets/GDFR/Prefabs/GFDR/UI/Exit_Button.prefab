@@ -12,6 +12,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Exit_Button
       objectReference: {fileID: 0}
+    - target: {fileID: 7171816787145319531, guid: 143d2cdf81c8b0a4c95babd6211e0981,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggerExitButtonPressedEvent
+      objectReference: {fileID: 0}
     - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -79,16 +84,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
         type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 140
-      objectReference: {fileID: 0}
-    - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 140
-      objectReference: {fileID: 0}
-    - target: {fileID: 7171816787145319530, guid: 143d2cdf81c8b0a4c95babd6211e0981,
-        type: 3}
       propertyPath: m_AnchorMin.x
       value: 0.5
       objectReference: {fileID: 0}
@@ -123,10 +118,5 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 3481465836ef29446b642c72b0d735ce,
         type: 3}
-    - target: {fileID: 7171816787145319531, guid: 143d2cdf81c8b0a4c95babd6211e0981,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: TriggerExitButtonPressedEvent
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 143d2cdf81c8b0a4c95babd6211e0981, type: 3}
