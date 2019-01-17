@@ -22,12 +22,12 @@
 //	public void AddRandomCard()
 //	{
 //		masterDeck.DrawAndMoveRandomCard(testDeck);
-//		testDeck.Refresh();
+//		testDeck.RefreshDeckPosition();
 //	}
 
 //	public void RemoveRandomCard()
 //	{
 //		testDeck.DrawAndMoveRandomCard(masterDeck);
-//		testDeck.Refresh();
+//		testDeck.RefreshDeckPosition();
 //	}
 //}

@@ -276,8 +276,11 @@ namespace GDFR
 
         public IEnumerator AnimateDrawCard(Deck toDeck, float duration)
         {
-            ParentDeck.RemoveCard(this);
+            Deck from = ParentDeck;
             toDeck.AddCard(this);
+
+            from.deckPositioner.SetPosition(duration/2.0f);
+            toDeck.deckPositioner.SetPosition(duration);
             yield return new WaitForSeconds(duration);
         }
 
@@ -325,7 +328,6 @@ namespace GDFR
             if (AreStarsShowing)
             {
                 StarsScript.Show();
-                //PlayStarsEffect();
             }
             else
             {
@@ -357,11 +359,6 @@ namespace GDFR
             }
         }
 
-        public void MoveCard(Vector3 to, float duration)
-        {
-            Move(mMoveRect, to, duration, mMoveEaseCurve.tweenCurves[0]);
-        }
-
         public void Move(RectTransform rect, Vector3 to, float duration, AnimationCurve easement)
         {
             LeanTween.move(rect, to, duration).setEase(easement);
@@ -387,8 +384,6 @@ namespace GDFR
         {
             LeanTween.scale(mScaleRect, new Vector3(1.2f, 1.2f, 1.2f), BUMP_TIME_SECONDS)
                 .setEase(mScaleEaseCurve.tweenCurves[0]);
-            //cardBumpTweener.ResetToBeginning();
-            //cardBumpTweener.PlayForward();
         }
 
         private void UpdateDepth()

@@ -28,10 +28,8 @@ namespace GDFR
             }
         }
 
-        public void SetPosition()
+        public void SetPosition(float tweenTime)
         {
-            const float tweenSpeed = 0.33f;
-
             int total = LocalRectTransform.childCount;
             for (int i = 0; i < total; i++)
             {
@@ -39,10 +37,16 @@ namespace GDFR
 
                 Vector3 to = GetGridPosition(i, total);
 
-                //reset
-                LeanTween.move(card.LocalRectTransform, to, tweenSpeed);
-                LeanTween.rotateLocal(card.gameObject, Vector3.zero, tweenSpeed);
-                LeanTween.scale(card.LocalRectTransform, Vector3.one, tweenSpeed);
+                if (Vector3.SqrMagnitude(LocalRectTransform.anchoredPosition3D - to) > 0.05f)
+                {
+                    LeanTween.move(card.LocalRectTransform, to, tweenTime);
+                }
+                else
+                {
+                    card.LocalRectTransform.anchoredPosition3D = to;
+                }
+
+                card.LocalRectTransform.localScale = Vector3.one;
 
                 //sets card's depth in comparison with the others
                 card.Depth = hOrder == HorizontalOrder.LeftToR ? i : -i;

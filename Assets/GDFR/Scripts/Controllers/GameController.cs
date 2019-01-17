@@ -517,8 +517,6 @@ namespace GDFR
                             : Race.Goblin);
                         yield return StartCoroutine(card.AnimateDrawCard(pDeck, dealSpeed));
                     }
-
-                    //pDeck.Refresh();
                 }
             }
         }
@@ -605,8 +603,6 @@ namespace GDFR
                         : Race.Fairy;
                 yield return StartCoroutine(card.AnimateDrawCard(fairyRingDeck, dealSpeed));
             }
-
-            //fairyRingDeck.Refresh();
         }
 
         public int DetermineFairyRowCardCount()
@@ -893,17 +889,14 @@ namespace GDFR
 
             foreach (Card c in takenCards)
             {
-                yield return StartCoroutine(c.AnimateDrawCard(playerDecks[PlayersPosition[currentPlayer]], 0f));
+                StartCoroutine(c.AnimateDrawCard(playerDecks[PlayersPosition[currentPlayer]], 1f));
             }
 
-            //fairyRingDeck.Refresh();
             fairyRingDeck.DeckUiEnabled(false);
-            //playerDecks[PlayersPosition[currentPlayer]].Refresh();
 
             yield return StartCoroutine(PlayedCard.AnimateDrawCard(fairyRingDeck, 1f));
             //EventReceiver.TriggerPlayResultEvent(playQuality);
             yield return new WaitForSeconds(1f);
-            //fairyRingDeck.Refresh();
 
             switch (Toolbox.Instance.gameSettings.RulesVariant)
             {

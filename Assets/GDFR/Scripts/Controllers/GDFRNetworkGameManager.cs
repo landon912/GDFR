@@ -171,8 +171,6 @@ namespace GDFR
                             toDecksId.Add(pDeck.Id);
                         }
 
-                        //pDeck.Refresh();
-
                         GroupedDrawMessage outMess =
                             new GroupedDrawMessage(GroupDrawPhase.Phase2, fromDeckId, cardsId, toDecksId);
 
@@ -232,7 +230,7 @@ namespace GDFR
                 yield return StartCoroutine(c.AnimateDrawCard(toDeck, mController.dealSpeed));
             }
 
-            //mController.fairyRingDeck.Refresh();
+            //mController.fairyRingDeck.RefreshDeckPosition();
         }
 
         public IEnumerator State_Network_Initiative()

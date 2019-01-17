@@ -84,7 +84,7 @@ namespace GDFR
 
             if (xmlDataFile != null)
                 LoadDeckData(xmlDataFile);
-            Refresh();
+            //RefreshDeckPosition();
         }
 
         void SetVisuallyActive(bool VisActive)
@@ -93,20 +93,20 @@ namespace GDFR
             if (VisActive)
             {
                 DeckPivot.LeanScale(Vector3.one, 2).setEase(DeckPivot.GetComponent<TweenCurve>().tweenCurves[0]);
-                deckPositioner.SetPosition();
+                deckPositioner.SetPosition(2.0f);
             }
             else
             {
                 DeckPivot.LeanScale(new Vector3(0.6f, 0.6f, 0.6f), 2)
                     .setEase(DeckPivot.GetComponent<TweenCurve>().tweenCurves[0]);
-                deckPositioner.SetPosition();
+                deckPositioner.SetPosition(2.0f);
             }
         }
 
-        public void Refresh()
-        {
-            deckPositioner.SetPosition();
-        }
+        //public void RefreshDeckPosition()
+        //{
+        //    deckPositioner.SetPosition();
+        //}
 
         public void CollapseDeck()
         {
@@ -236,16 +236,11 @@ namespace GDFR
                 c.Depth = 0;
                 c.MoveToNewDeckInstant(toDeck);
             }
-
-            //toDeck.Refresh();
         }
 
         public Card AddCard(Card card)
         {
-            Deck fromDeck = card.ParentDeck;
-
-            if (fromDeck != null)
-                fromDeck.RemoveCard(card);
+            card.ParentDeck?.RemoveCard(card);
 
             card.LocalRectTransform.SetParent(DeckPivot);
 
@@ -256,20 +251,17 @@ namespace GDFR
 
             EventReceiver.TriggerCardMovedEvent(card);
 
-            Refresh();
             card.DeckDepthOffset = zDepth;
 
             if (playSparklesOnDraw)
                 card.CardSparkleOverTime(0.4f);
-            if (fromDeck != null)
-                fromDeck.Refresh();
+
             return card;
         }
 
         public Card AddCardInstant(Card card)
         {
-            if (card.ParentDeck != null)
-                card.ParentDeck.RemoveCard(card);
+            card.ParentDeck?.RemoveCard(card);
 
             card.LocalRectTransform.SetParent(DeckPivot);
             card.ParentDeck = this;
@@ -283,12 +275,10 @@ namespace GDFR
             return card;
         }
 
-        public Card RemoveCard(Card removeCard)
+        private void RemoveCard(Card removeCard)
         {
-            removeCard.LocalRectTransform.SetParent(null);
             mCards.Remove(removeCard);
             mDrawableCards.Remove(removeCard);
-            return removeCard;
         }
 
         void OnCardAdded(Card card)
